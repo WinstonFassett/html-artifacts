@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Plotly starter</title>
+  <script src="https://cdn.plot.ly/plotly-3.0.0.min.js" charset="utf-8"></script>
+  <style>
+    body { margin: 0; font-family: system-ui, sans-serif; padding: 2rem; }
+  </style>
+</head>
+<body>
+<h1>Plotly — no build</h1>
+<div id="plot"></div>
+
+<script>
+Plotly.newPlot('plot', [{
+  x: [1, 2, 3, 4, 5],
+  y: [1, 4, 9, 16, 25],
+  type: 'scatter',
+  mode: 'lines+markers',
+  marker: { color: '#e15759' }
+}], {
+  title: 'y = x²',
+  margin: { t: 40 }
+}, { responsive: true });
+</script>
+</body>
+</html>

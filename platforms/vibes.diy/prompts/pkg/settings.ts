@@ -1,0 +1,37 @@
+/**
+ * User settings for the application
+ */
+export interface UserSettings {
+  /** Document ID for the settings document */
+  _id: string;
+
+  /** Custom style prompt for UI generation */
+  stylePrompt?: string;
+
+  /** Custom user instructions to append to the system prompt */
+  userPrompt?: string;
+
+  /** AI model to use for code generation */
+  model?: string;
+
+  /** Whether to show the per‑chat model picker in the chat UI */
+  showModelPickerInChat?: boolean; // default false
+
+  /** Pre-resolved skill names chosen for this app (from pre-allocation). */
+  skills?: string[];
+
+  /** Selected theme slug (from picker or pre-allocation). Validated against the theme catalog. */
+  theme?: string;
+
+  /** Selected colorset slug. Defaults to `theme` (every theme ships a same-slug default colorset). Enables theme×color combinatorics — see ticket #1853. */
+  colorTheme?: string;
+
+  /** Human-readable app title (from pre-allocation or user edit). */
+  title?: string;
+
+  /** Enriched 3-sentence preamble synthesized at pre-allocation. Threads into the system prompt as <app-workflow>. */
+  enrichedPrompt?: string;
+
+  /** Whether to include a demo-data button. Default false. */
+  demoData?: boolean;
+}

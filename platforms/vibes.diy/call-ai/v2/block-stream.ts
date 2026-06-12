@@ -1,0 +1,672 @@
+import { type } from "arktype";
+import { CoercedDate } from "./types.js";
+import { isLineBegin, isLineLine, isLineEnd, LineStreamMsg, createLineStream, LineStreamInput } from "./line-stream.js";
+import { isStatsCollect, StatsCollectMsg } from "./stats-stream.js";
+import { passthrough } from "./passthrough.js";
+import { DeltaStreamMsg, isDeltaBegin, isDeltaEnd, isDeltaImage, isDeltaLine, isDeltaUsage } from "./delta-stream.js";
+import { consumeStream, Lazy } from "@adviser/cement";
+import { SseUsage } from "./sse-stream.js";
+import { encodeUtf8 } from "./utf8-stream.js";
+
+export const BlockBase = type({
+  blockId: "string",
+  streamId: "string",
+  seq: "number",
+  blockNr: "number",
+  timestamp: CoercedDate,
+});
+
+export const BlockStats = type({
+  lines: "number",
+  bytes: "number",
+  "cnt?": "number",
+});
+export type BlockStats = typeof BlockStats.infer;
+
+const BlockStatsBox = type({
+  stats: BlockStats,
+});
+// Block stream lifecycle events
+export const BlockBeginMsg = type({
+  type: "'block.begin'",
+}).and(BlockBase);
+
+export const BlockUsage = type({
+  given: SseUsage.array(),
+  calculated: SseUsage,
+});
+export type BlockUsage = typeof BlockUsage.infer;
+
+// Plain shape for use in .and() type compositions (morph types break .and() inference).
+export const FileSystemRefFields = type({
+  appSlug: "string",
+  ownerHandle: "string",
+  mode: "'production'|'dev'",
+  fsId: "string",
+});
+
+// Accepts both current and legacy fsRef shapes and always normalizes to
+// `{ appSlug, ownerHandle, mode, fsId }` on parse. Using a single morph avoids
+// ArkType's indeterminate union error for overlapping object inputs.
+export const FileSystemRef = type({
+  appSlug: "string",
+  "ownerHandle?": "string",
+  "userSlug?": "string",
+  mode: "'production'|'dev'",
+  fsId: "string",
+  // wrapperUrl: "string",
+  // entryPointUrl: "string",
+})
+  .narrow((value, ctx) => {
+    const hasOwnerHandle = typeof value.ownerHandle === "string";
+    const hasUserSlug = typeof value.userSlug === "string";
+    return hasOwnerHandle !== hasUserSlug || ctx.mustBe("exactly one of ownerHandle or userSlug");
+  })
+  .pipe((value) => {
+    const ownerHandle = value.ownerHandle ?? value.userSlug;
+    if (ownerHandle === undefined) {
+      throw new Error("FileSystemRef requires ownerHandle or userSlug");
+    }
+    const { userSlug: _legacyUserSlug, ownerHandle: _currentOwnerHandle, ...rest } = value;
+    return { ...rest, ownerHandle };
+  });
+export type FileSystemRef = typeof FileSystemRef.infer;
+
+export const PromptContextSql = type({
+  type: "'prompt.usage.sql'",
+  usage: BlockUsage,
+  "fsRef?": FileSystemRef,
+});
+export type PromptContextSql = typeof PromptContextSql.infer;
+
+export const ChatContextSql = type({
+  type: "'chat.context.sql'",
+  userId: "string",
+  chatId: "string",
+  "promptId?": "string",
+  "fsId?": "string",
+  nethash: "string",
+  promptTokens: "number",
+  completionTokens: "number",
+  totalTokens: "number",
+  usage: BlockUsage,
+  created: CoercedDate,
+});
+
+export type ChatContextSql = typeof ChatContextSql.infer;
+
+export const BlockEndMsg = type({
+  type: "'block.end'",
+  stats: {
+    toplevel: BlockStats,
+    code: BlockStats,
+    image: BlockStats,
+    total: BlockStats,
+  },
+  usage: BlockUsage,
+  "fsRef?": FileSystemRef,
+}).and(BlockBase);
+
+// Toplevel (non-code) section events
+export const ToplevelBeginMsg = type({
+  type: "'block.toplevel.begin'",
+  sectionId: "string",
+}).and(BlockBase);
+
+const BlockLine = type({
+  lineNr: "number",
+  line: "string",
+});
+
+export const ToplevelLineMsg = type({
+  type: "'block.toplevel.line'",
+  sectionId: "string",
+})
+  .and(BlockBase)
+  .and(BlockLine);
+
+export const ToplevelEndMsg = type({
+  type: "'block.toplevel.end'",
+  sectionId: "string",
+})
+  .and(BlockBase)
+  .and(BlockStatsBox);
+// Code block events
+export const CodeBeginMsg = type({
+  type: "'block.code.begin'",
+  sectionId: "string",
+  lang: "string",
+  "path?": "string",
+}).and(BlockBase);
+export const CodeLineMsg = type({
+  type: "'block.code.line'",
+  sectionId: "string",
+  lang: "string",
+  "path?": "string",
+})
+  .and(BlockBase)
+  .and(BlockLine);
+
+export const CodeEndMsg = type({
+  type: "'block.code.end'",
+  sectionId: "string",
+  lang: "string",
+  "path?": "string",
+})
+  .and(BlockBase)
+  .and(BlockStatsBox);
+
+// Code-block truncate event. Emitted by the server in place of the failed
+// block.code.end when streamingResolver detects an apply error mid-stream.
+// Live consumers (web UI, CLI) treat this as the closure event for the
+// block — accumulator is dropped, no edit is applied, no end event will
+// arrive for the same blockId. Wire-additive: clients that don't know
+// the type ignore it (the orchestrator simply doesn't forward the failed
+// code.end either, so old clients see an orphaned begin/lines stream
+// that's resolved when the next block arrives).
+export const CodeTruncatedMsg = type({
+  type: "'block.code.truncated'",
+  sectionId: "string",
+  lang: "string",
+  "path?": "string",
+  reason: "string",
+  kind: "string",
+  truncatedAtLine: "number",
+  errorCount: "number",
+}).and(BlockBase);
+
+// Image block events. Two payload shapes coexist:
+//   - LLM-streamed images carry `url` (raw data: URL or remote URL).
+//   - Server-side image-gen (Prodia, etc.) carries the file ref shape
+//     `{uploadId, cid, type, size}` — the asset has already been written
+//     through `storeAndAuditAsset`, and the hook turns this into
+//     `_files.v<N> = FileMeta` so display reads via Stage C's meta.url.
+export const BlockImageMsg = type({
+  type: "'block.image'",
+  sectionId: "string",
+  "url?": "string",
+  "uploadId?": "string",
+  "cid?": "string",
+  "mimeType?": "string",
+  "size?": "number",
+})
+  .and(BlockBase)
+  .and(BlockStatsBox);
+
+// Stats message
+export const BlockStatsMsg = type({
+  type: "'block.stats'",
+  stats: {
+    toplevel: BlockStats,
+    code: BlockStats,
+    image: BlockStats,
+    total: BlockStats,
+  },
+  usage: SseUsage,
+}).and(BlockBase);
+
+// Union types
+export const ToplevelMsg = ToplevelBeginMsg.or(ToplevelLineMsg).or(ToplevelEndMsg);
+export const CodeMsg = CodeBeginMsg.or(CodeLineMsg).or(CodeEndMsg).or(CodeTruncatedMsg);
+export const LineMsg = ToplevelLineMsg.or(CodeLineMsg);
+export const BeginMsg = ToplevelBeginMsg.or(CodeBeginMsg);
+export const BlockStreamMsg = BlockBeginMsg.or(BlockEndMsg).or(BlockStatsMsg).or(BlockImageMsg).or(CodeMsg).or(ToplevelMsg);
+// export const BlockOutput = BlockStreamMsg.or(ToplevelMsg).or(CodeMsg).or(BlockImageMsg);
+
+export const BlockMsgs = BlockStreamMsg.or(ToplevelMsg).or(CodeMsg);
+
+// Inferred types
+export type BlockBeginMsg = typeof BlockBeginMsg.infer;
+export type BlockEndMsg = typeof BlockEndMsg.infer;
+export type BlockStatsMsg = typeof BlockStatsMsg.infer;
+export type ToplevelBeginMsg = typeof ToplevelBeginMsg.infer;
+export type ToplevelLineMsg = typeof ToplevelLineMsg.infer;
+export type ToplevelEndMsg = typeof ToplevelEndMsg.infer;
+export type CodeBeginMsg = typeof CodeBeginMsg.infer;
+export type CodeLineMsg = typeof CodeLineMsg.infer;
+export type CodeEndMsg = typeof CodeEndMsg.infer;
+export type CodeTruncatedMsg = typeof CodeTruncatedMsg.infer;
+export type BlockImageMsg = typeof BlockImageMsg.infer;
+export type BlockStreamMsg = typeof BlockStreamMsg.infer;
+export type ToplevelMsg = typeof ToplevelMsg.infer;
+export type CodeMsg = typeof CodeMsg.infer;
+export type BlockMsgs = typeof BlockMsgs.infer;
+export type LineMsg = typeof LineMsg.infer;
+export type BeginMsg = typeof BeginMsg.infer;
+
+// Type guards with optional streamId filter
+export const isBlockBegin = (msg: unknown, streamId?: string): msg is BlockBeginMsg =>
+  !(BlockBeginMsg(msg) instanceof type.errors) && (!streamId || (msg as BlockBeginMsg).streamId === streamId);
+export const isBlockEnd = (msg: unknown, streamId?: string): msg is BlockEndMsg =>
+  !(BlockEndMsg(msg) instanceof type.errors) && (!streamId || (msg as BlockEndMsg).streamId === streamId);
+export const isBlockStats = (msg: unknown, streamId?: string): msg is BlockStatsMsg =>
+  !(BlockStatsMsg(msg) instanceof type.errors) && (!streamId || (msg as BlockStatsMsg).streamId === streamId);
+export const isToplevelBegin = (msg: unknown, streamId?: string): msg is ToplevelBeginMsg =>
+  !(ToplevelBeginMsg(msg) instanceof type.errors) && (!streamId || (msg as ToplevelBeginMsg).streamId === streamId);
+export const isToplevelLine = (msg: unknown, streamId?: string): msg is ToplevelLineMsg =>
+  !(ToplevelLineMsg(msg) instanceof type.errors) && (!streamId || (msg as ToplevelLineMsg).streamId === streamId);
+export const isToplevelEnd = (msg: unknown, streamId?: string): msg is ToplevelEndMsg =>
+  !(ToplevelEndMsg(msg) instanceof type.errors) && (!streamId || (msg as ToplevelEndMsg).streamId === streamId);
+export const isCodeBegin = (msg: unknown, streamId?: string): msg is CodeBeginMsg =>
+  !(CodeBeginMsg(msg) instanceof type.errors) && (!streamId || (msg as CodeBeginMsg).streamId === streamId);
+export const isCodeLine = (msg: unknown, streamId?: string): msg is CodeLineMsg =>
+  !(CodeLineMsg(msg) instanceof type.errors) && (!streamId || (msg as CodeLineMsg).streamId === streamId);
+export const isCodeEnd = (msg: unknown, streamId?: string): msg is CodeEndMsg =>
+  !(CodeEndMsg(msg) instanceof type.errors) && (!streamId || (msg as CodeEndMsg).streamId === streamId);
+export const isCodeTruncated = (msg: unknown, streamId?: string): msg is CodeTruncatedMsg =>
+  !(CodeTruncatedMsg(msg) instanceof type.errors) && (!streamId || (msg as CodeTruncatedMsg).streamId === streamId);
+export const isBlockImage = (msg: unknown, streamId?: string): msg is BlockImageMsg =>
+  !(BlockImageMsg(msg) instanceof type.errors) && (!streamId || (msg as BlockImageMsg).streamId === streamId);
+export const isBlockStreamMsg = (msg: unknown, streamId?: string): msg is BlockStreamMsg =>
+  !(BlockStreamMsg(msg) instanceof type.errors) && (!streamId || (msg as BlockStreamMsg).streamId === streamId);
+
+// Regex to match code fence start: ```lang or just ```
+const CODE_FENCE_START = /^```(\w*)$/;
+// Regex to match code fence end: just ```
+const CODE_FENCE_END = /^```$/;
+
+// Aider-style path line that may precede a fence (e.g. "App.jsx", "src/foo.ts").
+// Trimmed line must look like a relative path with a recognized extension.
+const PATH_LINE = /^[\w\-./]+\.(?:jsx?|tsx?|mjs|cjs|md|json|html|css)$/;
+
+// Markdown horizontal-rule line; we suppress it only when it's the trailing
+// line of the stream so it doesn't render as a stray <hr> at message end.
+const HR_LINE = /^---+$/;
+
+const DEFAULT_PATH = "App.jsx";
+
+type Mode = "toplevel" | "code";
+
+interface PendingLine {
+  readonly content: string;
+  readonly kind: "path" | "hr";
+}
+
+function addStat(target: BlockStats, source: BlockStats) {
+  target.lines += source.lines;
+  target.bytes += source.bytes;
+}
+
+function addSSeUsage(target: SseUsage, source: SseUsage) {
+  target.prompt_tokens += source.prompt_tokens;
+  target.completion_tokens += source.completion_tokens;
+  target.total_tokens += source.total_tokens;
+}
+
+export function createBlockStream(
+  streamId: string,
+  innerStreamId: string,
+  createId: () => string
+): TransformStream<LineStreamMsg | DeltaStreamMsg | StatsCollectMsg, BlockStreamMsg> {
+  let blockId = "";
+  let mode: Mode = "toplevel";
+  let sectionStarted = false;
+  let currentLang = "";
+  let currentSectionId = "";
+  let currentPath = DEFAULT_PATH;
+  // A non-blank toplevel line whose role depends on what comes next:
+  //   path-shape line → consumed as path on fence open; flushed as prose otherwise
+  //   hr-shape line   → dropped at line.end (trailing); flushed as prose if any line follows
+  let pendingLine: PendingLine | undefined;
+  const toplevelStat = { lines: 0, bytes: 0, cnt: 0 };
+  const codeStat = { lines: 0, bytes: 0, cnt: 0 };
+  const imageStat = { lines: 0, bytes: 0, cnt: 0 };
+  const totalStat = { lines: 0, bytes: 0, cnt: 0 };
+  let blockStat = { lines: 0, bytes: 0, cnt: 0 };
+  let seq = 0;
+  let blockNr = 0;
+
+  function beginBlockAction(controller: TransformStreamDefaultController<BlockStreamMsg>) {
+    blockId = createId();
+    blockStat = { lines: 0, bytes: 0, cnt: 0 };
+    blockNr = 0;
+    controller.enqueue({
+      type: "block.begin",
+      blockId,
+      blockNr: blockNr,
+      streamId,
+      seq: seq++,
+      timestamp: new Date(),
+    });
+  }
+
+  let beginBlock = Lazy(beginBlockAction);
+
+  function emitToplevelLine(controller: TransformStreamDefaultController<BlockStreamMsg>, content: string) {
+    if (!sectionStarted) {
+      sectionStarted = true;
+      currentSectionId = createId();
+      blockStat = { lines: 0, bytes: 0, cnt: 0 };
+      controller.enqueue({
+        type: "block.toplevel.begin",
+        streamId,
+        sectionId: currentSectionId,
+        timestamp: new Date(),
+        blockId,
+        seq: seq++,
+        blockNr: blockNr,
+      });
+    }
+    blockStat.bytes += content.length;
+    controller.enqueue({
+      type: "block.toplevel.line",
+      timestamp: new Date(),
+      lineNr: blockStat.lines++,
+      sectionId: currentSectionId,
+      line: content,
+      blockId,
+      seq: seq++,
+      streamId,
+      blockNr: blockNr,
+    });
+  }
+
+  function flushPendingAsToplevel(controller: TransformStreamDefaultController<BlockStreamMsg>) {
+    if (pendingLine === undefined) return;
+    const line = pendingLine.content;
+    pendingLine = undefined;
+    emitToplevelLine(controller, line);
+  }
+
+  let currentUsageSSE: SseUsage = { prompt_tokens: 0, completion_tokens: 0, total_tokens: 0 };
+  const givenUsageSSE: SseUsage[] = [];
+  // const usageSumByUsage: SseUsage = { prompt_tokens: 0, completion_tokens: 0, total_tokens: 0 };
+  return new TransformStream<LineStreamMsg | DeltaStreamMsg, BlockStreamMsg>({
+    transform(msg, controller) {
+      // Handle stats.collect trigger
+      if (isStatsCollect(msg, streamId) || isDeltaUsage(msg, streamId)) {
+        if (isDeltaUsage(msg, streamId)) {
+          currentUsageSSE = msg.usage;
+          givenUsageSSE.push(msg.usage);
+          // addSSeUsage(usageSumByUsage, msg.usage);
+        }
+        controller.enqueue({
+          type: "block.stats",
+          blockId,
+          seq,
+          streamId,
+          blockNr,
+          stats: {
+            toplevel: toplevelStat,
+            code: codeStat,
+            image: imageStat,
+            total: totalStat,
+          },
+          usage: currentUsageSSE,
+          timestamp: new Date(),
+        } satisfies BlockStatsMsg);
+        return;
+      }
+      // if (isDeltaEnd(msg, streamId)) {
+      //   const accu = { prompt_tokens: 0, completion_tokens: 0, total_tokens: 0 };
+      //   for (const usage of msg.usages) {
+      //     addSSeUsage(accu, usage);
+      //   }
+      //   givenUsageSSE.push(msg.
+      // }
+
+      if (isDeltaImage(msg, streamId)) {
+        // No-op, block begun on line.begin
+        beginBlock(controller);
+        imageStat.cnt++;
+        imageStat.bytes += msg.image.image_url.url.length;
+        totalStat.cnt++;
+        totalStat.bytes += msg.image.image_url.url.length;
+        controller.enqueue({
+          type: "block.image",
+          blockId,
+          sectionId: createId(),
+          blockNr: blockNr++,
+          streamId,
+          seq: seq++,
+          timestamp: new Date(),
+          stats: imageStat,
+          url: msg.image.image_url.url,
+        });
+        return;
+      }
+      if (isLineBegin(msg, innerStreamId)) {
+        beginBlock(controller);
+        return;
+      }
+      if (isLineLine(msg, innerStreamId)) {
+        const content = msg.content;
+
+        // Check for code fence
+        const fenceStartMatch = CODE_FENCE_START.exec(content);
+
+        if (mode === "toplevel") {
+          if (fenceStartMatch) {
+            // Entering code block. Consume a buffered path-candidate as the
+            // path; flush any other buffered candidate as prose first.
+            let consumedPath: string | undefined;
+            if (pendingLine !== undefined && pendingLine.kind === "path") {
+              consumedPath = pendingLine.content.trim();
+              pendingLine = undefined;
+            } else {
+              flushPendingAsToplevel(controller);
+            }
+            if (sectionStarted) {
+              addStat(totalStat, blockStat);
+              addStat(toplevelStat, blockStat);
+              totalStat.cnt++;
+              toplevelStat.cnt++;
+              controller.enqueue({
+                type: "block.toplevel.end",
+                streamId,
+                sectionId: currentSectionId,
+                stats: toplevelStat,
+                timestamp: new Date(),
+                blockId,
+                seq: seq++,
+                blockNr: blockNr++,
+              });
+            }
+            mode = "code";
+            currentLang = fenceStartMatch[1] || "";
+            currentPath = consumedPath ?? DEFAULT_PATH;
+
+            sectionStarted = true;
+            currentSectionId = createId();
+            blockStat = { lines: 0, bytes: 0, cnt: 0 };
+            totalStat.lines++;
+            controller.enqueue({
+              type: "block.code.begin",
+              lang: currentLang.toLowerCase(),
+              path: currentPath,
+              timestamp: new Date(),
+              sectionId: currentSectionId,
+              blockId,
+              streamId,
+              seq: seq++,
+              blockNr: blockNr,
+            });
+          } else {
+            const trimmed = content.trim();
+            if (trimmed.length > 0 && PATH_LINE.test(trimmed)) {
+              // Path candidate: defer emission until we know if a fence follows.
+              flushPendingAsToplevel(controller);
+              pendingLine = { content, kind: "path" };
+            } else if (trimmed.length > 0 && HR_LINE.test(trimmed)) {
+              // HR candidate: drop only if it's the last line of the block.
+              flushPendingAsToplevel(controller);
+              pendingLine = { content, kind: "hr" };
+            } else {
+              flushPendingAsToplevel(controller);
+              emitToplevelLine(controller, content);
+            }
+          }
+        } else {
+          // mode === "code"
+          if (CODE_FENCE_END.test(content)) {
+            // Exiting code block
+            addStat(totalStat, blockStat);
+            addStat(codeStat, blockStat);
+            codeStat.cnt++;
+            totalStat.cnt++;
+            totalStat.lines++;
+            controller.enqueue({
+              type: "block.code.end",
+              timestamp: new Date(),
+              blockId,
+              streamId,
+              sectionId: currentSectionId,
+              seq: seq++,
+              blockNr: blockNr++,
+              lang: currentLang.toLowerCase(),
+              path: currentPath,
+              stats: blockStat,
+            });
+            mode = "toplevel";
+            sectionStarted = false;
+          } else {
+            // Code line
+            blockStat.bytes += content.length;
+            controller.enqueue({
+              type: "block.code.line",
+              lang: currentLang.toLowerCase(),
+              path: currentPath,
+              timestamp: new Date(),
+              sectionId: currentSectionId,
+              lineNr: blockStat.lines++,
+              line: content,
+              blockId,
+              seq: seq++,
+              streamId,
+              blockNr: blockNr,
+            });
+          }
+        }
+      } else if (isLineEnd(msg, innerStreamId)) {
+        // A buffered path-candidate at end-of-stream was prose; drop a buffered hr-candidate.
+        if (pendingLine !== undefined) {
+          if (pendingLine.kind === "path") {
+            flushPendingAsToplevel(controller);
+          } else {
+            pendingLine = undefined;
+          }
+        }
+        // Close any open section
+        if (sectionStarted) {
+          if (mode === "toplevel") {
+            toplevelStat.cnt++;
+            totalStat.cnt++;
+            totalStat.lines++;
+            addStat(totalStat, blockStat);
+            addStat(toplevelStat, blockStat);
+            controller.enqueue({
+              type: "block.toplevel.end",
+              blockId,
+              streamId,
+              stats: blockStat,
+              sectionId: currentSectionId,
+              seq: seq++,
+              blockNr: blockNr++,
+              timestamp: new Date(),
+            });
+          } else {
+            // Unclosed code block - emit end anyway
+            totalStat.cnt++;
+            codeStat.cnt++;
+            totalStat.lines++;
+            addStat(totalStat, blockStat);
+            addStat(codeStat, blockStat);
+            toplevelStat.cnt++;
+            controller.enqueue({
+              type: "block.code.end",
+              blockId,
+              streamId,
+              lang: currentLang.toLowerCase(),
+              path: currentPath,
+              sectionId: currentSectionId,
+              seq: seq++,
+              blockNr: blockNr++,
+              stats: blockStat,
+              timestamp: new Date(),
+            });
+          }
+        }
+        beginBlock = Lazy(beginBlockAction);
+        controller.enqueue({
+          type: "block.end",
+          timestamp: new Date(),
+          blockId,
+          streamId,
+          seq: seq++,
+          blockNr: blockNr++,
+          stats: {
+            toplevel: toplevelStat,
+            code: codeStat,
+            image: imageStat,
+            total: totalStat,
+          },
+          usage: {
+            given: givenUsageSSE,
+            calculated: givenUsageSSE.reduce(
+              (accu, usage) => {
+                addSSeUsage(accu, usage);
+                return accu;
+              },
+              { prompt_tokens: 0, completion_tokens: 0, total_tokens: 0 }
+            ),
+          },
+        });
+      }
+    },
+  });
+}
+
+// Output type for createLineStreamFromDelta (passthrough + block events)
+
+export function createSectionsStream(
+  filterStreamId: string,
+  createId: () => string
+): TransformStream<DeltaStreamMsg, BlockStreamMsg> {
+  let transStream: TransformStream;
+  let writer: WritableStreamDefaultWriter<LineStreamInput | DeltaStreamMsg | StatsCollectMsg>;
+  let consumePromise: Promise<unknown>;
+  let blockStreamId: string;
+  return new TransformStream<DeltaStreamMsg, BlockStreamMsg>({
+    transform: passthrough(async (msg, controller) => {
+      switch (true) {
+        case isDeltaBegin(msg, filterStreamId): {
+          blockStreamId = createId();
+          transStream = new TransformStream();
+          writer = transStream.writable.getWriter();
+          consumePromise = consumeStream(
+            transStream.readable
+              .pipeThrough(createLineStream(blockStreamId))
+              .pipeThrough(createBlockStream(filterStreamId, blockStreamId, createId)), // blockstream is not passthrough
+            (e) => controller.enqueue(e)
+          );
+          break;
+        }
+
+        case isDeltaLine(msg, filterStreamId):
+          writer?.write(encodeUtf8(msg.content));
+          break;
+
+        // case isDeltaImage(msg, filterStreamId):
+        //   writer?.write({ ...msg});
+        //   break;
+
+        // case isDeltaUsage(msg, filterStreamId):
+        //   writer?.write({ ...msg});
+        //   break;
+
+        case isDeltaEnd(msg, filterStreamId):
+          writer?.write({ ...msg });
+          if (writer) {
+            await writer.close().then(() => consumePromise);
+          } else {
+            await consumePromise;
+          }
+          break;
+
+        default:
+          writer?.write(msg);
+          break;
+      }
+    }),
+  });
+}

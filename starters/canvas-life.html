@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Game of Life — canvas</title>
+  <style>
+    body { margin: 0; font-family: system-ui, sans-serif; background: #111; color: #ddd; display: flex; flex-direction: column; align-items: center; padding: 1rem; }
+    canvas { background: #000; border: 1px solid #333; image-rendering: pixelated; }
+    .controls { margin: 0.75rem 0; display: flex; gap: 0.5rem; }
+    button { background: #222; color: #ddd; border: 1px solid #444; padding: 0.4rem 0.8rem; border-radius: 4px; cursor: pointer; }
+    button:hover { background: #333; }
+  </style>
+</head>
+<body>
+<h1>Conway's Game of Life</h1>
+<div class="controls">
+  <button id="toggle">Pause</button>
+  <button id="step">Step</button>
+  <button id="rand">Randomize</button>
+  <button id="clear">Clear</button>
+</div>
+<canvas id="c" width="600" height="400"></canvas>
+<p style="color:#666;font-size:0.8rem">Click/drag on the grid to draw cells. No build, pure canvas + JS.</p>
+
+<script>
+const CELL = 8, W = 75, H = 50;
+const canvas = document.getElementById('c');
+const ctx = canvas.getContext('2d');
+let grid = make();
+let running = true;
+
+function make() { return Array.from({ length: H }, () => Array.from({ length: W }, () => 0)); }
+function randomize() { grid = grid.map(row => row.map(() => Math.random() < 0.25 ? 1 : 0)); }
+
+function step() {
+  const next = make();
+  for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
+    let n = 0;
+    for (let dy = -1; dy <= 1; dy++) for (let dx = -1; dx <= 1; dx++) {
+      if (dx || dy) n += grid[(y + dy + H) % H][(x + dx + W) % W];
+    }
+    next[y][x] = (grid[y][x] && (n === 2 || n === 3)) || (!grid[y][x] && n === 3) ? 1 : 0;
+  }
+  grid = next;
+}
+
+function draw() {
+  ctx.fillStyle = '#000'; ctx.fillRect(0, 0, canvas.width, canvas.height);
+  ctx.fillStyle = '#4ade80';
+  for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
+    if (grid[y][x]) ctx.fillRect(x * CELL, y * CELL, CELL - 1, CELL - 1);
+  }
+}
+
+function loop() { if (running) step(); draw(); requestAnimationFrame(loop); }
+
+let drawing = false;
+function paint(e) {
+  const r = canvas.getBoundingClientRect();
+  const x = Math.floor((e.clientX - r.left) / CELL), y = Math.floor((e.clientY - r.top) / CELL);
+  if (x >= 0 && x < W && y >= 0 && y < H) { grid[y][x] = 1; draw(); }
+}
+canvas.addEventListener('mousedown', e => { drawing = true; paint(e); });
+canvas.addEventListener('mousemove', e => { if (drawing) paint(e); });
+window.addEventListener('mouseup', () => drawing = false);
+
+document.getElementById('toggle').onclick = e => { running = !running; e.target.textContent = running ? 'Pause' : 'Play'; };
+document.getElementById('step').onclick = () => { step(); draw(); };
+document.getElementById('rand').onclick = () => { randomize(); draw(); };
+document.getElementById('clear').onclick = () => { grid = make(); draw(); };
+
+randomize();
+loop();
+</script>
+</body>
+</html>

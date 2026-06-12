@@ -1,0 +1,75 @@
+import React, { useEffect, useRef } from "react";
+import { useParams } from "react-router";
+// import type { ChatInterfaceProps } from "@vibes.diy/prompts";
+import MessageList from "./MessageList.js";
+import WelcomeScreen from "./WelcomeScreen.js";
+import { PromptState } from "../routes/chat/chat.$ownerHandle.$appSlug.js";
+import { PromptError } from "@vibes.diy/api-types";
+
+function ChatInterface({
+  promptState,
+  onClick,
+  onDiffClick,
+  onRetry,
+  onSelectOption,
+}: {
+  promptState: PromptState;
+  onClick: (a: { fsId: string; appSlug: string; ownerHandle: string }) => void;
+  onDiffClick?: (diff: { path: string; lines: string[] } | null) => void;
+  onRetry?: (msg: PromptError) => void;
+  onSelectOption?: (option: string) => void;
+}) {
+  const { fsId } = useParams<{ fsId?: string }>();
+  const { running, blocks } = promptState;
+  const messagesContainerRef = useRef<HTMLDivElement>(null);
+
+  // console.log(
+  //   "ChatInterface",
+  //   runtimeFn().isBrowser,
+  //   running,
+  //   blocks.length,
+  //   blocks.reduce((a, i) => a + i.msgs.length, 1)
+  // );
+
+  useEffect(() => {
+    if (messagesContainerRef.current && blocks.length > 0) {
+      try {
+        // Since we're using flex-col-reverse, we need to scroll to the top to see the latest messages
+        messagesContainerRef.current.scrollTop = 0;
+      } catch (error) {
+        console.error("Error scrolling to bottom:", error);
+      }
+    }
+  }, [blocks.length, running]);
+
+  return (
+    <div className="flex h-full flex-col">
+      {blocks.length > 0 ? (
+        <div ref={messagesContainerRef} className="flex flex-grow flex-col-reverse overflow-y-auto">
+          <MessageList
+            onClick={onClick}
+            onDiffClick={onDiffClick}
+            onRetry={onRetry}
+            onSelectOption={onSelectOption}
+            promptBlocks={blocks}
+            promptProcessing={running}
+            chatId={promptState.chat.chatId}
+            selectedFsId={fsId}
+            agentSavedBlockIds={promptState.agentSavedBlockIds}
+
+            // setSelectedResponseId={setSelectedResponseId}
+            // selectedResponseId={selectedResponseDoc?._id || ""}
+            // setMobilePreviewShown={setMobilePreviewShown}
+            // navigateToView={navigateToView}
+          />
+        </div>
+      ) : (
+        <div className="flex flex-grow items-center justify-center">
+          <WelcomeScreen />
+        </div>
+      )}
+    </div>
+  );
+}
+
+export default ChatInterface;

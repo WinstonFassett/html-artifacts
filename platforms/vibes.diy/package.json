@@ -1,0 +1,86 @@
+{
+  "name": "vibes.diy-monorepo",
+  "version": "0.0.0",
+  "private": true,
+  "description": "it contains all elements of vibes.diy web page",
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/VibesDIY/vibes.diy.git"
+  },
+  "homepage": "https://vibes.diy",
+  "bugs": {
+    "url": "https://github.com/VibesDIY/vibes.diy/issues"
+  },
+  "scripts": {
+    "xbuild:base": "pnpm --filter use-vibes-base build",
+    "build": "core-cli tsc",
+    "build:prod": "pnpm --filter vibes-diy build",
+    "serve:prod": "pnpm exec serve -s vibes.diy/pkg/build/client",
+    "growth-report": "pnpm --filter @vibes.diy/api-svc run db:inspect-report",
+    "lint": "node ./scripts/check-rules-bag-constructors.mjs && node ./scripts/check-browser-imports.mjs && NODE_OPTIONS=--max-old-space-size=8192 eslint . --cache",
+    "rules-bag:constructors": "node ./scripts/check-rules-bag-constructors.mjs",
+    "knip": "knip",
+    "test": "vitest --run",
+    "test:coverage": "vitest run --coverage",
+    "test:all": "cd vibes.diy/tests/app && pnpm run test && cd ../simple-chat && pnpm run test && cd ../../../prompts/tests && pnpm run test && cd ../../use-vibes/tests && pnpm run test && cd ../../call-ai/tests && pnpm run test",
+    "playwright:claude": "playwright test -c claude-browse-vibes/playwright.config.js",
+    "test:screenshot:local": "node claude-browse-vibes/test-screenshot-api.js",
+    "format": "prettier --write  --log-level silent .",
+    "wrangler:types": "cd vibes.diy/pkg && npx wrangler types && cd ../.. && pnpm format",
+    "dev": "cd vibes.diy/pkg && pnpm run dev",
+    "dev:router": "cd vibes.diy/pkg && pnpm run dev:router",
+    "pack": "echo skip pack",
+    "publish": "echo skip publish",
+    "check": "pnpm build && pnpm lint && pnpm test",
+    "fast-check": "(git diff --name-only HEAD; git ls-files --others --exclude-standard) | xargs -r npx prettier --write --ignore-unknown && pnpm build && pnpm lint",
+    "storybook": "cd vibes.diy/pkg && pnpm run storybook",
+    "storybook:use-vibes": "cd use-vibes/base && pnpm run storybook"
+  },
+  "keywords": [
+    "ai",
+    "llm",
+    "api",
+    "call",
+    "openai",
+    "streaming",
+    "openrouter"
+  ],
+  "contributors": [
+    "J Chris Anderson",
+    "Selem Delul",
+    "Meno Abels"
+  ],
+  "license": "Apache-2.0",
+  "pnpm": {
+    "patchedDependencies": {
+      "drizzle-kit@0.31.8": "patches/drizzle-kit@0.31.8.patch",
+      "@adviser/cement@0.5.34": "patches/@adviser__cement.patch",
+      "@fireproof/core-types-base@0.24.19": "patches/@fireproof__core-types-base@0.24.19.patch"
+    }
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@fireproof/core-cli": "0.24.19",
+    "@playwright/test": "^1.59.1",
+    "@types/deno": "^2.5.0",
+    "@types/node": "^25.2.3",
+    "@typescript/native-preview": "7.0.0-dev.20260519.1",
+    "@vitest/browser-playwright": "~4.1.7",
+    "@vitest/coverage-v8": "~4.1.7",
+    "eslint": "^10.0.3",
+    "eslint-plugin-import": "^2.32.0",
+    "knip": "^6.14.2",
+    "playwright": "^1.59.1",
+    "prettier": "^3.8.1",
+    "prettier-plugin-tailwindcss": "^0.7.1",
+    "serve": "^14.2.6",
+    "typescript": "6.0.3",
+    "typescript-eslint": "^8.60.0",
+    "vitest": "~4.1.7",
+    "wrangler": "^4.97.0"
+  }
+}

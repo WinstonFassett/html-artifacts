@@ -1,0 +1,31 @@
+// Clean consumer API - ONLY exports for user vibes
+export {
+  // Core Fireproof integration
+  useFireproof,
+  fireproof,
+  type FireproofOpts,
+  ImgFile,
+  toCloud,
+  type Fireproof,
+
+  // AI integration
+  callAI,
+  callAi,
+  type CallAI,
+
+  // Vibes generation hook
+  useVibes,
+  type UseVibesOptions,
+  type UseVibesResult,
+  type VibeDocument,
+
+  // Viewer identity & capabilities hook
+  useViewer,
+  type UseViewerResult,
+
+  // Install ID generation
+  generateInstallId,
+
+  // Hooks (kept for compatibility)
+  useMobile,
+} from "@vibes.diy/use-vibes-base";

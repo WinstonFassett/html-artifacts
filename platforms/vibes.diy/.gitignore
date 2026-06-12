@@ -1,0 +1,40 @@
+node_modules
+**/__screenshots__/
+**/.vitest-attachments/
+**/build/
+**/dist/
+.claude/*
+!.claude/skills/
+.superpowers/
+
+# QA agent run artifacts (triage drafts, screenshots, alias log) — local-only.
+qa-reports/
+.worktrees/
+
+.env*
+.*vars
+**/.*vars
+.netlify/
+.react-router/
+.wrangler/
+
+# Ignore editor backup files
+**~
+
+## Debug and test files
+claude-browse-vibes/*.png
+*.sse
+test-results/
+playwright-report/
+playwright/.cache/
+coverage/
+
+.DS_Store
+
+.eslintcache
+
+**/_wildcard.localhost.vibesdiy.net*
+
+# Local scratch: stray tool worktrees. Root-anchored so vibes.diy/ and
+# use-vibes/ are unaffected. vibes/ is tracked but excluded from ESLint.
+/.claire/

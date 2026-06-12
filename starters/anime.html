@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>anime.js v4 — staggered grid</title>
+  <style>
+    body { margin: 0; height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2rem; background: #0c0c14; font-family: system-ui, sans-serif; }
+    .grid { display: grid; grid-template-columns: repeat(8, 1fr); gap: 8px; }
+    .dot { width: 28px; height: 28px; border-radius: 6px; background: #4ade80; }
+    button { background: #222; color: #ddd; border: 1px solid #444; padding: 0.5rem 1.2rem; border-radius: 6px; cursor: pointer; }
+  </style>
+</head>
+<body>
+<div class="grid" id="grid"></div>
+<button id="play">Replay</button>
+
+<script type="module">
+import { animate, stagger } from 'https://cdn.jsdelivr.net/npm/animejs@4/+esm';
+
+const grid = document.getElementById('grid');
+for (let i = 0; i < 64; i++) {
+  const d = document.createElement('div');
+  d.className = 'dot';
+  grid.appendChild(d);
+}
+
+function play() {
+  animate('.dot', {
+    scale: [{ to: 1.4 }, { to: 1 }],
+    rotate: { from: 0, to: 360 },
+    backgroundColor: ['#4ade80', '#60a5fa', '#f472b6', '#4ade80'],
+    delay: stagger(40, { grid: [8, 8], from: 'center' }),
+    duration: 1200,
+    ease: 'inOutQuad',
+  });
+}
+document.getElementById('play').onclick = play;
+play();
+</script>
+</body>
+</html>

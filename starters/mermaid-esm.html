@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mermaid starter</title>
+  <style>
+    body { margin: 0; font-family: system-ui, sans-serif; padding: 2rem; max-width: 900px; margin: 0 auto; }
+    textarea { width: 100%; height: 160px; font-family: ui-monospace, monospace; font-size: 13px; padding: 0.5rem; box-sizing: border-box; }
+    #out { margin-top: 1rem; border: 1px solid #ddd; border-radius: 6px; padding: 1rem; min-height: 100px; }
+  </style>
+</head>
+<body>
+<h1>Mermaid — live editor, no build</h1>
+<textarea id="src">graph TD
+  A[Start] --> B{Decision}
+  B -->|Yes| C[Do thing]
+  B -->|No| D[Skip]
+  C --> E[End]
+  D --> E</textarea>
+<div id="out"></div>
+
+<script type="module">
+import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+mermaid.initialize({ startOnLoad: false });
+
+const src = document.getElementById('src');
+const out = document.getElementById('out');
+let n = 0;
+
+async function render() {
+  try {
+    const { svg } = await mermaid.render('m' + (n++), src.value);
+    out.innerHTML = svg;
+  } catch (e) {
+    out.innerHTML = '<pre style="color:#c00">' + e.message + '</pre>';
+  }
+}
+
+src.addEventListener('input', () => { clearTimeout(window._t); window._t = setTimeout(render, 300); });
+render();
+</script>
+</body>
+</html>

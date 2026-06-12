@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Regex tester — file://-safe</title>
+  <style>
+    body { margin: 0; font-family: system-ui, sans-serif; max-width: 760px; margin: 2rem auto; padding: 0 1rem; }
+    .pattern-row { display: flex; align-items: center; gap: 0.25rem; font-family: ui-monospace, monospace; font-size: 15px; }
+    .pattern-row input { font-family: ui-monospace, monospace; }
+    #pattern { flex: 1; padding: 0.5rem; border: 1px solid #ccc; border-radius: 4px; }
+    #flags { width: 60px; padding: 0.5rem; border: 1px solid #ccc; border-radius: 4px; }
+    .slash { font-size: 1.4rem; color: #999; }
+    textarea { width: 100%; height: 140px; margin-top: 1rem; padding: 0.75rem; font-family: ui-monospace, monospace; font-size: 14px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 4px; }
+    #result { margin-top: 1rem; padding: 1rem; background: #f7f7f7; border-radius: 6px; white-space: pre-wrap; font-family: ui-monospace, monospace; font-size: 14px; line-height: 1.5; }
+    mark { background: #ffe066; border-radius: 2px; }
+    .count { color: #666; font-size: 0.85rem; margin-top: 0.5rem; }
+    .err { color: #c00; }
+  </style>
+</head>
+<body>
+<h1>Regex tester</h1>
+<div class="pattern-row">
+  <span class="slash">/</span>
+  <input id="pattern" value="\b(\w+)@(\w+)\.(\w+)\b" spellcheck="false">
+  <span class="slash">/</span>
+  <input id="flags" value="gi" spellcheck="false">
+</div>
+<textarea id="text" spellcheck="false">Contact alice@example.com or BOB@test.org for details. Invalid: not-an-email.</textarea>
+<div class="count" id="count"></div>
+<div id="result"></div>
+
+<script>
+const pattern = document.getElementById('pattern');
+const flags = document.getElementById('flags');
+const text = document.getElementById('text');
+const result = document.getElementById('result');
+const count = document.getElementById('count');
+
+function esc(s) { return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+
+function run() {
+  let re;
+  try {
+    re = new RegExp(pattern.value, flags.value);
+  } catch (e) {
+    result.innerHTML = `<span class="err">${e.message}</span>`;
+    count.textContent = '';
+    return;
+  }
+  const src = text.value;
+  let matches = [];
+  if (re.global) {
+    matches = [...src.matchAll(re)];
+  } else {
+    const m = re.exec(src);
+    if (m) matches = [m];
+  }
+  count.textContent = `${matches.length} match${matches.length === 1 ? '' : 'es'}`;
+
+  // Highlight matches
+  let html = '', last = 0;
+  for (const m of matches) {
+    html += esc(src.slice(last, m.index)) + '<mark>' + esc(m[0]) + '</mark>';
+    last = m.index + m[0].length;
+    if (m[0].length === 0) last++; // avoid infinite zero-width
+  }
+  html += esc(src.slice(last));
+  result.innerHTML = html || '<span style="color:#999">no matches</span>';
+}
+
+[pattern, flags, text].forEach(el => el.addEventListener('input', run));
+run();
+</script>
+</body>
+</html>

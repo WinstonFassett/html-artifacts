@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Alpine.js — reactive, file://-safe</title>
+  <style>
+    body { margin: 0; font-family: system-ui, sans-serif; max-width: 460px; margin: 2rem auto; padding: 0 1rem; }
+    .tabs { display: flex; gap: 0.5rem; margin-bottom: 1rem; }
+    .tabs button { padding: 0.5rem 1rem; border: 1px solid #ccc; background: #fff; border-radius: 4px; cursor: pointer; }
+    .tabs button.active { background: #4ade80; border-color: #4ade80; }
+    .panel { padding: 1rem; border: 1px solid #eee; border-radius: 6px; }
+    input[type=range] { width: 100%; }
+    .swatch { height: 80px; border-radius: 8px; margin-top: 1rem; }
+  </style>
+</head>
+<!-- Alpine: defer attribute, single CDN script. Reactive directives in plain HTML.
+     file://-safe — UMD global, no ESM imports. -->
+<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3/dist/cdn.min.js"></script>
+<body>
+<h1>Alpine.js</h1>
+
+<div x-data="{ tab: 'counter', count: 0, r: 74, g: 222, b: 128 }">
+  <div class="tabs">
+    <button :class="{ active: tab === 'counter' }" @click="tab = 'counter'">Counter</button>
+    <button :class="{ active: tab === 'color' }" @click="tab = 'color'">Color mixer</button>
+  </div>
+
+  <div class="panel" x-show="tab === 'counter'">
+    <p>Count: <strong x-text="count"></strong></p>
+    <button @click="count++">+1</button>
+    <button @click="count--">−1</button>
+    <button @click="count = 0">reset</button>
+  </div>
+
+  <div class="panel" x-show="tab === 'color'">
+    <label>R <input type="range" min="0" max="255" x-model="r"></label>
+    <label>G <input type="range" min="0" max="255" x-model="g"></label>
+    <label>B <input type="range" min="0" max="255" x-model="b"></label>
+    <div class="swatch" :style="`background: rgb(${r}, ${g}, ${b})`"></div>
+    <p x-text="`rgb(${r}, ${g}, ${b})`"></p>
+  </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chart.js starter</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+  <style>
+    body { margin: 0; font-family: system-ui, sans-serif; padding: 2rem; }
+    .wrap { max-width: 720px; margin: 0 auto; }
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Chart.js — no build</h1>
+  <canvas id="chart"></canvas>
+</div>
+
+<script>
+const ctx = document.getElementById('chart');
+new Chart(ctx, {
+  type: 'bar',
+  data: {
+    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+    datasets: [{
+      label: 'Revenue ($k)',
+      data: [12, 19, 8, 15, 22, 17],
+      backgroundColor: 'rgba(54, 162, 235, 0.6)',
+    }]
+  },
+  options: { responsive: true, scales: { y: { beginAtZero: true } } }
+});
+</script>
+</body>
+</html>

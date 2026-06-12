@@ -1,0 +1,11 @@
+name: Zine Cut
+colors:
+  surface: "oklch(0.96 0.005 100)"
+  primary: "oklch(0.05 0 0)"
+  text-primary: "oklch(0.05 0 0)"
+  text-secondary: "oklch(0.05 0 0 / 0.3)"
+  border: "oklch(0.05 0 0)"
+extras:
+  comp-accent-text: "oklch(0.96 0.005 100)"
+  zine-inverted-bg: "oklch(0.05 0 0)"
+  zine-inverted-text: "oklch(0.96 0.005 100)"

@@ -1,0 +1,316 @@
+import { HandleTriggerCtx, Result, EventoResultType, EventoResult, exception2Result, stream2uint8array } from "@adviser/cement";
+import {
+  FileSystemItem,
+  HttpResponseBodyType,
+  isFetchErrResult,
+  isFetchNotFoundResult,
+  isMetaScreenShot,
+  isMetaTitle,
+  MetaItem,
+  VibesDiyServCtx,
+  vibeImportMap,
+  vibeUserEnv,
+} from "@vibes.diy/api-types";
+import { NpmUrlCapture } from "../public/serv-entry-point.js";
+import { VibesApiSQLCtx } from "../types.js";
+import { type } from "arktype";
+import { resolveWhoAmI } from "../public/who-am-i.js";
+// import { VibeEnv, vibesEnvSchema } from "@vibes.diy/use-vibes-base";
+import { ExtractedHostToBindings } from "../entry-point-utils.js";
+import { VibePage } from "./components/vibe-page.js";
+import { renderToReadableStream } from "react-dom/server";
+import { serialize as cookieSerialize } from "cookie";
+import { Dependencies, render_esm_sh, resolveVersionRegistry } from "./import-map.js";
+import { lockedGroupsVersions, lockedVersions } from "./grouped-vibe-import-map.js";
+import { defaultFetchPkgVersion } from "../npm-package-version.js";
+import { sqlite } from "@vibes.diy/api-sql";
+
+async function buildViewerEnvForRender(vctx: VibesApiSQLCtx, args: { appSlug: string; ownerUserSlug: string }) {
+  const r = await resolveWhoAmI(vctx, { auth: undefined, ...args });
+  if (!r.isOk()) return undefined;
+  const { viewer, access, isOwner, dbAcls, grants } = r.Ok();
+  return { viewer, access, ...(isOwner ? { isOwner } : {}), ...(dbAcls ? { dbAcls } : {}), ...(grants ? { grants } : {}) };
+}
+
+export interface RenderVibesOpts {
+  ctx: HandleTriggerCtx<Request, ExtractedHostToBindings, unknown>;
+  fs: typeof sqlite.sqlApps.$inferSelect;
+  fsItems: FileSystemItem[];
+  entryPointEtag: string;
+  entryPointCacheControl: string;
+  pkgRepos: {
+    private: NpmUrlCapture;
+    public?: string; // default to esm.sh
+  };
+}
+
+export async function renderVibe({
+  ctx,
+  fs,
+  fsItems,
+  entryPointEtag,
+  entryPointCacheControl,
+  pkgRepos,
+}: RenderVibesOpts): Promise<Result<EventoResultType>> {
+  // console.log("renderVibe-8")
+  const fsIportMap = fsItems.find((i) => i.transform?.type === "import-map");
+  if (!fsIportMap) {
+    return Result.Err(new Error("No import-map found in file system"));
+  }
+  // console.log("renderVibe-7", fsIportMap);
+  const vctx = ctx.ctx.getOrThrow<VibesApiSQLCtx>("vibesApiCtx");
+  const rImportMapUint8 = await vctx.storage.fetch(fsIportMap.assetURI);
+  // (ctx, fsIportMap);
+  // console.log("renderVibe-6")
+  if (isFetchErrResult(rImportMapUint8)) {
+    return Result.Err(rImportMapUint8.error);
+  }
+  // console.log("renderVibe-5")
+  if (isFetchNotFoundResult(rImportMapUint8)) {
+    return Result.Err(new Error(`Import map not found for URI ${fsIportMap.assetURI}`));
+  }
+  // console.log("renderVibe-4")
+  const genImport = vibeImportMap(JSON.parse(vctx.sthis.txt.decode(await stream2uint8array(rImportMapUint8.data))));
+  if (genImport instanceof type.errors) {
+    return Result.Err(genImport.summary);
+  }
+  // console.log("renderVibe-3")
+
+  const deps = Dependencies.from({
+    ...genImport.imports,
+    ...lockedGroupsVersions,
+  });
+
+  const importMap = await deps.renderImportMap({
+    resolveFn: resolveVersionRegistry({
+      fetch: defaultFetchPkgVersion({
+        defaults: {
+          cache: vctx.cache,
+        },
+      }),
+      symbol2Version: lockedVersions,
+    }),
+    renderRHS: render_esm_sh({
+      privateUrl: pkgRepos.private.npmURL,
+    }),
+  });
+  // console.log("renderVibe-1")
+
+  // Mount only the entry component (App.jsx / App.tsx by vibes.diy convention). Helper modules
+  // — whether plain .js or JSX — are served at their path for relative imports but must NOT
+  // be default-imported here; they rarely have a default export and would crash the runtime.
+  // Fall back to all jsx-to-js items only when no App.jsx/App.tsx is present (old single-file
+  // apps stored before this convention was enforced, which always only had App.jsx anyway).
+  const jsxToJsItems = fsItems.filter(
+    (i) => ["text/javascript", "application/javascript"].includes(i.mimeType) && i.transform?.type === "jsx-to-js"
+  );
+  const conventionEntries = jsxToJsItems.filter((i) => /\/App\.(jsx|tsx)$/.test(i.fileName));
+  const mountItems = new Set(conventionEntries.length > 0 ? conventionEntries : jsxToJsItems);
+  const imports = fsItems.reduce(
+    (acc, item, idx) => {
+      if (mountItems.has(item)) {
+        acc.push({
+          importStmt: `import V${idx} from ${JSON.stringify(`/~${fs.fsId}~${item.fileName}`)};`,
+          var: `V${idx}`,
+        });
+      }
+      return acc;
+    },
+    [] as {
+      importStmt: string;
+      var: string;
+    }[]
+  );
+
+  const usrEnv = vibeUserEnv(fs.env);
+  if (usrEnv instanceof type.errors) {
+    return Result.Err(`fs.env failure: ${usrEnv.summary}`);
+  }
+
+  // console.log("Pre Env", fs.env, vctx.params.vibes.env);
+  // const env = vibesEnvSchema({
+  //   ...fsEnv,
+  //   ...vctx.params.vibes.env,
+  // });
+  // if (env instanceof type.errors) {
+  //   return Result.Err(env.toLocaleString());
+  // }
+
+  const metaItems = (fs.meta as MetaItem[]) || [];
+  const metaTitle = metaItems.find(isMetaTitle);
+  const metaScreenShot = metaItems.find(isMetaScreenShot);
+
+  const requestUrl = new URL(ctx.request.url);
+  const canonicalUrl = `${requestUrl.protocol}//${requestUrl.host}/`;
+
+  // Skip viewerEnv for preview: the parent page knows the viewer is the owner
+  // and pushes vibe.evt.viewerChanged eagerly after the sandbox is ready.
+  // Embedding access:"none" here would cause a read-only flash before the
+  // bridge resolves, since auth is unavailable on this HTTP path.
+  const viewerEnv =
+    requestUrl.searchParams.get("preview") === "yes"
+      ? undefined
+      : await buildViewerEnvForRender(vctx, {
+          appSlug: fs.appSlug,
+          ownerUserSlug: fs.ownerHandle,
+        });
+
+  let imageUrl: string | undefined;
+  if (metaScreenShot) {
+    const assetPath = `/assets/cid/?url=${encodeURIComponent(metaScreenShot.assetUrl)}&mime=${encodeURIComponent(metaScreenShot.mime)}`;
+    imageUrl = `${requestUrl.protocol}//${requestUrl.host}${assetPath}`;
+  }
+
+  const title = metaTitle?.title ?? fs.appSlug;
+
+  const vsctx = {
+    wrapper: {
+      state: "waiting",
+    },
+    usrEnv,
+    svcEnv: vctx.params.vibes.env,
+    importMap: {
+      imports: importMap,
+    },
+    metaProps: {
+      title,
+      description: `${title} - built on vibes.diy`,
+      imageUrl,
+      canonicalUrl,
+    },
+    mountJS: [
+      `import { mountVibe, registerDependencies } from '@vibes.diy/vibe-runtime';`,
+      ...imports.map((i) => i.importStmt),
+      `registerDependencies(${JSON.stringify({ appSlug: fs.appSlug, ownerHandle: fs.ownerHandle, fsId: fs.fsId })})`,
+      `  .then(() => mountVibe([${imports.map((i) => i.var).join(",")}], ${JSON.stringify({
+        usrEnv,
+        ...(viewerEnv ? { viewerEnv } : {}),
+      })}));`,
+    ].join("\n"),
+  } satisfies VibesDiyServCtx;
+  const optionalHeader: Record<string, string> = {};
+  if (pkgRepos.private.fromURL) {
+    optionalHeader["Set-Cookie"] = cookieSerialize("Vibes-Npm-Url", pkgRepos.private.npmURL, {
+      httpOnly: true,
+      maxAge: 86400, // 1 week
+      path: "/~.....~/",
+      sameSite: "lax",
+    });
+  }
+  // console.log("servEntryPoint triggered with URL-3:", optionalHeader);
+  const res = await exception2Result(async () =>
+    ctx.send.send(ctx, {
+      type: "http.Response.Body",
+      status: 200,
+      headers: {
+        "Content-Type": "text/html",
+        "Cache-Control": entryPointCacheControl,
+        ETag: entryPointEtag,
+        ...optionalHeader,
+      },
+      body: ctx.request.method === "HEAD" ? "" : ((await renderToReadableStream(VibePage(vsctx))) as BodyInit),
+    } satisfies HttpResponseBodyType)
+  );
+  if (res.isErr()) {
+    return Result.Err(res);
+  }
+  return Result.Ok(EventoResult.Stop);
+}
+
+export interface RenderPendingVibesOpts {
+  ctx: HandleTriggerCtx<Request, ExtractedHostToBindings, unknown>;
+  appSlug: string;
+  ownerHandle: string;
+  pkgRepos: {
+    private: NpmUrlCapture;
+    public?: string;
+  };
+}
+
+/**
+ * Render a "pending" iframe shell when no apps row exists yet for this slug
+ * pair. Boots the runtime + hot-swap listener with no App mounted, so the
+ * first vibe.evt.set-source from the host posts the scaffold into a live
+ * listener (no race, no lost first push). Used by the chat UI to pre-warm the
+ * iframe before code starts streaming.
+ */
+export async function renderPendingVibe({
+  ctx,
+  appSlug,
+  ownerHandle,
+  pkgRepos,
+}: RenderPendingVibesOpts): Promise<Result<EventoResultType>> {
+  const vctx = ctx.ctx.getOrThrow<VibesApiSQLCtx>("vibesApiCtx");
+
+  const deps = Dependencies.from({ ...lockedGroupsVersions });
+  const importMap = await deps.renderImportMap({
+    resolveFn: resolveVersionRegistry({
+      fetch: defaultFetchPkgVersion({ defaults: { cache: vctx.cache } }),
+      symbol2Version: lockedVersions,
+    }),
+    renderRHS: render_esm_sh({ privateUrl: pkgRepos.private.npmURL }),
+  });
+
+  const requestUrl = new URL(ctx.request.url);
+  const canonicalUrl = `${requestUrl.protocol}//${requestUrl.host}/`;
+
+  // Same preview skip as renderVibe: omit viewerEnv when ?preview=yes so the
+  // parent's eager vibe.evt.viewerChanged is the first identity signal.
+  const viewerEnv =
+    requestUrl.searchParams.get("preview") === "yes"
+      ? undefined
+      : await buildViewerEnvForRender(vctx, {
+          appSlug,
+          ownerUserSlug: ownerHandle,
+        });
+
+  const title = appSlug;
+
+  const vsctx = {
+    wrapper: { state: "waiting" },
+    usrEnv: {},
+    svcEnv: vctx.params.vibes.env,
+    importMap: { imports: importMap },
+    metaProps: {
+      title,
+      description: `${title} - built on vibes.diy`,
+      imageUrl: undefined,
+      canonicalUrl,
+    },
+    mountJS: [
+      `import { mountVibe, registerDependencies } from '@vibes.diy/vibe-runtime';`,
+      `registerDependencies(${JSON.stringify({ appSlug, ownerHandle, fsId: "pending" })})`,
+      `  .then(() => mountVibe([], ${JSON.stringify({
+        usrEnv: {},
+        ...(viewerEnv ? { viewerEnv } : {}),
+      })}));`,
+    ].join("\n"),
+  } satisfies VibesDiyServCtx;
+
+  const optionalHeader: Record<string, string> = {};
+  if (pkgRepos.private.fromURL) {
+    optionalHeader["Set-Cookie"] = cookieSerialize("Vibes-Npm-Url", pkgRepos.private.npmURL, {
+      httpOnly: true,
+      maxAge: 86400,
+      path: "/~.....~/",
+      sameSite: "lax",
+    });
+  }
+  const res = await exception2Result(async () =>
+    ctx.send.send(ctx, {
+      type: "http.Response.Body",
+      status: 200,
+      headers: {
+        "Content-Type": "text/html",
+        // Don't cache pending — once apps row exists, request should hit real entry
+        "Cache-Control": "no-store",
+        ...optionalHeader,
+      },
+      body: ctx.request.method === "HEAD" ? "" : ((await renderToReadableStream(VibePage(vsctx))) as BodyInit),
+    } satisfies HttpResponseBodyType)
+  );
+  if (res.isErr()) {
+    return Result.Err(res);
+  }
+  return Result.Ok(EventoResult.Stop);
+}

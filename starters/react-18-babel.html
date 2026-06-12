@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>React 18 + Babel Standalone (file://-safe)</title>
+  <!-- UMD globals + Babel Standalone: the classic CommonJS-style in-browser JSX.
+       Works from file:// because nothing uses ES module imports or fetch. -->
+  <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+  <script src="https://unpkg.com/@babel/standalone@7/babel.min.js"></script>
+  <style>
+    body { margin: 0; font-family: system-ui, sans-serif; }
+    #root { padding: 2rem; }
+  </style>
+</head>
+<body>
+<div id="root"></div>
+
+<!-- type="text/babel" + data-presets. No data-type="module" → React/ReactDOM come
+     from window globals (CommonJS-style), so this runs straight from the filesystem. -->
+<script type="text/babel" data-presets="react,typescript">
+const { useState } = React;
+
+function App() {
+  const [count, setCount] = useState(0);
+  return (
+    <div style={{ padding: '1rem', fontFamily: 'system-ui' }}>
+      <h1>React 18 + Babel — file://-safe</h1>
+      <p>UMD globals + Babel Standalone. No import map, no ESM, no server needed.</p>
+      <button onClick={() => setCount(c => c + 1)}>count: {count}</button>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>

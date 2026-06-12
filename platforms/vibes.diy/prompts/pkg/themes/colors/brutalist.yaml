@@ -1,0 +1,33 @@
+name: Neobrutalist
+colors:
+  background: "#f5f0e0"
+  surface: "#ffffff"
+  primary: "#DA291C"
+  secondary: "#fedd00"
+  text-primary: "#1a1a2e"
+  text-secondary: "#6b6b80"
+  border: "#1a1a2e"
+  success: "#22c55e"
+extras:
+  on-primary: "#ffffff"
+  on-secondary: "#1a1a2e"
+  on-success: "#1a1a2e"
+  info: "#3b82f6"
+  on-info: "#ffffff"
+  primary-light: "rgba(218, 41, 28, 0.1)"
+colorsDark:
+  background: "oklch(0.18 0.02 280)"
+  surface: "oklch(0.22 0.02 280)"
+  primary: "#DA291C"
+  secondary: "#fedd00"
+  text-primary: "oklch(0.96 0.01 80)"
+  text-secondary: "oklch(0.60 0.03 280)"
+  border: "oklch(0.96 0.01 80)"
+  success: "#22c55e"
+extrasDark:
+  on-primary: "#ffffff"
+  on-secondary: "#1a1a2e"
+  on-success: "#1a1a2e"
+  info: "#3b82f6"
+  on-info: "#ffffff"
+  primary-light: "rgba(218, 41, 28, 0.18)"

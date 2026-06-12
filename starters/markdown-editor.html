@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Markdown editor — marked + highlight.js</title>
+  <script src="https://cdn.jsdelivr.net/npm/marked@15/marked.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/highlight.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/styles/github-dark.min.css">
+  <style>
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: system-ui, sans-serif; display: flex; height: 100vh; }
+    textarea, .preview { width: 50%; height: 100vh; padding: 1.5rem; overflow: auto; }
+    textarea { border: none; border-right: 1px solid #ddd; font-family: ui-monospace, monospace; font-size: 14px; resize: none; outline: none; }
+    .preview { line-height: 1.6; }
+    .preview pre { background: #0d1117; padding: 1rem; border-radius: 6px; overflow: auto; }
+    .preview code { font-family: ui-monospace, monospace; }
+    .preview h1, .preview h2 { border-bottom: 1px solid #eee; padding-bottom: 0.3rem; }
+  </style>
+</head>
+<body>
+<textarea id="src"># Markdown Editor
+
+Type **markdown** on the left, see it _rendered_ live.
+
+## Features
+- marked.js for parsing
+- highlight.js for code
+
+```js
+function fib(n) {
+  return n < 2 ? n : fib(n-1) + fib(n-2);
+}
+```
+
+> No build. Two CDN scripts. Works from file://.
+</textarea>
+<div class="preview" id="out"></div>
+
+<script>
+marked.setOptions({
+  highlight: (code, lang) => {
+    if (lang && hljs.getLanguage(lang)) return hljs.highlight(code, { language: lang }).value;
+    return hljs.highlightAuto(code).value;
+  }
+});
+const src = document.getElementById('src');
+const out = document.getElementById('out');
+function render() { out.innerHTML = marked.parse(src.value); }
+src.addEventListener('input', render);
+render();
+</script>
+</body>
+</html>

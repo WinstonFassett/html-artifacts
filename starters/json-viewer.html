@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JSON viewer / formatter — file://-safe</title>
+  <style>
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: system-ui, sans-serif; display: flex; height: 100vh; }
+    textarea, #out { width: 50%; height: 100vh; padding: 1rem; overflow: auto; font-family: ui-monospace, monospace; font-size: 13px; }
+    textarea { border: none; border-right: 1px solid #ddd; resize: none; outline: none; }
+    #out { white-space: pre; margin: 0; }
+    .err { color: #c00; }
+    .key { color: #905; }
+    .str { color: #07a; }
+    .num { color: #e60; }
+    .bool { color: #c0392b; }
+    .null { color: #999; }
+  </style>
+</head>
+<body>
+<textarea id="src" spellcheck="false">{"name":"artifact","tags":["html","no-build"],"version":3,"nested":{"ok":true,"count":42,"empty":null}}</textarea>
+<pre id="out"></pre>
+
+<script>
+const src = document.getElementById('src');
+const out = document.getElementById('out');
+
+function syntaxHighlight(json) {
+  return json.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, (m) => {
+      let cls = 'num';
+      if (/^"/.test(m)) cls = /:$/.test(m) ? 'key' : 'str';
+      else if (/true|false/.test(m)) cls = 'bool';
+      else if (/null/.test(m)) cls = 'null';
+      return `<span class="${cls}">${m}</span>`;
+    });
+}
+
+function render() {
+  try {
+    const parsed = JSON.parse(src.value);
+    out.innerHTML = syntaxHighlight(JSON.stringify(parsed, null, 2));
+  } catch (e) {
+    out.innerHTML = `<span class="err">${e.message}</span>`;
+  }
+}
+src.addEventListener('input', render);
+render();
+</script>
+</body>
+</html>

@@ -1,0 +1,496 @@
+import React, { useEffect, useState } from "react";
+import { useVibesDiy } from "../../../vibes-diy-provider.js";
+import { notifyRecentVibesChanged } from "../../../hooks/useRecentVibes.js";
+import { fromKVString, toKVString, AIParams } from "@vibes.diy/api-types";
+import { toast } from "react-hot-toast";
+import { ModelSettingsCards } from "../../ModelSettingsCards.js";
+import { cidAssetUrl, getAppHostBaseUrl } from "../../../utils/vibeUrls.js";
+import { vibesThemes } from "@vibes.diy/prompts";
+
+// ── card wrapper ─────────────────────────────────────────────────────────────
+
+function Card({ title, children }: { title: string; children: React.ReactNode }) {
+  return (
+    <li className="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-3">
+      <div className="font-medium text-gray-700 dark:text-gray-300 mb-3">{title}</div>
+      {children}
+    </li>
+  );
+}
+
+// ── field ────────────────────────────────────────────────────────────────────
+
+function Field({
+  label,
+  value,
+  onChange,
+  placeholder,
+  type = "text",
+}: {
+  label: string;
+  value: string;
+  onChange: (v: string) => void;
+  placeholder?: string;
+  type?: string;
+}) {
+  return (
+    <div className="flex items-center gap-3">
+      <label className="w-24 flex-shrink-0 text-xs text-gray-500 dark:text-gray-400">{label}</label>
+      <input
+        type={type}
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        placeholder={placeholder}
+        className="flex-1 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-2 py-1 text-xs text-gray-800 dark:text-gray-200 outline-none focus:ring-1 focus:ring-blue-400"
+      />
+    </div>
+  );
+}
+
+// ── save button ──────────────────────────────────────────────────────────────
+
+function SaveBtn({ saving, onClick }: { saving: boolean; onClick: () => void }) {
+  return (
+    <button
+      type="button"
+      disabled={saving}
+      onClick={onClick}
+      className="rounded px-2 py-1 text-xs font-medium bg-blue-100 text-blue-700 hover:bg-blue-200 dark:bg-blue-900/40 dark:text-blue-300 disabled:opacity-50"
+    >
+      {saving ? "Saving…" : "Save"}
+    </button>
+  );
+}
+
+// ── env CRUD ─────────────────────────────────────────────────────────────────
+
+function EnvSection({
+  env,
+  saving,
+  onUpsert,
+  onDelete,
+}: {
+  env: Record<string, string>;
+  saving: boolean;
+  onUpsert: (key: string, value: string) => void;
+  onDelete: (key: string) => void;
+}) {
+  const [newKey, setNewKey] = useState("");
+  const [newValue, setNewValue] = useState("");
+
+  function add() {
+    const key = newKey.trim();
+    const value = newValue.trim();
+    if (!key) return;
+    onUpsert(key, value);
+    setNewKey("");
+    setNewValue("");
+  }
+
+  const keys = Object.keys(env);
+
+  return (
+    <div className="space-y-2">
+      {keys.length > 0 && (
+        <table className="w-full text-xs border-collapse">
+          <thead>
+            <tr>
+              <th className="text-left text-gray-400 dark:text-gray-500 font-medium pb-1 pr-3">Key</th>
+              <th className="text-left text-gray-400 dark:text-gray-500 font-medium pb-1 pr-3">Value</th>
+              <th />
+            </tr>
+          </thead>
+          <tbody>
+            {keys.map((k) => (
+              <EnvRow
+                key={k}
+                envKey={k}
+                value={env[k]}
+                isBusy={saving}
+                onSave={(v) => onUpsert(k, v)}
+                onDelete={() => onDelete(k)}
+              />
+            ))}
+          </tbody>
+        </table>
+      )}
+      <div className="flex gap-2 pt-1">
+        <input
+          type="text"
+          value={newKey}
+          onChange={(e) => setNewKey(e.target.value)}
+          placeholder="KEY"
+          className="w-32 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-2 py-1 text-xs font-mono text-gray-800 dark:text-gray-200 outline-none focus:ring-1 focus:ring-blue-400"
+        />
+        <input
+          type="text"
+          value={newValue}
+          onChange={(e) => setNewValue(e.target.value)}
+          placeholder="value"
+          className="flex-1 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-2 py-1 text-xs text-gray-800 dark:text-gray-200 outline-none focus:ring-1 focus:ring-blue-400"
+        />
+        <button
+          type="button"
+          disabled={saving || !newKey.trim()}
+          onClick={add}
+          className="rounded px-2 py-1 text-xs font-medium bg-green-100 text-green-700 hover:bg-green-200 dark:bg-green-900/40 dark:text-green-300 disabled:opacity-50"
+        >
+          {saving ? "…" : "Add"}
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function EnvRow({
+  envKey,
+  value: initialValue,
+  isBusy,
+  onSave,
+  onDelete,
+}: {
+  envKey: string;
+  value: string;
+  isBusy: boolean;
+  onSave: (value: string) => void;
+  onDelete: () => void;
+}) {
+  const [value, setValue] = useState(initialValue);
+  const dirty = value !== initialValue;
+
+  return (
+    <tr className="border-t border-gray-100 dark:border-gray-800">
+      <td className="py-1 pr-3 font-mono text-gray-700 dark:text-gray-300 align-middle">{envKey}</td>
+      <td className="py-1 pr-2 align-middle">
+        <input
+          type="text"
+          value={value}
+          onChange={(e) => setValue(e.target.value)}
+          className="w-full rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-2 py-0.5 text-xs text-gray-800 dark:text-gray-200 outline-none focus:ring-1 focus:ring-blue-400"
+        />
+      </td>
+      <td className="py-1 align-middle">
+        <div className="flex items-center gap-1">
+          {dirty && (
+            <button
+              type="button"
+              disabled={isBusy}
+              onClick={() => onSave(value)}
+              className="rounded px-1.5 py-0.5 text-xs font-medium bg-blue-100 text-blue-700 hover:bg-blue-200 dark:bg-blue-900/40 dark:text-blue-300 disabled:opacity-50"
+            >
+              {isBusy ? "…" : "Save"}
+            </button>
+          )}
+          <button
+            type="button"
+            disabled={isBusy}
+            onClick={onDelete}
+            className="text-red-400 hover:text-red-600 dark:hover:text-red-300 text-xs leading-none disabled:opacity-50"
+            title="Delete"
+          >
+            ✕
+          </button>
+        </div>
+      </td>
+    </tr>
+  );
+}
+
+// ── pending update ────────────────────────────────────────────────────────────
+
+type SettingsUpdate =
+  | { kind: "fetch"; appSlug: string; ownerHandle: string }
+  | { kind: "title"; appSlug: string; ownerHandle: string; title: string }
+  | { kind: "theme"; appSlug: string; ownerHandle: string; theme: string }
+  | { kind: "iconDescription"; appSlug: string; ownerHandle: string; iconDescription: string }
+  | { kind: "iconRegen"; appSlug: string; ownerHandle: string }
+  | { kind: "chat"; appSlug: string; ownerHandle: string; chat: AIParams }
+  | { kind: "app"; appSlug: string; ownerHandle: string; app: AIParams }
+  | { kind: "img"; appSlug: string; ownerHandle: string; img: AIParams }
+  | { kind: "env"; appSlug: string; ownerHandle: string; env: Record<string, string> };
+
+// ── main tab ─────────────────────────────────────────────────────────────────
+
+interface SettingsTabProps {
+  ownerHandle: string;
+  appSlug: string;
+}
+
+export function SettingsTab({ ownerHandle, appSlug }: SettingsTabProps) {
+  const { chatApi } = useVibesDiy();
+
+  const [title, setTitle] = useState("");
+  const [theme, setTheme] = useState("");
+  const [iconDescription, setIconDescription] = useState("");
+  const [icon, setIcon] = useState<{ cid: string; mime: string } | undefined>(undefined);
+  const [chatConfig, setChatConfig] = useState<Partial<AIParams>>({});
+  const [appConfig, setAppConfig] = useState<Partial<AIParams>>({});
+  const [imgConfig, setImgConfig] = useState<Partial<AIParams>>({});
+  const [env, setEnv] = useState<Record<string, string>>({});
+
+  const [pending, setPending] = useState<SettingsUpdate>({ kind: "fetch", appSlug, ownerHandle });
+  const [savingTitle, setSavingTitle] = useState(false);
+  const [savingTheme, setSavingTheme] = useState(false);
+  const [savingChat, setSavingChat] = useState(false);
+  const [savingApp, setSavingApp] = useState(false);
+  const [savingImg, setSavingImg] = useState(false);
+  const [savingEnv, setSavingEnv] = useState(false);
+  const [loading, setLoading] = useState(true);
+  // CID we expect to be replaced by a fresh icon-gen. While set,
+  // the Save/Regenerate buttons are disabled and a poll watches for
+  // icon.cid to differ. `null` means "watch for any icon to appear"
+  // (when no icon existed at dispatch time).
+  const [iconWaitingFor, setIconWaitingFor] = useState<string | null | undefined>(undefined);
+
+  useEffect(() => {
+    setPending({ kind: "fetch", appSlug, ownerHandle });
+  }, [appSlug, ownerHandle, chatApi]);
+
+  useEffect(() => {
+    let alive = true;
+
+    if (pending.kind === "title") setSavingTitle(true);
+    else if (pending.kind === "theme") setSavingTheme(true);
+    else if (pending.kind === "chat") setSavingChat(true);
+    else if (pending.kind === "app") setSavingApp(true);
+    else if (pending.kind === "img") setSavingImg(true);
+    else if (pending.kind === "env") setSavingEnv(true);
+    else if (pending.kind === "iconDescription" || pending.kind === "iconRegen") {
+      // Capture the current icon CID; the regen-poll effect waits for it
+      // to change. `null` sentinel means "no icon yet, watch for any".
+      setIconWaitingFor(icon?.cid ?? null);
+    } else setLoading(true);
+
+    const base = { appSlug: pending.appSlug, ownerHandle: pending.ownerHandle };
+    const req =
+      pending.kind === "title"
+        ? { ...base, title: pending.title }
+        : pending.kind === "theme"
+          ? { ...base, theme: pending.theme }
+          : pending.kind === "iconDescription"
+            ? { ...base, iconDescription: pending.iconDescription }
+            : pending.kind === "iconRegen"
+              ? { ...base, iconRegen: true }
+              : pending.kind === "chat"
+                ? { ...base, chat: pending.chat }
+                : pending.kind === "app"
+                  ? { ...base, app: pending.app }
+                  : pending.kind === "img"
+                    ? { ...base, img: pending.img }
+                    : pending.kind === "env"
+                      ? { ...base, env: toKVString(pending.env) }
+                      : base;
+
+    void chatApi.ensureAppSettings(req).then((res) => {
+      if (!alive) return;
+
+      if (pending.kind === "title") setSavingTitle(false);
+      else if (pending.kind === "theme") setSavingTheme(false);
+      else if (pending.kind === "chat") setSavingChat(false);
+      else if (pending.kind === "app") setSavingApp(false);
+      else if (pending.kind === "img") setSavingImg(false);
+      else if (pending.kind === "env") setSavingEnv(false);
+      else if (pending.kind !== "iconDescription" && pending.kind !== "iconRegen") setLoading(false);
+
+      if (res.isErr()) {
+        toast.error(res.Err().message);
+        if (pending.kind === "iconDescription" || pending.kind === "iconRegen") {
+          setIconWaitingFor(undefined);
+        }
+        return;
+      }
+
+      const s = res.Ok().settings;
+      setTitle(s.entry.settings.title ?? "");
+      setTheme(s.entry.settings.theme ?? "");
+      setIconDescription(s.entry.settings.iconDescription ?? "");
+      setIcon(s.entry.settings.icon);
+      setChatConfig(s.entry.settings.chat ?? {});
+      setAppConfig(s.entry.settings.app ?? {});
+      setImgConfig(s.entry.settings.img ?? {});
+      setEnv(fromKVString(s.entry.settings.env ?? []));
+
+      if (pending.kind === "title") {
+        notifyRecentVibesChanged({
+          ownerHandle: pending.ownerHandle,
+          appSlug: pending.appSlug,
+          title: s.entry.settings.title ?? "",
+        });
+      }
+
+      if (pending.kind !== "fetch") toast.success("Saved");
+    });
+
+    return () => {
+      alive = false;
+    };
+  }, [pending, chatApi]);
+
+  // Icon-gen completion poll: when iconWaitingFor is set, re-fetch
+  // settings every 2s until the icon CID differs from the captured
+  // value (or 60s ceiling, then give up gracefully).
+  useEffect(() => {
+    if (iconWaitingFor === undefined) return;
+    let alive = true;
+    let attempts = 0;
+    const MAX_ATTEMPTS = 30;
+    async function tick() {
+      if (!alive) return;
+      attempts += 1;
+      const res = await chatApi.ensureAppSettings({ appSlug, ownerHandle });
+      if (!alive) return;
+      if (res.isOk()) {
+        const s = res.Ok().settings;
+        const nextIcon = s.entry.settings.icon;
+        const settled =
+          (iconWaitingFor === null && nextIcon !== undefined) ||
+          (typeof iconWaitingFor === "string" && nextIcon !== undefined && nextIcon.cid !== iconWaitingFor);
+        if (settled) {
+          setIcon(nextIcon);
+          setIconDescription(s.entry.settings.iconDescription ?? "");
+          setIconWaitingFor(undefined);
+          return;
+        }
+      }
+      if (attempts >= MAX_ATTEMPTS) {
+        toast.error("Couldn't generate icon — try again.");
+        setIconWaitingFor(undefined);
+        return;
+      }
+      setTimeout(tick, 2000);
+    }
+    setTimeout(tick, 2000);
+    return () => {
+      alive = false;
+    };
+  }, [iconWaitingFor, chatApi, appSlug, ownerHandle]);
+
+  function upsertEnv(key: string, value: string) {
+    const updated = { ...env, [key]: value };
+    setEnv(updated);
+    setPending({ kind: "env", appSlug, ownerHandle, env: updated });
+  }
+
+  function deleteEnv(key: string) {
+    const { [key]: _, ...updated } = env;
+    setEnv(updated);
+    setPending({ kind: "env", appSlug, ownerHandle, env: updated });
+  }
+
+  if (loading) {
+    return (
+      <div className="flex justify-center py-4">
+        <div className="h-4 w-4 animate-spin rounded-full border-t-2 border-b-2 border-blue-500" />
+      </div>
+    );
+  }
+
+  return (
+    <ol className="space-y-5 text-sm">
+      <Card title="General">
+        <div className="space-y-2">
+          <Field label="Title" value={title} onChange={setTitle} placeholder={appSlug} />
+          <div className="flex justify-end">
+            <SaveBtn saving={savingTitle} onClick={() => setPending({ kind: "title", appSlug, ownerHandle, title })} />
+          </div>
+        </div>
+      </Card>
+
+      <Card title="Theme">
+        <div className="space-y-2">
+          <div className="flex items-center gap-3">
+            <label className="w-24 flex-shrink-0 text-xs text-gray-500 dark:text-gray-400">Theme</label>
+            <select
+              value={theme}
+              onChange={(e) => setTheme(e.target.value)}
+              className="flex-1 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-2 py-1 text-xs text-gray-800 dark:text-gray-200 outline-none focus:ring-1 focus:ring-blue-400"
+            >
+              <option value="">(none — auto-pick)</option>
+              {vibesThemes.map((t) => (
+                <option key={t.slug} value={t.slug}>
+                  {t.name}
+                </option>
+              ))}
+            </select>
+            {theme && (
+              <a
+                href={`/vibe/theme/${theme}`}
+                target="_blank"
+                rel="noreferrer"
+                className="text-xs text-blue-600 dark:text-blue-400 hover:underline"
+                title="View this theme as an exemplar app"
+              >
+                preview
+              </a>
+            )}
+          </div>
+          <div className="flex justify-end">
+            <SaveBtn saving={savingTheme} onClick={() => setPending({ kind: "theme", appSlug, ownerHandle, theme })} />
+          </div>
+        </div>
+      </Card>
+
+      <Card title="Icon">
+        <div className="space-y-2">
+          <div className="flex items-center gap-3">
+            <div className="h-12 w-12 flex-shrink-0 rounded-full border border-gray-200 dark:border-gray-700 bg-white overflow-hidden flex items-center justify-center">
+              {icon ? (
+                <img
+                  src={cidAssetUrl(icon.cid, icon.mime, getAppHostBaseUrl())}
+                  alt=""
+                  className={"h-full w-full object-cover " + (iconWaitingFor !== undefined ? "opacity-50 animate-pulse" : "")}
+                />
+              ) : iconWaitingFor !== undefined ? (
+                <div className="h-4 w-4 animate-spin rounded-full border-t-2 border-b-2 border-blue-500" />
+              ) : (
+                <span className="text-xs text-gray-400">none</span>
+              )}
+            </div>
+            <div className="flex-1">
+              <Field
+                label="Description"
+                value={iconDescription}
+                onChange={setIconDescription}
+                placeholder='e.g. "a fox on a record player"'
+              />
+            </div>
+          </div>
+          <div className="flex justify-end gap-2">
+            <button
+              type="button"
+              disabled={iconWaitingFor !== undefined || !iconDescription.trim()}
+              onClick={() => setPending({ kind: "iconRegen", appSlug, ownerHandle })}
+              className="rounded px-2 py-1 text-xs font-medium bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300 disabled:opacity-50"
+            >
+              {iconWaitingFor !== undefined ? "Generating…" : "Regenerate"}
+            </button>
+            <button
+              type="button"
+              disabled={iconWaitingFor !== undefined}
+              onClick={() => setPending({ kind: "iconDescription", appSlug, ownerHandle, iconDescription })}
+              className="rounded px-2 py-1 text-xs font-medium bg-blue-100 text-blue-700 hover:bg-blue-200 dark:bg-blue-900/40 dark:text-blue-300 disabled:opacity-50"
+            >
+              {iconWaitingFor !== undefined ? "Generating…" : "Save"}
+            </button>
+          </div>
+        </div>
+      </Card>
+
+      <ModelSettingsCards
+        chatConfig={chatConfig}
+        appConfig={appConfig}
+        imgConfig={imgConfig}
+        savingChat={savingChat}
+        savingApp={savingApp}
+        savingImg={savingImg}
+        onSaveChat={(cfg) => setPending({ kind: "chat", appSlug, ownerHandle, chat: cfg })}
+        onSaveApp={(cfg) => setPending({ kind: "app", appSlug, ownerHandle, app: cfg })}
+        onSaveImg={(cfg) => setPending({ kind: "img", appSlug, ownerHandle, img: cfg })}
+      />
+
+      <Card title="Environment Variables">
+        <EnvSection env={env} saving={savingEnv} onUpsert={upsertEnv} onDelete={deleteEnv} />
+      </Card>
+    </ol>
+  );
+}

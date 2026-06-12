@@ -1,0 +1,59 @@
+{
+  "name": "@vibes.diy/use-vibes-base",
+  "version": "0.0.0",
+  "type": "module",
+  "main": "./index.js",
+  "description": "Core components and utilities for use-vibes (internal workspace package)",
+  "scripts": {
+    "build": "core-cli tsc",
+    "pack": "core-cli build -x '^' --doPack",
+    "publish": "core-cli build -x '^'"
+  },
+  "license": "Apache-2.0",
+  "dependencies": {
+    "@adviser/cement": "^0.5.34",
+    "@clerk/react": "^6.7.2",
+    "@fireproof/core": "0.24.19",
+    "@fireproof/core-device-id": "0.24.19",
+    "@fireproof/core-keybag": "0.24.19",
+    "@fireproof/core-protocols-dashboard": "0.24.19",
+    "@fireproof/core-runtime": "0.24.19",
+    "@fireproof/core-types-base": "0.24.19",
+    "@fireproof/core-types-protocols-cloud": "0.24.19",
+    "@fireproof/core-types-protocols-dashboard": "0.24.19",
+    "@fireproof/use-fireproof": "0.24.19",
+    "@vibes.diy/api-impl": "workspace:*",
+    "@vibes.diy/base": "workspace:*",
+    "@vibes.diy/prompts": "workspace:*",
+    "@vibes.diy/use-vibes-types": "workspace:*",
+    "@vibes.diy/vibe-runtime": "workspace:*",
+    "arktype": "^2.2.0",
+    "call-ai": "workspace:*",
+    "jose": "^6.2.2",
+    "react-dom": "19.2.7",
+    "zod": "^4.1.12"
+  },
+  "peerDependencies": {
+    "react": ">=19.1.0"
+  },
+  "devDependencies": {
+    "@chromatic-com/storybook": "^5.2.1",
+    "@fireproof/core-cli": "0.24.19",
+    "@storybook/addon-a11y": "^10.4.2",
+    "@storybook/addon-docs": "^10.4.2",
+    "@storybook/react": "^10.4.2",
+    "@storybook/react-vite": "^10.4.2",
+    "@types/babel__standalone": "^7.1.9",
+    "@types/react": "~19.2.14",
+    "@types/react-dom": "^19.2.1",
+    "@vitest/browser-playwright": "~4.1.7",
+    "storybook": "^10.4.2",
+    "typescript": "^6.0.3",
+    "vite": "^7.3.3",
+    "vitest": "~4.1.7"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/VibesDIY/vibes.diy.git"
+  }
+}

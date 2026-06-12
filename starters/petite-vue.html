@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>petite-vue — reactive todo</title>
+  <style>
+    body { margin: 0; font-family: system-ui, sans-serif; max-width: 480px; margin: 2rem auto; padding: 0 1rem; }
+    input { padding: 0.5rem; width: 70%; border: 1px solid #ccc; border-radius: 4px; }
+    button { padding: 0.5rem 0.8rem; border: none; border-radius: 4px; background: #4ade80; cursor: pointer; }
+    ul { list-style: none; padding: 0; }
+    li { display: flex; align-items: center; gap: 0.5rem; padding: 0.4rem 0; border-bottom: 1px solid #eee; }
+    li.done span { text-decoration: line-through; color: #999; }
+    .del { margin-left: auto; background: none; color: #c00; cursor: pointer; border: none; }
+  </style>
+</head>
+<body>
+<!-- petite-vue: ~6KB, reactive, no build. v-scope drives reactivity in plain HTML. -->
+<div v-scope="Todo()">
+  <h1>petite-vue todo</h1>
+  <form @submit.prevent="add">
+    <input v-model="text" placeholder="What needs doing?">
+    <button type="submit">Add</button>
+  </form>
+  <p>{{ remaining }} of {{ items.length }} left</p>
+  <ul>
+    <li v-for="(item, i) in items" :class="{ done: item.done }">
+      <input type="checkbox" v-model="item.done">
+      <span>{{ item.text }}</span>
+      <button class="del" @click="items.splice(i, 1)">×</button>
+    </li>
+  </ul>
+</div>
+
+<script type="module">
+import { createApp, reactive } from 'https://unpkg.com/petite-vue?module';
+
+function Todo() {
+  return {
+    text: '',
+    items: reactive([
+      { text: 'Try petite-vue', done: true },
+      { text: 'Build an artifact', done: false },
+    ]),
+    get remaining() { return this.items.filter(i => !i.done).length; },
+    add() {
+      if (this.text.trim()) { this.items.push({ text: this.text.trim(), done: false }); this.text = ''; }
+    },
+  };
+}
+
+createApp({ Todo }).mount();
+</script>
+</body>
+</html>

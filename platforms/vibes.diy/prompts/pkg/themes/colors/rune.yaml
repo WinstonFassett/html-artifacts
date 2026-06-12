@@ -1,0 +1,14 @@
+name: Rune Interface
+colors:
+  text-primary: "#b0c4cc"
+  text-secondary: "#4a6070"
+extras:
+  abyss: "#020406"
+  abyss-blue: "#05101a"
+  cyan-neon: "#00ffcc"
+  cyan-dim: "#005f52"
+  cyan-text: "#ccfffa"
+  purple-magic: "#9d4eff"
+  stone: "#0d161f"
+  stone-border: "#1c2b38"
+  stone-light: "#162330"

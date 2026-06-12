@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>React + Fireproof — persistent state</title>
+  <script type="importmap">
+  {
+    "imports": {
+      "react": "https://esm.sh/react@19",
+      "react/": "https://esm.sh/react@19/",
+      "react/jsx-runtime": "https://esm.sh/react@19/jsx-runtime",
+      "react-dom": "https://esm.sh/react-dom@19",
+      "react-dom/": "https://esm.sh/react-dom@19/",
+      "react-dom/client": "https://esm.sh/react-dom@19/client",
+      "use-fireproof": "https://esm.sh/use-fireproof@0.24?external=react"
+    }
+  }
+  </script>
+  <script type="module" src="https://esm.sh/tsx"></script>
+  <style>
+    body { margin: 0; font-family: system-ui, sans-serif; max-width: 480px; margin: 2rem auto; padding: 0 1rem; }
+    input { padding: 0.5rem; width: 70%; border: 1px solid #ccc; border-radius: 4px; }
+    button { padding: 0.5rem 0.8rem; border: none; border-radius: 4px; background: #4ade80; cursor: pointer; }
+    ul { list-style: none; padding: 0; }
+    li { display: flex; align-items: center; gap: 0.5rem; padding: 0.4rem 0; border-bottom: 1px solid #eee; }
+    li.done span { text-decoration: line-through; color: #999; }
+    .del { margin-left: auto; background: none; color: #c00; cursor: pointer; border: none; }
+    .note { color: #888; font-size: 0.8rem; }
+  </style>
+</head>
+<body>
+<div id="root"></div>
+
+<script type="text/tsx">
+import { useState } from 'react'
+import { createRoot } from 'react-dom/client'
+import { useFireproof } from 'use-fireproof'
+
+function App() {
+  // Data persists to IndexedDB via Fireproof. Reload the page — todos survive.
+  const { useDocument, useLiveQuery } = useFireproof('todos-artifact')
+  const { doc, merge, submit } = useDocument({ text: '', done: false, type: 'todo' })
+  const todos = useLiveQuery('type', { key: 'todo' })
+
+  return (
+    <div>
+      <h1>React + Fireproof</h1>
+      <p className="note">Local-first persistence to IndexedDB. Add todos, reload — they stay.</p>
+      <form onSubmit={(e) => { e.preventDefault(); if (doc.text.trim()) submit(); }}>
+        <input value={doc.text} onChange={(e) => merge({ text: e.target.value })} placeholder="What needs doing?" />
+        <button type="submit">Add</button>
+      </form>
+      <ul>
+        {todos.docs.map((t: any) => (
+          <li key={t._id} className={t.done ? 'done' : ''}>
+            <input type="checkbox" checked={!!t.done}
+              onChange={() => { t.done = !t.done; }} />
+            <span>{t.text}</span>
+          </li>
+        ))}
+      </ul>
+    </div>
+  )
+}
+
+createRoot(document.getElementById('root')!).render(<App />)
+</script>
+</body>
+</html>

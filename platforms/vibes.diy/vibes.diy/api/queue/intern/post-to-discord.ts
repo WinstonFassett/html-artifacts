@@ -1,0 +1,144 @@
+import { BuildURI, Result } from "@adviser/cement";
+import {
+  EvtCommentPosted,
+  EvtDmReceived,
+  EvtInviteGrant,
+  EvtNewFsId,
+  EvtRequestGrant,
+  ForeignInfo,
+  Role,
+} from "@vibes.diy/api-types";
+import { DiscordWebhookBody, QueueCtx } from "../queue-ctx.js";
+
+const DISCORD_EMBED_COLOR = 11184810;
+
+function vibeUrl(vctx: QueueCtx, ownerHandle: string, appSlug: string): string {
+  return BuildURI.from(vctx.params.vibes.env.VIBES_DIY_PUBLIC_BASE_URL)
+    .appendRelative("vibe")
+    .appendRelative(ownerHandle)
+    .appendRelative(appSlug)
+    .toString();
+}
+
+function foreignLabel(foreignInfo: ForeignInfo | undefined): string {
+  return foreignInfo?.claims?.params.email ?? foreignInfo?.givenEmail ?? "(unknown)";
+}
+
+export function buildPublishEmbed(vctx: QueueCtx, payload: EvtNewFsId, publishCount?: number): DiscordWebhookBody {
+  const url = vibeUrl(vctx, payload.ownerHandle, payload.appSlug);
+  const screenshotUrl = BuildURI.from(payload.vibeUrl).pathname("/screenshot.png").toString();
+  const countLabel = publishCount !== undefined ? ` (update #${publishCount})` : "";
+  const verb = publishCount === 1 ? "New Vibe published" : "Vibe updated";
+  return {
+    content: `🎉 ${verb}${countLabel}: **[${payload.ownerHandle}/${payload.appSlug}](${url})**`,
+    embeds: [
+      {
+        title: `${payload.ownerHandle}/${payload.appSlug}`,
+        url,
+        color: DISCORD_EMBED_COLOR,
+        fields: [
+          { name: "User", value: payload.ownerHandle, inline: true },
+          { name: "App", value: payload.appSlug, inline: true },
+          { name: "fsId", value: payload.fsId, inline: false },
+        ],
+        image: { url: screenshotUrl },
+      },
+    ],
+  };
+}
+
+export function buildCommentEmbed(vctx: QueueCtx, payload: EvtCommentPosted): DiscordWebhookBody {
+  const url = vibeUrl(vctx, payload.ownerHandle, payload.appSlug);
+  const commenter = payload.email ?? payload.userId;
+  return {
+    content: `🗨️ New comment on **[${payload.ownerHandle}/${payload.appSlug}](${url})**`,
+    embeds: [
+      {
+        title: `${payload.ownerHandle}/${payload.appSlug}`,
+        url,
+        color: DISCORD_EMBED_COLOR,
+        fields: [
+          { name: "Commenter", value: commenter, inline: true },
+          { name: "User ID", value: payload.userId, inline: true },
+          { name: "Doc", value: payload.docId, inline: true },
+        ],
+      },
+    ],
+  };
+}
+
+export function buildInviteAcceptedEmbed(vctx: QueueCtx, payload: EvtInviteGrant): DiscordWebhookBody {
+  const url = vibeUrl(vctx, payload.grant.ownerHandle, payload.grant.appSlug);
+  return {
+    content: `🎟️ Invite accepted on **[${payload.grant.ownerHandle}/${payload.grant.appSlug}](${url})**`,
+    embeds: [
+      {
+        title: `${payload.grant.ownerHandle}/${payload.grant.appSlug}`,
+        url,
+        color: DISCORD_EMBED_COLOR,
+        fields: [
+          { name: "Member", value: foreignLabel(payload.grant.foreignInfo), inline: true },
+          { name: "Role", value: payload.grant.role, inline: true },
+        ],
+      },
+    ],
+  };
+}
+
+export function buildRequestPendingEmbed(vctx: QueueCtx, payload: EvtRequestGrant): DiscordWebhookBody {
+  const url = vibeUrl(vctx, payload.grant.ownerHandle, payload.grant.appSlug);
+  return {
+    content: `🙋 Access requested on **[${payload.grant.ownerHandle}/${payload.grant.appSlug}](${url})**`,
+    embeds: [
+      {
+        title: `${payload.grant.ownerHandle}/${payload.grant.appSlug}`,
+        url,
+        color: DISCORD_EMBED_COLOR,
+        fields: [{ name: "Requester", value: foreignLabel(payload.grant.foreignInfo), inline: true }],
+      },
+    ],
+  };
+}
+
+export function buildRequestApprovedEmbed(vctx: QueueCtx, payload: EvtRequestGrant, role: Role): DiscordWebhookBody {
+  const url = vibeUrl(vctx, payload.grant.ownerHandle, payload.grant.appSlug);
+  return {
+    content: `✅ Access granted on **[${payload.grant.ownerHandle}/${payload.grant.appSlug}](${url})**`,
+    embeds: [
+      {
+        title: `${payload.grant.ownerHandle}/${payload.grant.appSlug}`,
+        url,
+        color: DISCORD_EMBED_COLOR,
+        fields: [
+          { name: "Member", value: foreignLabel(payload.grant.foreignInfo), inline: true },
+          { name: "Role", value: role, inline: true },
+        ],
+      },
+    ],
+  };
+}
+
+export function buildDmEmbed(vctx: QueueCtx, payload: EvtDmReceived): DiscordWebhookBody {
+  return {
+    content: `💬 New DM from **${payload.senderUserSlug}** → **${payload.recipientUserSlug}**`,
+    embeds: [
+      {
+        title: `${payload.senderUserSlug} → ${payload.recipientUserSlug}`,
+        color: DISCORD_EMBED_COLOR,
+        fields: [
+          { name: "From", value: payload.senderUserSlug, inline: true },
+          { name: "To", value: payload.recipientUserSlug, inline: true },
+          ...(payload.bodySnippet ? [{ name: "Preview", value: payload.bodySnippet, inline: false }] : []),
+        ],
+      },
+    ],
+  };
+}
+
+export async function postEmbed(vctx: QueueCtx, body: DiscordWebhookBody): Promise<Result<void>> {
+  const r = await vctx.postToDiscord(body);
+  if (r.isErr()) {
+    console.error("Discord post failed:", r.Err());
+  }
+  return r;
+}

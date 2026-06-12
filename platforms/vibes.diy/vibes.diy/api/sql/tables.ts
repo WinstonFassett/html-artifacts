@@ -1,0 +1,73 @@
+import * as sqlite from "./vibes-diy-api-schema-sqlite.js";
+import * as pg from "./vibes-diy-api-schema-pg.js";
+import { BaseSQLiteDatabase } from "drizzle-orm/sqlite-core";
+import { ResultSet } from "@libsql/client";
+import type { D1Result } from "@cloudflare/workers-types";
+import { type } from "arktype";
+
+export type VibesSqlite = BaseSQLiteDatabase<"async", ResultSet | D1Result, Record<string, never>>;
+
+function createSqliteVibesApiTables() {
+  return {
+    assets: sqlite.sqlAssets,
+    handleBinding: sqlite.sqlHandleBinding,
+    appSlugBinding: sqlite.sqlAppSlugBinding,
+    apps: sqlite.sqlApps,
+    chatContexts: sqlite.sqlChatContexts,
+    chatSections: sqlite.sqlChatSections,
+    promptContexts: sqlite.sqlPromptContexts,
+    applicationChats: sqlite.sqlApplicationChats,
+    userSettings: sqlite.sqlUserSettings,
+    appSettings: sqlite.sqlAppSettings,
+    requestGrants: sqlite.sqlRequestGrants,
+    inviteGrants: sqlite.sqlInviteGrants,
+    appDocuments: sqlite.sqlAppDocuments,
+    directChannelIndex: sqlite.sqlDirectChannelIndex,
+    directChannelReads: sqlite.sqlDirectChannelReads,
+    assetUploads: sqlite.sqlAssetUploads,
+    refererEvents: sqlite.sqlRefererEvents,
+    missingVibeEvents: sqlite.sqlMissingVibeEvents,
+    accessFunctionBindings: sqlite.sqlAccessFunctionBindings,
+    accessFnOutputs: sqlite.sqlAccessFnOutputs,
+  };
+}
+
+export type VibesApiTables = ReturnType<typeof createSqliteVibesApiTables>;
+
+export const DBFlavour = type("'sqlite' | 'pg'");
+export type DBFlavour = typeof DBFlavour.infer;
+export function toDBFlavour(flavour: unknown): DBFlavour {
+  const res = DBFlavour(flavour);
+  if (res instanceof type.errors) {
+    return "sqlite";
+  }
+  return res;
+}
+
+export function createVibesApiTables(flavour: DBFlavour): VibesApiTables {
+  if (flavour === "pg") {
+    return {
+      assets: pg.sqlAssets,
+      handleBinding: pg.sqlHandleBinding,
+      appSlugBinding: pg.sqlAppSlugBinding,
+      apps: pg.sqlApps,
+      chatContexts: pg.sqlChatContexts,
+      chatSections: pg.sqlChatSections,
+      promptContexts: pg.sqlPromptContexts,
+      applicationChats: pg.sqlApplicationChats,
+      userSettings: pg.sqlUserSettings,
+      appSettings: pg.sqlAppSettings,
+      requestGrants: pg.sqlRequestGrants,
+      inviteGrants: pg.sqlInviteGrants,
+      appDocuments: pg.sqlAppDocuments,
+      directChannelIndex: pg.sqlDirectChannelIndex,
+      directChannelReads: pg.sqlDirectChannelReads,
+      assetUploads: pg.sqlAssetUploads,
+      refererEvents: pg.sqlRefererEvents,
+      missingVibeEvents: pg.sqlMissingVibeEvents,
+      accessFunctionBindings: pg.sqlAccessFunctionBindings,
+      accessFnOutputs: pg.sqlAccessFnOutputs,
+    } as unknown as VibesApiTables;
+  }
+  return createSqliteVibesApiTables();
+}

@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vega-Lite starter</title>
+  <script src="https://cdn.jsdelivr.net/npm/vega@6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vega-lite@6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vega-embed@7"></script>
+  <style>
+    body { margin: 0; font-family: system-ui, sans-serif; padding: 2rem; }
+  </style>
+</head>
+<body>
+<h1>Vega-Lite — no build</h1>
+<div id="vis"></div>
+
+<script>
+const spec = {
+  $schema: 'https://vega.github.io/schema/vega-lite/v6.json',
+  description: 'A simple bar chart from inline data.',
+  data: {
+    values: [
+      { category: 'A', value: 28 }, { category: 'B', value: 55 },
+      { category: 'C', value: 43 }, { category: 'D', value: 91 },
+      { category: 'E', value: 81 }, { category: 'F', value: 53 },
+    ]
+  },
+  mark: 'bar',
+  encoding: {
+    x: { field: 'category', type: 'nominal' },
+    y: { field: 'value', type: 'quantitative' }
+  }
+};
+vegaEmbed('#vis', spec);
+</script>
+</body>
+</html>

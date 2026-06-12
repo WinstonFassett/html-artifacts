@@ -1,0 +1,208 @@
+import { VibesDiyApi } from "@vibes.diy/api-impl";
+import { assert, beforeAll, describe, expect, inject, it } from "vitest";
+import { Result, TestFetchPair, TestWSPair } from "@adviser/cement";
+import { ensureSuperThis } from "@fireproof/core-runtime";
+import { createTestDeviceCA, createTestUser } from "@fireproof/core-device-id";
+import { cfServe, CFInject, noopCache, vibesMsgEvento, WSSendProvider } from "@vibes.diy/api-svc";
+import { Request as CFRequest, ExecutionContext } from "@cloudflare/workers-types";
+import { isResEnsureAppSlugOk } from "@vibes.diy/api-types";
+import { createVibeDiyTestCtx } from "./vibe-diy-test-ctx.js";
+
+describe("getAppByFsId grant flow", { timeout: (inject("DB_FLAVOUR" as never) as string) === "pg" ? 30000 : 5000 }, () => {
+  const sthis = ensureSuperThis();
+
+  let api: VibesDiyApi; // owner
+  let api2: VibesDiyApi; // requester
+  let appCtx: Awaited<ReturnType<typeof createVibeDiyTestCtx>>;
+
+  beforeAll(async () => {
+    const deviceCA = await createTestDeviceCA(sthis);
+    appCtx = await createVibeDiyTestCtx(sthis, deviceCA);
+    const testUser = await createTestUser({ sthis, deviceCA, seqUserId: 100 });
+
+    const fetchPair = TestFetchPair.create();
+    const wsPair = TestWSPair.create();
+
+    fetchPair.server.onServe(async (req: Request) => {
+      return cfServe(
+        req as unknown as CFRequest,
+        {
+          appCtx: appCtx.appCtx,
+          cache: noopCache,
+          drizzle: appCtx.vibesCtx.sql.db,
+          webSocket: {
+            connections: new Set(),
+            webSocketPair: () => ({
+              client: wsPair.p1,
+              server: wsPair.p2,
+            }),
+          },
+        } as unknown as ExecutionContext & CFInject
+      ) as unknown as Promise<Response>;
+    });
+
+    const wsEvento = vibesMsgEvento();
+    const wsSendProvider = new WSSendProvider(wsPair.p2 as unknown as WebSocket);
+    appCtx.vibesCtx.connections.add(wsSendProvider);
+
+    wsPair.p2.onmessage = (event: MessageEvent) => {
+      wsEvento.trigger({ ctx: appCtx.appCtx, request: { type: "MessageEvent", event }, send: wsSendProvider });
+    };
+
+    api = new VibesDiyApi({
+      apiUrl: "http://localhost:8787/api",
+      ws: wsPair.p1 as unknown as WebSocket,
+      fetch: fetchPair.client.fetch,
+      timeoutMs: 100000,
+      getToken: async () => Result.Ok(await testUser.getDashBoardToken()),
+    });
+
+    const testUser2 = await createTestUser({ sthis, deviceCA, seqUserId: 200 });
+    api2 = new VibesDiyApi({
+      apiUrl: "http://localhost:8787/api",
+      ws: wsPair.p1 as unknown as WebSocket,
+      fetch: fetchPair.client.fetch,
+      timeoutMs: 100000,
+      getToken: async () => Result.Ok(await testUser2.getDashBoardToken()),
+    });
+  });
+
+  async function createApp() {
+    const now = sthis.nextId(8).str;
+    const rRes = await api.ensureAppSlug({
+      mode: "dev",
+      fileSystem: [
+        {
+          type: "code-block",
+          lang: "jsx",
+          filename: "/App.jsx",
+          content: `function App() { return <div>Hello ${now}</div>; } App();`,
+        },
+      ],
+    });
+    const res = rRes.Ok();
+    if (!isResEnsureAppSlugOk(res)) {
+      assert.fail("Expected ensureAppSlug to return ResEnsureAppSlugOk");
+    }
+    return { appSlug: res.appSlug, ownerHandle: res.ownerHandle };
+  }
+
+  it("getAppByFsId returns pending-request after requestAccess", async () => {
+    const { appSlug, ownerHandle } = await createApp();
+
+    // Enable request access (no auto-approve)
+    await api.ensureAppSettings({ appSlug, ownerHandle, request: { enable: true } });
+
+    // Non-owner requests access
+    const rRequested = await api2.requestAccess({ appSlug, ownerHandle });
+    if (rRequested.isErr()) {
+      assert.fail("Expected requestAccess to succeed: " + JSON.stringify(rRequested.Err()));
+    }
+    expect(rRequested.Ok().state).toBe("pending");
+
+    // Now getAppByFsId as non-owner should return pending-request, not not-grant
+    const rApp = await api2.getAppByFsId({ appSlug, ownerHandle });
+    if (rApp.isErr()) {
+      assert.fail("Expected getAppByFsId to succeed: " + JSON.stringify(rApp.Err()));
+    }
+    expect(rApp.Ok().grant).toBe("pending-request");
+  });
+
+  it("getAppByFsId returns req-login.request on first visit (no implicit requestAccess)", async () => {
+    const { appSlug, ownerHandle } = await createApp();
+
+    // Enable request access (no auto-approve)
+    await api.ensureAppSettings({ appSlug, ownerHandle, request: { enable: true } });
+
+    // Non-owner calls getAppByFsId without prior requestAccess — must NOT create a
+    // request implicitly. The landing card needs to render so the visitor can choose
+    // to install vs request; only an explicit requestAccess click should fire the flow.
+    const rApp = await api2.getAppByFsId({ appSlug, ownerHandle });
+    if (rApp.isErr()) {
+      assert.fail("Expected getAppByFsId to succeed: " + JSON.stringify(rApp.Err()));
+    }
+    expect(rApp.Ok().grant).toBe("req-login.request");
+  });
+
+  it("getAppByFsId auto-grants access on first visit when autoAcceptRole is enabled", async () => {
+    const { appSlug, ownerHandle } = await createApp();
+
+    // Enable request access with auto-approve
+    await api.ensureAppSettings({ appSlug, ownerHandle, request: { enable: true, autoAcceptRole: "viewer" } });
+
+    // Signed-in non-owner visits — getAppByFsId fires requestAccess internally and
+    // resolves straight to granted-access.viewer without any user click.
+    const rApp = await api2.getAppByFsId({ appSlug, ownerHandle });
+    if (rApp.isErr()) {
+      assert.fail("Expected getAppByFsId to succeed: " + JSON.stringify(rApp.Err()));
+    }
+    expect(rApp.Ok().grant).toBe("granted-access.viewer");
+  });
+
+  it("signed-in user gets auto-promoted above public-access when autoAcceptRole is also set", async () => {
+    // Must be a production app — the publicAccess branch gates on app.mode === "production"
+    const now = sthis.nextId(8).str;
+    const rRes = await api.ensureAppSlug({
+      mode: "production",
+      fileSystem: [
+        {
+          type: "code-block",
+          lang: "jsx",
+          filename: "/App.jsx",
+          content: `function App() { return <div>Pub+AutoGrant ${now}</div>; } App();`,
+        },
+      ],
+    });
+    const res = rRes.Ok();
+    if (!isResEnsureAppSlugOk(res)) {
+      assert.fail("Expected ensureAppSlug to return ResEnsureAppSlugOk");
+    }
+    const { appSlug, ownerHandle } = res;
+
+    // ensureAppSettings only applies one setting per call — two separate calls required
+    await api.ensureAppSettings({ appSlug, ownerHandle, publicAccess: { enable: true } });
+    await api.ensureAppSettings({ appSlug, ownerHandle, request: { enable: true, autoAcceptRole: "editor" } });
+
+    // Signed-in non-owner should get granted-access.editor, not the read-only public-access
+    const rApp = await api2.getAppByFsId({ appSlug, ownerHandle });
+    if (rApp.isErr()) {
+      assert.fail("Expected getAppByFsId to succeed: " + JSON.stringify(rApp.Err()));
+    }
+    expect(rApp.Ok().grant).toBe("granted-access.editor");
+  });
+
+  it("getAppByFsId returns not-grant when request access is disabled", async () => {
+    const { appSlug, ownerHandle } = await createApp();
+
+    // No enableRequest, no publicAccess — non-owner should get not-grant
+    const rApp = await api2.getAppByFsId({ appSlug, ownerHandle });
+    if (rApp.isErr()) {
+      assert.fail("Expected getAppByFsId to succeed: " + JSON.stringify(rApp.Err()));
+    }
+    expect(rApp.Ok().grant).toBe("not-grant");
+  });
+
+  it("getAppByFsId surfaces the displayable title via meta", async () => {
+    const { appSlug, ownerHandle } = await createApp();
+
+    // Owner sets a real title; the slug stays slug-shaped.
+    await api.ensureAppSettings({ appSlug, ownerHandle, title: "Friendly Title" });
+
+    const rApp = await api.getAppByFsId({ appSlug, ownerHandle });
+    if (rApp.isErr()) {
+      assert.fail("Expected getAppByFsId to succeed: " + JSON.stringify(rApp.Err()));
+    }
+    const titleEntry = rApp.Ok().meta.find((m) => m.type === "title");
+    expect(titleEntry).toEqual({ type: "title", title: "Friendly Title" });
+  });
+
+  it("getAppByFsId returns owner for app owner", async () => {
+    const { appSlug, ownerHandle } = await createApp();
+
+    const rApp = await api.getAppByFsId({ appSlug, ownerHandle });
+    if (rApp.isErr()) {
+      assert.fail("Expected getAppByFsId to succeed: " + JSON.stringify(rApp.Err()));
+    }
+    expect(rApp.Ok().grant).toBe("owner");
+  });
+});

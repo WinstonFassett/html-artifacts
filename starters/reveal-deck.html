@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>reveal.js deck — no build</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5/dist/reveal.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5/dist/theme/black.css" id="theme">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5/plugin/highlight/monokai.css">
+</head>
+<body>
+<div class="reveal">
+  <div class="slides">
+    <section>
+      <h1>reveal.js</h1>
+      <p>Single file, all from CDN. No build.</p>
+      <aside class="notes">Speaker notes — press S for speaker view.</aside>
+    </section>
+
+    <section>
+      <h2>Fragments</h2>
+      <ul>
+        <li class="fragment">Appear one</li>
+        <li class="fragment">at a time</li>
+        <li class="fragment">on each advance</li>
+      </ul>
+    </section>
+
+    <!-- Vertical stack: press down arrow -->
+    <section>
+      <section><h2>Vertical slides</h2><p>Press ↓ to go deeper</p></section>
+      <section><h2>Nested</h2><p>This is below the previous slide.</p></section>
+    </section>
+
+    <section>
+      <h2>Code with highlighting</h2>
+      <pre><code data-trim data-line-numbers class="language-js">
+const deck = new Reveal({ hash: true });
+deck.initialize();
+      </code></pre>
+    </section>
+
+    <section>
+      <h2>That's it</h2>
+      <p>Arrow keys / space to navigate · F fullscreen · S speaker notes · ESC overview</p>
+    </section>
+  </div>
+</div>
+
+<script type="module">
+import Reveal from 'https://cdn.jsdelivr.net/npm/reveal.js@5/dist/reveal.esm.js';
+import Highlight from 'https://cdn.jsdelivr.net/npm/reveal.js@5/plugin/highlight/highlight.esm.js';
+import Notes from 'https://cdn.jsdelivr.net/npm/reveal.js@5/plugin/notes/notes.esm.js';
+
+const deck = new Reveal({
+  hash: true,
+  slideNumber: true,
+  plugins: [Highlight, Notes],
+});
+deck.initialize();
+</script>
+</body>
+</html>

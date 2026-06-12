@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>React + htm (no transform, file://-safe)</title>
+  <style>
+    body { margin: 0; font-family: system-ui, sans-serif; }
+    #root { padding: 2rem; }
+  </style>
+</head>
+<body>
+<div id="root"></div>
+
+<!-- htm: JSX-like syntax via tagged template literals — NO build, NO transform step.
+     ~600 bytes. Works from file:// (UMD globals, no ESM imports). -->
+<script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+<script src="https://unpkg.com/htm@3/dist/htm.umd.js" crossorigin></script>
+<script>
+const html = htm.bind(React.createElement);
+const { useState } = React;
+
+function App() {
+  const [count, setCount] = useState(0);
+  // Note: tagged template literal `html\`...\`` instead of JSX <...>
+  return html`
+    <div style=${{ padding: '1rem', fontFamily: 'system-ui' }}>
+      <h1>React + htm — no transform</h1>
+      <p>JSX-like via tagged templates. No Babel, no esm.sh/tsx. ~600 bytes. file://-safe.</p>
+      <button onClick=${() => setCount(c => c + 1)}>count: ${count}</button>
+    </div>
+  `;
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(html`<${App} />`);
+</script>
+</body>
+</html>

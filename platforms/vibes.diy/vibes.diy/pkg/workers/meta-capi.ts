@@ -1,0 +1,143 @@
+import { BuildURI, exception2Result, URI } from "@adviser/cement";
+
+interface CapiUserData {
+  readonly fbc: string;
+  readonly client_ip_address: string;
+  readonly client_user_agent: string;
+}
+
+interface CapiEvent {
+  readonly event_name: "PageView" | "ViewContent";
+  readonly action_source: "website";
+  readonly event_time: number;
+  readonly event_source_url: string;
+  readonly event_id?: string;
+  readonly user_data: CapiUserData;
+}
+
+export interface CapiPayload {
+  readonly data: readonly [CapiEvent];
+  readonly access_token: string;
+}
+
+export function capiEndpoint(pixelId: string): string {
+  return `https://graph.facebook.com/v19.0/${pixelId}/events`;
+}
+
+export interface BuildCapiViewContentParams {
+  readonly fbclid: string;
+  readonly landingUrl: string;
+  readonly capiToken: string;
+  readonly request: Request;
+  readonly fbclidTs?: number;
+  readonly eventId?: string;
+}
+
+export interface ViewContentParams extends BuildCapiViewContentParams {
+  readonly pixelId: string;
+}
+
+export function buildCapiViewContent({
+  fbclid,
+  landingUrl,
+  capiToken,
+  request,
+  fbclidTs,
+  eventId,
+}: BuildCapiViewContentParams): CapiPayload | undefined {
+  if (fbclid === "") return undefined;
+
+  const now = Date.now();
+  const fbc = `fb.1.${fbclidTs ?? now}.${fbclid}`;
+
+  return {
+    data: [
+      {
+        event_name: "ViewContent",
+        action_source: "website",
+        event_time: Math.floor(now / 1000),
+        event_source_url: landingUrl,
+        ...(eventId !== undefined ? { event_id: eventId } : {}),
+        user_data: {
+          fbc,
+          client_ip_address: request.headers.get("CF-Connecting-IP") ?? "",
+          client_user_agent: request.headers.get("User-Agent") ?? "",
+        },
+      },
+    ],
+    access_token: capiToken,
+  };
+}
+
+export async function sendCapiViewContent(params: ViewContentParams): Promise<void> {
+  const payload = buildCapiViewContent(params);
+  if (payload === undefined) return;
+
+  const rRes = await exception2Result(() =>
+    fetch(capiEndpoint(params.pixelId), {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    })
+  );
+
+  if (rRes.isErr()) {
+    console.error("[capi] network error sending ViewContent", rRes.Err());
+    return;
+  }
+  const resp = rRes.Ok();
+  if (resp.ok === false) {
+    const rBody = await exception2Result(() => resp.text());
+    console.error("[capi] non-ok response from Meta", resp.status, rBody.isOk() ? rBody.Ok() : String(rBody.Err()));
+  }
+}
+
+export function buildCapiPayload(request: Request, capiToken: string): CapiPayload | undefined {
+  const url = URI.from(request.url);
+  const fbclid = url.getParam("fbclid");
+  if (fbclid === undefined) return undefined;
+
+  const now = Date.now();
+  const fbc = `fb.1.${now}.${fbclid}`;
+  const eventSourceUrl = BuildURI.from(request.url).delParam("fbclid").toString();
+
+  return {
+    data: [
+      {
+        event_name: "PageView",
+        action_source: "website",
+        event_time: Math.floor(now / 1000),
+        event_source_url: eventSourceUrl,
+        user_data: {
+          fbc,
+          client_ip_address: request.headers.get("CF-Connecting-IP") ?? "",
+          client_user_agent: request.headers.get("User-Agent") ?? "",
+        },
+      },
+    ],
+    access_token: capiToken,
+  };
+}
+
+export async function sendCapiPageView(request: Request, capiToken: string, pixelId: string): Promise<void> {
+  const payload = buildCapiPayload(request, capiToken);
+  if (payload === undefined) return;
+
+  const rRes = await exception2Result(() =>
+    fetch(capiEndpoint(pixelId), {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    })
+  );
+
+  if (rRes.isErr()) {
+    console.error("[capi] network error sending PageView", rRes.Err());
+    return;
+  }
+  const resp = rRes.Ok();
+  if (resp.ok === false) {
+    const rBody = await exception2Result(() => resp.text());
+    console.error("[capi] non-ok response from Meta", resp.status, rBody.isOk() ? rBody.Ok() : String(rBody.Err()));
+  }
+}

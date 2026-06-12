@@ -1,0 +1,308 @@
+name: "deploy-vibes-diy"
+description: "Deploy vibes-diy"
+inputs:
+  CLOUDFLARE_API_TOKEN:
+    description: "Cloudflare API token for authentication"
+    required: true
+  CLOUDFLARE_ACCOUNT_ID:
+    description: "Cloudflare account ID"
+    required: true
+  CLOUDFLARE_ENV:
+    description: "Cloudflare environment (e.g., production, staging)"
+    required: true
+  CLOUD_SESSION_TOKEN_PUBLIC:
+    description: "Cloud session token for public access"
+    required: true
+  CLERK_PUBLISHABLE_KEY:
+    description: "Clerk publishable key for authentication"
+    required: true
+  DEVICE_ID_CA_PRIV_KEY:
+    description: "Device ID CA private key"
+    required: true
+  DEVICE_ID_CA_CERT:
+    description: "Device ID CA certificate"
+    required: true
+  FP_VERSION:
+    description: "Fireproof version"
+    required: true
+  FPCLOUD_URL:
+    description: "Fireproof cloud URL"
+    required: true
+  RESEND_API_KEY:
+    description: "Resend API key for email"
+    required: true
+  VIBES_DIY_PUBLIC_BASE_URL:
+    description: "Public base URL for vibes.diy"
+    required: true
+  CLOUD_SESSION_TOKEN_SECRET:
+    description: "Cloud session token secret"
+    required: true
+  CLOUD_SESSION_TOKEN_ISSUER:
+    description: "Cloud session token issuer"
+    required: false
+  VIBES_DIY_FROM_EMAIL:
+    description: "From email address for vibes.diy"
+    required: true
+  VIBES_SVC_HOSTNAME_BASE:
+    description: "Hostname base for vibes service"
+    required: true
+  VIBES_SVC_PROTOCOL:
+    description: "Protocol for vibes service"
+    required: true
+  LLM_BACKEND_API_KEY:
+    description: "API key for LLM backend"
+    required: true
+  DB_FLAVOUR:
+    description: "Database flavour: sqlite (D1) or pg (Neon)"
+    required: false
+    default: "sqlite"
+  NEON_DATABASE_URL:
+    description: "Neon database connection URL for runtime (app role, required when DB_FLAVOUR=pg)"
+    required: false
+  NEON_DATABASE_ADMIN_URL:
+    description: "Neon database connection URL for schema migrations (admin role, required when DB_FLAVOUR=pg)"
+    required: false
+  MAX_APP_SLUG_PER_USER_ID:
+    description: "Maximum number of app slugs per user ID"
+    required: false
+  LLM_BACKEND_URL:
+    description: "URL for LLM backend API endpoint"
+    required: false
+    default: "https://openrouter.ai/api/v1/chat/completions"
+  CLERK_PUB_JWT_URL:
+    description: "Clerk JWKS endpoint URL for JWT verification"
+    required: false
+  WORKSPACE_NPM_URL:
+    description: "URL for self-hosted workspace npm packages (e.g. https://prod-v2.vibesdiy.net/vibe-pkg/)"
+    required: true
+  VIBES_DIY_API_URL:
+    description: "Public API URL for vibes.diy WebSocket connection (e.g. https://vibes.diy/api)"
+    required: false
+  PRODIA_TOKEN:
+    description: "Prodia API token for image generation"
+    required: false
+  DISCORD_WEBHOOK_URL:
+    description: "Discord webhook URL for site-activity notifications (queue worker)"
+    required: false
+  CLERK_WEBHOOK_SECRET:
+    description: "Svix signing secret for verifying Clerk webhook payloads (POST /webhooks/clerk)"
+    required: false
+  META_CAPI_TOKEN:
+    description: "Meta Conversions API token for server-side pixel events"
+    required: false
+  META_PIXEL_ID:
+    description: "Meta pixel ID for CAPI endpoint construction"
+    required: false
+  META_ACCESS_TOKEN:
+    description: "Meta Graph API access token for campaign health report"
+    required: false
+  META_AD_ACCOUNT_ID:
+    description: "Meta Ad Account ID for campaign health report (e.g. act_123456)"
+    required: false
+  POSTHOG_KEY:
+    description: "PostHog project API key (client-side, public)"
+    required: false
+  POSTHOG_HOST:
+    description: "PostHog ingest host (e.g. https://us.i.posthog.com)"
+    required: false
+
+runs:
+  using: "composite"
+  steps:
+    - name: Build vibes.diy
+      working-directory: vibes.diy/pkg
+      shell: bash
+      run: |
+        pnpm run build
+
+    - name: Deploy vibes.diy
+      working-directory: vibes.diy/pkg
+      shell: bash
+      env:
+        # need for drizzle
+        CLOUDFLARE_API_TOKEN: ${{ inputs.CLOUDFLARE_API_TOKEN }}
+        CLOUDFLARE_ACCOUNT_ID: ${{ inputs.CLOUDFLARE_ACCOUNT_ID }}
+        CLOUDFLARE_ENV: ${{ inputs.CLOUDFLARE_ENV }}
+        CLOUD_SESSION_TOKEN_PUBLIC: ${{ inputs.CLOUD_SESSION_TOKEN_PUBLIC }}
+        CLERK_PUBLISHABLE_KEY: ${{ inputs.CLERK_PUBLISHABLE_KEY }}
+        DEVICE_ID_CA_PRIV_KEY: ${{ inputs.DEVICE_ID_CA_PRIV_KEY }}
+        DEVICE_ID_CA_CERT: ${{ inputs.DEVICE_ID_CA_CERT }}
+        FP_VERSION: ${{ inputs.FP_VERSION }}
+        FPCLOUD_URL: ${{ inputs.FPCLOUD_URL }}
+        RESEND_API_KEY: ${{ inputs.RESEND_API_KEY }}
+        VIBES_DIY_PUBLIC_BASE_URL: ${{ inputs.VIBES_DIY_PUBLIC_BASE_URL }}
+        CLOUD_SESSION_TOKEN_SECRET: ${{ inputs.CLOUD_SESSION_TOKEN_SECRET }}
+        CLOUD_SESSION_TOKEN_ISSUER: ${{ inputs.CLOUD_SESSION_TOKEN_ISSUER }}
+        VIBES_DIY_FROM_EMAIL: ${{ inputs.VIBES_DIY_FROM_EMAIL }}
+        VIBES_SVC_HOSTNAME_BASE: ${{ inputs.VIBES_SVC_HOSTNAME_BASE }}
+        VIBES_SVC_PROTOCOL: ${{ inputs.VIBES_SVC_PROTOCOL }}
+        LLM_BACKEND_API_KEY: ${{ inputs.LLM_BACKEND_API_KEY }}
+        LLM_BACKEND_URL: ${{ inputs.LLM_BACKEND_URL }}
+        CLERK_PUB_JWT_URL: ${{ inputs.CLERK_PUB_JWT_URL }}
+        DB_FLAVOUR: ${{ inputs.DB_FLAVOUR }}
+        NEON_DATABASE_URL: ${{ inputs.NEON_DATABASE_URL }}
+        NEON_DATABASE_ADMIN_URL: ${{ inputs.NEON_DATABASE_ADMIN_URL }}
+        MAX_APP_SLUG_PER_USER_ID: ${{ inputs.MAX_APP_SLUG_PER_USER_ID }}
+        WORKSPACE_NPM_URL: ${{ inputs.WORKSPACE_NPM_URL }}?v=${{ github.sha }}
+        VIBES_DIY_API_URL: ${{ inputs.VIBES_DIY_API_URL }}
+        PRODIA_TOKEN: ${{ inputs.PRODIA_TOKEN }}
+        META_CAPI_TOKEN: ${{ inputs.META_CAPI_TOKEN }}
+        META_PIXEL_ID: ${{ inputs.META_PIXEL_ID }}
+        META_ACCESS_TOKEN: ${{ inputs.META_ACCESS_TOKEN }}
+        META_AD_ACCOUNT_ID: ${{ inputs.META_AD_ACCOUNT_ID }}
+        DISCORD_WEBHOOK_URL: ${{ inputs.DISCORD_WEBHOOK_URL }}
+        CLERK_WEBHOOK_SECRET: ${{ inputs.CLERK_WEBHOOK_SECRET }}
+        POSTHOG_KEY: ${{ inputs.POSTHOG_KEY }}
+        POSTHOG_HOST: ${{ inputs.POSTHOG_HOST }}
+
+      run: |
+        if [ "$DB_FLAVOUR" = "pg" ]; then
+          NEON_DATABASE_URL="$NEON_DATABASE_ADMIN_URL" pnpm run drizzle:neon
+        else
+          pnpm run drizzle:d1-remote
+        fi
+        SECRETS=$(pnpm exec core-cli writeEnv --out - --json \
+          --fromEnv CLOUD_SESSION_TOKEN_PUBLIC \
+          --fromEnv CLERK_PUBLISHABLE_KEY \
+          --fromEnv DEVICE_ID_CA_PRIV_KEY \
+          --fromEnv DEVICE_ID_CA_CERT \
+          --fromEnv FP_VERSION \
+          --fromEnv FPCLOUD_URL \
+          --fromEnv RESEND_API_KEY \
+          --fromEnv VIBES_DIY_PUBLIC_BASE_URL \
+          --fromEnv CLOUD_SESSION_TOKEN_SECRET \
+          --fromEnv CLOUD_SESSION_TOKEN_ISSUER \
+          --fromEnv VIBES_DIY_FROM_EMAIL \
+          --fromEnv VIBES_SVC_HOSTNAME_BASE \
+          --fromEnv VIBES_SVC_PROTOCOL \
+          --fromEnv LLM_BACKEND_API_KEY \
+          --fromEnv LLM_BACKEND_URL \
+          --fromEnv CLERK_PUB_JWT_URL \
+          --fromEnv DB_FLAVOUR \
+          --fromEnv NEON_DATABASE_URL \
+          --fromEnv MAX_APP_SLUG_PER_USER_ID \
+          --fromEnv WORKSPACE_NPM_URL \
+          --fromEnv VIBES_DIY_API_URL \
+          --fromEnv PRODIA_TOKEN \
+          --fromEnv META_CAPI_TOKEN \
+          --fromEnv META_PIXEL_ID \
+          --fromEnv META_ACCESS_TOKEN \
+          --fromEnv META_AD_ACCOUNT_ID \
+          --fromEnv DISCORD_WEBHOOK_URL \
+          --fromEnv CLERK_WEBHOOK_SECRET \
+          ${POSTHOG_KEY:+--fromEnv POSTHOG_KEY} \
+          ${POSTHOG_HOST:+--fromEnv POSTHOG_HOST})
+        for attempt in 1 2 3; do
+          echo "$SECRETS" | pnpm exec wrangler -c ./wrangler.toml secret --env ${{inputs.CLOUDFLARE_ENV}} bulk && break
+          if [ "$attempt" -eq 3 ]; then echo "secret bulk failed after 3 attempts"; exit 1; fi
+          echo "secret bulk attempt $attempt failed (Cloudflare 10021?), retrying in 15s..."
+          sleep 15
+        done
+        for attempt in 1 2 3; do
+          pnpm run deploy:${{inputs.CLOUDFLARE_ENV}} && break
+          if [ "$attempt" -eq 3 ]; then echo "wrangler deploy failed after 3 attempts"; exit 1; fi
+          echo "wrangler deploy attempt $attempt failed, retrying in 15s..."
+          sleep 15
+        done
+
+    - name: Upload startup profile (on failure)
+      if: failure()
+      uses: actions/upload-artifact@v4
+      with:
+        name: worker-startup-profile
+        path: vibes.diy/pkg/.wrangler/tmp/startup-profile-*/
+        include-hidden-files: true
+        if-no-files-found: ignore
+        retention-days: 7
+
+    - name: Deploy api-queue consumer
+      if: ${{ inputs.CLOUDFLARE_ENV == 'prod' }}
+      working-directory: vibes.diy/api/queue
+      shell: bash
+      env:
+        CLOUDFLARE_API_TOKEN: ${{ inputs.CLOUDFLARE_API_TOKEN }}
+        CLOUDFLARE_ACCOUNT_ID: ${{ inputs.CLOUDFLARE_ACCOUNT_ID }}
+        CLOUDFLARE_ENV: ${{ inputs.CLOUDFLARE_ENV }}
+        CLOUD_SESSION_TOKEN_PUBLIC: ${{ inputs.CLOUD_SESSION_TOKEN_PUBLIC }}
+        CLERK_PUBLISHABLE_KEY: ${{ inputs.CLERK_PUBLISHABLE_KEY }}
+        DEVICE_ID_CA_PRIV_KEY: ${{ inputs.DEVICE_ID_CA_PRIV_KEY }}
+        DEVICE_ID_CA_CERT: ${{ inputs.DEVICE_ID_CA_CERT }}
+        FP_VERSION: ${{ inputs.FP_VERSION }}
+        FPCLOUD_URL: ${{ inputs.FPCLOUD_URL }}
+        RESEND_API_KEY: ${{ inputs.RESEND_API_KEY }}
+        VIBES_DIY_PUBLIC_BASE_URL: ${{ inputs.VIBES_DIY_PUBLIC_BASE_URL }}
+        CLOUD_SESSION_TOKEN_SECRET: ${{ inputs.CLOUD_SESSION_TOKEN_SECRET }}
+        CLOUD_SESSION_TOKEN_ISSUER: ${{ inputs.CLOUD_SESSION_TOKEN_ISSUER }}
+        VIBES_DIY_FROM_EMAIL: ${{ inputs.VIBES_DIY_FROM_EMAIL }}
+        VIBES_SVC_HOSTNAME_BASE: ${{ inputs.VIBES_SVC_HOSTNAME_BASE }}
+        VIBES_SVC_PROTOCOL: ${{ inputs.VIBES_SVC_PROTOCOL }}
+        LLM_BACKEND_API_KEY: ${{ inputs.LLM_BACKEND_API_KEY }}
+        LLM_BACKEND_URL: ${{ inputs.LLM_BACKEND_URL }}
+        CLERK_PUB_JWT_URL: ${{ inputs.CLERK_PUB_JWT_URL }}
+        DB_FLAVOUR: ${{ inputs.DB_FLAVOUR }}
+        NEON_DATABASE_URL: ${{ inputs.NEON_DATABASE_URL }}
+        MAX_APP_SLUG_PER_USER_ID: ${{ inputs.MAX_APP_SLUG_PER_USER_ID }}
+        PRODIA_TOKEN: ${{ inputs.PRODIA_TOKEN }}
+        DISCORD_WEBHOOK_URL: ${{ inputs.DISCORD_WEBHOOK_URL }}
+        CLERK_WEBHOOK_SECRET: ${{ inputs.CLERK_WEBHOOK_SECRET }}
+      run: |
+        SECRETS=$(pnpm exec core-cli writeEnv --out - --json \
+          --fromEnv CLOUD_SESSION_TOKEN_PUBLIC \
+          --fromEnv CLERK_PUBLISHABLE_KEY \
+          --fromEnv DEVICE_ID_CA_PRIV_KEY \
+          --fromEnv DEVICE_ID_CA_CERT \
+          --fromEnv FP_VERSION \
+          --fromEnv FPCLOUD_URL \
+          --fromEnv RESEND_API_KEY \
+          --fromEnv VIBES_DIY_PUBLIC_BASE_URL \
+          --fromEnv CLOUD_SESSION_TOKEN_SECRET \
+          --fromEnv CLOUD_SESSION_TOKEN_ISSUER \
+          --fromEnv VIBES_DIY_FROM_EMAIL \
+          --fromEnv VIBES_SVC_HOSTNAME_BASE \
+          --fromEnv VIBES_SVC_PROTOCOL \
+          --fromEnv LLM_BACKEND_API_KEY \
+          --fromEnv LLM_BACKEND_URL \
+          --fromEnv CLERK_PUB_JWT_URL \
+          --fromEnv DB_FLAVOUR \
+          --fromEnv NEON_DATABASE_URL \
+          --fromEnv MAX_APP_SLUG_PER_USER_ID \
+          --fromEnv PRODIA_TOKEN \
+          --fromEnv DISCORD_WEBHOOK_URL \
+          --fromEnv CLERK_WEBHOOK_SECRET)
+        for attempt in 1 2 3; do
+          echo "$SECRETS" | pnpm exec wrangler -c ./wrangler.toml secret --env ${{inputs.CLOUDFLARE_ENV}} bulk && break
+          if [ "$attempt" -eq 3 ]; then echo "secret bulk failed after 3 attempts"; exit 1; fi
+          echo "secret bulk attempt $attempt failed (Cloudflare 10021?), retrying in 15s..."
+          sleep 15
+        done
+        for attempt in 1 2 3; do
+          pnpm run deploy -- --env ${{inputs.CLOUDFLARE_ENV}} && break
+          if [ "$attempt" -eq 3 ]; then echo "wrangler deploy failed after 3 attempts"; exit 1; fi
+          echo "wrangler deploy attempt $attempt failed, retrying in 15s..."
+          sleep 15
+        done
+
+    - name: Deploy logpush-etl worker
+      if: ${{ inputs.CLOUDFLARE_ENV == 'prod' || inputs.CLOUDFLARE_ENV == 'cli' }}
+      working-directory: vibes.diy/api/logpush-etl
+      shell: bash
+      env:
+        CLOUDFLARE_API_TOKEN: ${{ inputs.CLOUDFLARE_API_TOKEN }}
+        CLOUDFLARE_ACCOUNT_ID: ${{ inputs.CLOUDFLARE_ACCOUNT_ID }}
+        CLOUDFLARE_ENV: ${{ inputs.CLOUDFLARE_ENV }}
+        NEON_DATABASE_URL: ${{ inputs.NEON_DATABASE_URL }}
+      run: |
+        SECRETS=$(pnpm exec core-cli writeEnv --out - --json \
+          --fromEnv NEON_DATABASE_URL)
+        for attempt in 1 2 3; do
+          echo "$SECRETS" | pnpm exec wrangler -c ./wrangler.toml secret --env ${{inputs.CLOUDFLARE_ENV}} bulk && break
+          if [ "$attempt" -eq 3 ]; then echo "secret bulk failed after 3 attempts"; exit 1; fi
+          echo "secret bulk attempt $attempt failed (Cloudflare 10021?), retrying in 15s..."
+          sleep 15
+        done
+        for attempt in 1 2 3; do
+          pnpm run deploy -- --env ${{inputs.CLOUDFLARE_ENV}} && break
+          if [ "$attempt" -eq 3 ]; then echo "wrangler deploy failed after 3 attempts"; exit 1; fi
+          echo "wrangler deploy attempt $attempt failed, retrying in 15s..."
+          sleep 15
+        done

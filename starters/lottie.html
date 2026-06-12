@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lottie — After Effects JSON animation</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.12.2/lottie.min.js"></script>
+  <style>
+    body { margin: 0; height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1rem; background: #0c0c14; font-family: system-ui, sans-serif; color: #ddd; }
+    #anim { width: 320px; height: 320px; }
+    .row { display: flex; gap: 0.5rem; }
+    button { background: #222; color: #ddd; border: 1px solid #444; padding: 0.5rem 1rem; border-radius: 6px; cursor: pointer; }
+  </style>
+</head>
+<body>
+<div id="anim"></div>
+<div class="row">
+  <button id="play">Play</button>
+  <button id="pause">Pause</button>
+  <button id="stop">Stop</button>
+</div>
+<p style="color:#666;font-size:0.8rem">Loads a Lottie JSON from a CDN. Swap the path for your own After Effects export.</p>
+
+<script>
+const anim = lottie.loadAnimation({
+  container: document.getElementById('anim'),
+  renderer: 'svg',
+  loop: true,
+  autoplay: true,
+  // A public sample Lottie animation. Replace with any .json export.
+  path: 'https://cdn.jsdelivr.net/gh/airbnb/lottie-web@master/demo/gatin/data.json',
+});
+
+document.getElementById('play').onclick = () => anim.play();
+document.getElementById('pause').onclick = () => anim.pause();
+document.getElementById('stop').onclick = () => anim.stop();
+</script>
+</body>
+</html>

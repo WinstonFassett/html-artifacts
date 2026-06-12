@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Motion (motion.dev) — scroll + spring</title>
+  <style>
+    body { margin: 0; font-family: system-ui, sans-serif; background: #0c0c14; color: #eee; }
+    .hero { height: 100vh; display: flex; align-items: center; justify-content: center; }
+    .ball { width: 100px; height: 100px; border-radius: 50%; background: #4ade80; cursor: pointer; }
+    .scroller { height: 200vh; }
+    .reveal { max-width: 600px; margin: 40vh auto; padding: 2rem; background: #1a1a22; border-radius: 12px; }
+    h1 { font-size: 2rem; }
+  </style>
+</head>
+<body>
+<div class="hero">
+  <div class="ball" id="ball"></div>
+</div>
+<div class="scroller">
+  <div class="reveal" id="rev">
+    <h1>Scroll-triggered</h1>
+    <p>This card animates in on scroll. Click the ball above for a spring bounce.</p>
+  </div>
+</div>
+
+<script type="module">
+import { animate, scroll, inView } from 'https://cdn.jsdelivr.net/npm/motion@12/+esm';
+
+// Spring on click
+const ball = document.getElementById('ball');
+ball.addEventListener('click', () => {
+  animate(ball, { scale: [1, 1.6, 1], rotate: [0, 360] }, { type: 'spring', stiffness: 300 });
+});
+
+// Scroll-linked progress on the ball
+scroll((progress) => {
+  ball.style.background = `hsl(${140 + progress * 200}, 70%, 60%)`;
+});
+
+// Reveal on enter
+inView('#rev', (el) => {
+  animate(el, { opacity: [0, 1], y: [40, 0] }, { duration: 0.6 });
+});
+</script>
+</body>
+</html>

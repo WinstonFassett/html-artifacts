@@ -1,0 +1,23 @@
+import { defineConfig } from "vitest/config";
+
+export default defineConfig({
+  test: {
+    reporters: ["dot"],
+    projects: [
+      "vibes.diy/tests/app/vitest.config.ts",
+      "vibes.diy/tests/app/ssr/vitest.config.ts",
+      "vibes.diy/api/tests/vitest.config.ts",
+      "vibes.diy/api/impl/vitest.config.ts",
+      "vibes.diy/pkg/test/vitest.config.ts",
+      "call-ai/v2/vitest.browser.config.ts",
+      "call-ai/v2/vitest.node.config.ts",
+      "call-ai/tests/unit/vitest.config.ts",
+      "call-ai/tests/integration/vitest.config.ts",
+      "use-vibes/tests/vitest.config.ts",
+      "use-vibes/tests/vitest.node.config.ts",
+      "prompts/tests/vitest.node.config.ts",
+      "prompts/tests/vitest.browser.config.ts",
+      "vibes-diy/vitest.config.ts",
+    ],
+  },
+});

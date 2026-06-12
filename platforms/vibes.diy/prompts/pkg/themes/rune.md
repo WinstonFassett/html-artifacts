@@ -1,0 +1,32 @@
+---
+name: Rune Interface
+typography:
+  body-md:
+    fontFamily: Cormorant Garamond
+    fontSize: 1rem
+    fontWeight: "400"
+---
+
+## Brand & Style
+
+Rune Interface design system. A clean, structured theme with Cinzel and Cormorant Garamond typography. Use this design system\'s color tokens, spacing, and typographic choices consistently across all generated components. This theme **respects the visitor's system color scheme** — light by default, with a dark variant that auto-applies on `@media (prefers-color-scheme: dark)`. Apply both color sets via CSS variables in a `<style>` block; never hard-code one mode only.
+
+## Colors
+
+- **abyss** (#020406): Use for supporting UI elements.
+- **abyss-blue** (#05101a): Use for supporting UI elements.
+- **cyan-neon** (#00ffcc): Use for supporting UI elements.
+- **cyan-dim** (#005f52): Use for secondary/muted content.
+- **cyan-text** (#ccfffa): Use for text content.
+- **purple-magic** (#9d4eff): Use for supporting UI elements.
+- **stone** (#0d161f): Use for supporting UI elements.
+- **stone-border** (#1c2b38): Use for borders and dividers.
+
+## Typography
+
+Load fonts from Google Fonts: Cinzel, Cormorant Garamond. Use display=optional.
+Primary body font: 'Cormorant Garamond', Georgia, serif.
+
+## Components
+
+Apply the color tokens and typography consistently to all interactive elements (buttons, inputs, cards, modals). Ensure sufficient contrast between text and background colors for accessibility.
