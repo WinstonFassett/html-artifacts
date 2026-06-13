@@ -1,0 +1,754 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OpenAI WebRTC Audio Session</title>
+  <style>
+  * {
+    box-sizing: border-box;
+  }
+
+  body {
+    font-family: Helvetica, Arial, sans-serif;
+    margin: 0;
+    padding: 20px;
+    background: #f5f5f5;
+  }
+
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .audio-indicator {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #ccc;
+    margin-right: 10px;
+    vertical-align: middle;
+  }
+
+  .audio-indicator.active {
+    background: #4CAF50;
+    animation: pulse 1s infinite;
+  }
+
+  @keyframes pulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.5; }
+    100% { opacity: 1; }
+  }
+
+  .controls {
+    margin: 20px 0;
+  }
+
+  .form-group {
+    margin-bottom: 15px;
+  }
+
+  label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+  }
+
+  input, select, textarea {
+    width: 100%;
+    padding: 8px;
+    font-size: 16px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+  }
+
+  textarea {
+    font-family: inherit;
+    min-height: 200px;
+    resize: vertical;
+    overflow-x: hidden;
+  }
+
+  details.document-details {
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 10px;
+    margin-bottom: 15px;
+  }
+
+  details.document-details summary {
+    cursor: pointer;
+    font-weight: bold;
+  }
+
+  details.document-details .form-group {
+    margin-top: 10px;
+    margin-bottom: 0;
+  }
+
+  .document-hint {
+    font-weight: normal;
+    color: #666;
+    font-size: 0.9em;
+  }
+
+  button {
+    background: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    font-size: 16px;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+
+  button:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+  }
+
+  .status {
+    margin-top: 10px;
+    padding: 10px;
+    border-radius: 4px;
+  }
+
+  .error {
+    background: #fee;
+    color: #c00;
+  }
+
+  .success {
+    background: #efe;
+    color: #0a0;
+  }
+
+  .stats-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin: 20px 0;
+  }
+
+  @media (max-width: 1000px) {
+    .stats-container {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .stats-box {
+    background: #fff;
+    border-radius: 4px;
+    padding: 20px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  }
+
+  .transcript-box {
+    background: #0f172a;
+    color: #f8fafc;
+    border-radius: 4px;
+    padding: 18px 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.12);
+  }
+
+  .transcript-box h2 {
+    margin: 0 0 10px 0;
+    padding-bottom: 10px;
+    border-bottom: 1px solid rgba(255,255,255,0.15);
+  }
+
+  .transcript-value {
+    font-size: 1.15rem;
+    line-height: 1.5;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+
+  .transcript-placeholder {
+    color: #94a3b8;
+    font-style: italic;
+  }
+
+  .stats-box h2 {
+    margin: 0 0 15px 0;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #eee;
+  }
+
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+
+  .stats-section {
+    padding: 10px;
+    background: #f8f9fa;
+    border-radius: 4px;
+  }
+
+  .stats-section h3 {
+    margin: 0 0 10px 0;
+    font-size: 1.1em;
+    color: #495057;
+  }
+
+  .stats-section div {
+    margin: 5px 0;
+    font-size: 0.95em;
+  }
+
+  .stats-section span {
+    font-weight: bold;
+    color: #007bff;
+  }
+
+  .events-container {
+    margin-top: 20px;
+    background: #fff;
+    border-radius: 4px;
+    padding: 15px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  }
+
+  .event-entry {
+    font-family: monospace;
+    white-space: pre;
+    padding: 10px;
+    margin: 10px 0;
+    background: #f8f9fa;
+    border-radius: 4px;
+    border-left: 4px solid #007bff;
+  }
+
+  .event-timestamp {
+    color: #666;
+    font-size: 0.9em;
+    margin-bottom: 5px;
+  }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>
+      <span id="audioIndicator" class="audio-indicator"></span>
+      OpenAI WebRTC Audio Session
+    </h1>
+
+    <div class="controls">
+      <div class="form-group">
+        <label for="tokenInput">OpenAI API Token</label>
+        <input type="password" id="tokenInput">
+      </div>
+      <div class="form-group">
+        <label for="voiceSelect">Voice</label>
+        <select id="voiceSelect">
+          <option value="ash">Ash</option>
+          <option value="ballad">Ballad</option>
+          <option value="coral">Coral</option>
+          <option value="sage">Sage</option>
+          <option value="verse">Verse</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="modelSelect">Model</label>
+        <select id="modelSelect">
+          <option value="gpt-realtime-2">gpt-realtime-2</option>
+          <option value="gpt-realtime-1.5">gpt-realtime-1.5</option>
+          <option value="gpt-realtime-mini">gpt-realtime-mini</option>
+          <option value="gpt-realtime">gpt-realtime</option>
+        </select>
+      </div>
+      <details class="document-details">
+        <summary>Document context <span class="document-hint">(optional &mdash; paste text to talk about)</span></summary>
+        <div class="form-group">
+          <label for="documentInput">Paste a document here before starting the session and the model will be able to discuss it with you</label>
+          <textarea id="documentInput" placeholder="Paste your document text here..."></textarea>
+        </div>
+      </details>
+      <div class="form-group" style="display: flex; gap: 10px; flex-wrap: wrap;">
+        <button id="startButton">Start Session</button>
+        <button id="muteButton" disabled>Mute Mic</button>
+      </div>
+    </div>
+
+    <div id="status" class="status"></div>
+    
+    <div class="stats-container">
+      <div class="stats-box">
+        <div class="transcript-box">
+          <h2>Last transcript</h2>
+          <div id="lastTranscript" class="transcript-value transcript-placeholder">Waiting for the first response...</div>
+        </div>
+        <h2>Most recent interaction</h2>
+        <div class="stats-grid">
+          <div class="stats-section">
+            <h3>Input tokens</h3>
+            <div>Audio: <span id="currentAudioInputTokens">0</span></div>
+            <div>Text: <span id="currentTextInputTokens">0</span></div>
+            <div>Cached: <span id="currentCachedTokens">0</span></div>
+          </div>
+          <div class="stats-section">
+            <h3>Output tokens</h3>
+            <div>Audio: <span id="currentAudioOutputTokens">0</span></div>
+            <div>Text: <span id="currentTextOutputTokens">0</span></div>
+          </div>
+          <div class="stats-section">
+            <h3>Costs</h3>
+            <div>Input cost: <span id="currentInputCost">$0.00</span></div>
+            <div>Output cost: <span id="currentOutputCost">$0.00</span></div>
+            <div>Total cost: <span id="currentTotalCost">$0.00</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="stats-box">
+        <h2>Session total</h2>
+        <div class="stats-grid">
+          <div class="stats-section">
+            <h3>Input tokens</h3>
+            <div>Audio: <span id="totalAudioInputTokens">0</span></div>
+            <div>Text: <span id="totalTextInputTokens">0</span></div>
+            <div>Cached: <span id="totalCachedTokens">0</span></div>
+          </div>
+          <div class="stats-section">
+            <h3>Output tokens</h3>
+            <div>Audio: <span id="totalAudioOutputTokens">0</span></div>
+            <div>Text: <span id="totalTextOutputTokens">0</span></div>
+          </div>
+          <div class="stats-section">
+            <h3>Costs</h3>
+            <div>Input cost: <span id="totalInputCost">$0.00</span></div>
+            <div>Output cost: <span id="totalOutputCost">$0.00</span></div>
+            <div>Total cost: <span id="totalTotalCost">$0.00</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <p>I'm not 100% confident that these cost calculations are correct.</p>
+
+    <div class="events-container">
+      <h2>Session Events</h2>
+      <div id="events"></div>
+    </div>
+  </div>
+
+  <script type="module">
+// Track cumulative totals
+let sessionTotals = {
+  audioInputTokens: 0,
+  textInputTokens: 0,
+  cachedInputTokens: 0,
+  audioOutputTokens: 0,
+  textOutputTokens: 0,
+  inputCost: 0,
+  outputCost: 0,
+  totalCost: 0
+}
+
+async function createRealtimeSession(inStream, token, voice, model, documentText) {
+  const pc = new RTCPeerConnection()
+
+  pc.ontrack = e => {
+    const audio = new Audio()
+    audio.srcObject = e.streams[0]
+    audio.play()
+  }
+
+  pc.addTrack(inStream.getTracks()[0])
+
+  const dc = pc.createDataChannel("oai-events")
+
+  if (documentText) {
+    dc.addEventListener("open", () => {
+      dc.send(JSON.stringify({
+        type: 'conversation.item.create',
+        item: {
+          type: 'message',
+          role: 'user',
+          content: [{
+            type: 'input_text',
+            text: `The user has provided the following document. They want to have a conversation about it. Refer to it when answering their questions.\n\n<document>\n${documentText}\n</document>`
+          }]
+        }
+      }))
+    })
+  }
+  dc.addEventListener("message", (e) => {
+    try {
+      const eventData = JSON.parse(e.data)
+      
+      if (eventData.type === 'response.done' && eventData.response) {
+        updateLastTranscript(eventData)
+
+        if (eventData.response.usage) {
+          const usage = eventData.response.usage
+          const inputDetails = usage.input_token_details
+          const outputDetails = usage.output_token_details
+          const cachedDetails = inputDetails.cached_tokens_details
+
+          const currentStats = {
+            audioInputTokens: inputDetails.audio_tokens - cachedDetails.audio_tokens,
+            textInputTokens: inputDetails.text_tokens - cachedDetails.text_tokens,
+            cachedInputTokens: inputDetails.cached_tokens,
+            audioOutputTokens: outputDetails.audio_tokens,
+            textOutputTokens: outputDetails.text_tokens
+          }
+
+          const costs = calculateCosts(currentStats, model)
+          
+          // Update current interaction display
+          updateCurrentStats(currentStats, costs)
+          
+          // Update session totals
+          updateSessionTotals(currentStats, costs)
+        }
+      }
+      
+      addEventToLog(eventData)
+    } catch (err) {
+      console.error('Error parsing event data:', err)
+    }
+  })
+  
+  const offer = await pc.createOffer()
+  await pc.setLocalDescription(offer)
+  
+  const headers = {
+    Authorization: `Bearer ${token}`
+  }
+  
+  const opts = {
+    method: 'POST',
+    headers
+  }
+
+  const fd = new FormData()
+  fd.set('sdp', offer.sdp)
+  fd.set('session', JSON.stringify({
+    type: 'realtime',
+    model,
+    audio: {
+      output: {
+        voice
+      }
+    }
+  }))
+  opts.body = fd
+
+  const resp = await fetch('https://api.openai.com/v1/realtime/calls', opts)
+
+  if (!resp.ok) {
+    throw new Error(`OpenAI realtime handshake failed: ${resp.status} ${await resp.text()}`)
+  }
+
+  await pc.setRemoteDescription({
+    type: 'answer',
+    sdp: await resp.text()
+  })
+  
+  return pc
+}
+
+function calculateCosts({audioInputTokens, textInputTokens, cachedInputTokens, audioOutputTokens, textOutputTokens}, model) {
+  const pricing = getModelPricing(model)
+
+  const audioInputCost = audioInputTokens * pricing.audioInput
+  const cachedAudioInputCost = cachedInputTokens * pricing.cachedAudioInput
+  const textInputCost = textInputTokens * pricing.textInput
+  const cachedTextInputCost = cachedInputTokens * pricing.cachedTextInput
+  const audioOutputCost = audioOutputTokens * pricing.audioOutput
+  const textOutputCost = textOutputTokens * pricing.textOutput
+
+  return {
+    inputCost: audioInputCost + cachedAudioInputCost + textInputCost + cachedTextInputCost,
+    outputCost: audioOutputCost + textOutputCost,
+    totalCost: audioInputCost + cachedAudioInputCost + textInputCost + cachedTextInputCost + audioOutputCost + textOutputCost
+  }
+}
+
+function getModelPricing(model) {
+  const pricingByModel = {
+    'gpt-realtime-2': {
+      audioInput: 0.000032,
+      cachedAudioInput: 0.0000004,
+      textInput: 0.000004,
+      cachedTextInput: 0.0000004,
+      audioOutput: 0.000064,
+      textOutput: 0.000016
+    },
+    'gpt-realtime-1.5': {
+      audioInput: 0.000032,
+      cachedAudioInput: 0.0000004,
+      textInput: 0.000004,
+      cachedTextInput: 0.0000004,
+      audioOutput: 0.000064,
+      textOutput: 0.000016
+    },
+    'gpt-realtime-mini': {
+      audioInput: 0.00001,
+      cachedAudioInput: 0.0000003,
+      textInput: 0.0000006,
+      cachedTextInput: 0.00000006,
+      audioOutput: 0.000024,
+      textOutput: 0.0000024
+    },
+    'gpt-realtime': {
+      audioInput: 0.000032,
+      cachedAudioInput: 0.0000004,
+      textInput: 0.000004,
+      cachedTextInput: 0.0000004,
+      audioOutput: 0.000064,
+      textOutput: 0.000016
+    }
+  }
+
+  return pricingByModel[model] || pricingByModel['gpt-realtime-2']
+}
+
+function updateCurrentStats(stats, costs) {
+  document.getElementById('currentAudioInputTokens').textContent = stats.audioInputTokens.toLocaleString()
+  document.getElementById('currentTextInputTokens').textContent = stats.textInputTokens.toLocaleString()
+  document.getElementById('currentCachedTokens').textContent = stats.cachedInputTokens.toLocaleString()
+  document.getElementById('currentAudioOutputTokens').textContent = stats.audioOutputTokens.toLocaleString()
+  document.getElementById('currentTextOutputTokens').textContent = stats.textOutputTokens.toLocaleString()
+  document.getElementById('currentInputCost').textContent = `$${costs.inputCost.toFixed(4)}`
+  document.getElementById('currentOutputCost').textContent = `$${costs.outputCost.toFixed(4)}`
+  document.getElementById('currentTotalCost').textContent = `$${costs.totalCost.toFixed(4)}`
+}
+
+function updateSessionTotals(currentStats, costs) {
+  // Update running totals
+  sessionTotals.audioInputTokens += currentStats.audioInputTokens
+  sessionTotals.textInputTokens += currentStats.textInputTokens
+  sessionTotals.cachedInputTokens += currentStats.cachedInputTokens
+  sessionTotals.audioOutputTokens += currentStats.audioOutputTokens
+  sessionTotals.textOutputTokens += currentStats.textOutputTokens
+  sessionTotals.inputCost += costs.inputCost
+  sessionTotals.outputCost += costs.outputCost
+  sessionTotals.totalCost += costs.totalCost
+
+  // Update display
+  document.getElementById('totalAudioInputTokens').textContent = sessionTotals.audioInputTokens.toLocaleString()
+  document.getElementById('totalTextInputTokens').textContent = sessionTotals.textInputTokens.toLocaleString()
+  document.getElementById('totalCachedTokens').textContent = sessionTotals.cachedInputTokens.toLocaleString()
+  document.getElementById('totalAudioOutputTokens').textContent = sessionTotals.audioOutputTokens.toLocaleString()
+  document.getElementById('totalTextOutputTokens').textContent = sessionTotals.textOutputTokens.toLocaleString()
+  document.getElementById('totalInputCost').textContent = `$${sessionTotals.inputCost.toFixed(4)}`
+  document.getElementById('totalOutputCost').textContent = `$${sessionTotals.outputCost.toFixed(4)}`
+  document.getElementById('totalTotalCost').textContent = `$${sessionTotals.totalCost.toFixed(4)}`
+}
+
+function updateLastTranscript(eventData) {
+  const transcript = extractLastTranscript(eventData)
+  if (!transcript) {
+    return
+  }
+
+  lastTranscript.textContent = transcript
+  lastTranscript.classList.remove('transcript-placeholder')
+}
+
+function extractLastTranscript(eventData) {
+  const outputs = eventData?.response?.output
+  if (!Array.isArray(outputs)) {
+    return null
+  }
+
+  for (let i = outputs.length - 1; i >= 0; i -= 1) {
+    const item = outputs[i]
+    const content = item?.content
+    if (!Array.isArray(content)) {
+      continue
+    }
+
+    for (let j = content.length - 1; j >= 0; j -= 1) {
+      const part = content[j]
+      if (typeof part?.transcript === 'string' && part.transcript.trim()) {
+        return part.transcript.trim()
+      }
+    }
+  }
+
+  return null
+}
+
+function addEventToLog(eventData) {
+      const eventsContainer = document.getElementById('events');
+      const eventEntry = document.createElement('div');
+      eventEntry.className = 'event-entry';
+      
+      const timestamp = document.createElement('div');
+      timestamp.className = 'event-timestamp';
+      timestamp.textContent = new Date().toISOString();
+      
+      const content = document.createElement('div');
+      content.textContent = JSON.stringify(eventData, null, 2);
+      
+      eventEntry.appendChild(timestamp);
+      eventEntry.appendChild(content);
+      
+      // Add new events at the top
+      eventsContainer.insertBefore(eventEntry, eventsContainer.firstChild);
+      
+      // Optional: limit number of displayed events to prevent excessive DOM growth
+      while (eventsContainer.children.length > 50) {
+        eventsContainer.removeChild(eventsContainer.lastChild);
+      }
+    }
+
+    const startButton = document.getElementById('startButton')
+    const muteButton = document.getElementById('muteButton')
+    const tokenInput = document.getElementById('tokenInput')
+    const voiceSelect = document.getElementById('voiceSelect')
+    const modelSelect = document.getElementById('modelSelect')
+    const documentInput = document.getElementById('documentInput')
+    const status = document.getElementById('status')
+    const audioIndicator = document.getElementById('audioIndicator')
+    const lastTranscript = document.getElementById('lastTranscript')
+
+    let peerConnection = null
+    let audioContext = null
+    let audioStream = null
+    let micMuted = false
+
+    // Load saved API key on page load
+    document.addEventListener('DOMContentLoaded', () => {
+      const savedToken = localStorage.getItem('openai_api_key')
+      if (savedToken) {
+        tokenInput.value = savedToken
+      }
+
+      const savedModel = localStorage.getItem('openai_realtime_model')
+      if (savedModel) {
+        modelSelect.value = savedModel
+      }
+    })
+
+    // Audio visualization
+    function setupAudioVisualization(stream) {
+      audioContext = new AudioContext()
+      const source = audioContext.createMediaStreamSource(stream)
+      const analyzer = audioContext.createAnalyser()
+      analyzer.fftSize = 256
+      
+      source.connect(analyzer)
+      
+      const bufferLength = analyzer.frequencyBinCount
+      const dataArray = new Uint8Array(bufferLength)
+      
+      function updateIndicator() {
+        if (!audioContext) return
+        
+        analyzer.getByteFrequencyData(dataArray)
+        const average = dataArray.reduce((a, b) => a + b) / bufferLength
+        
+        audioIndicator.classList.toggle('active', average > 30)
+        requestAnimationFrame(updateIndicator)
+      }
+      
+      updateIndicator()
+    }
+
+    async function startSession() {
+      try {
+        // Save API key to localStorage
+        localStorage.setItem('openai_api_key', tokenInput.value)
+        localStorage.setItem('openai_realtime_model', modelSelect.value)
+        
+        status.className = 'status'
+        status.textContent = 'Requesting microphone access...'
+        
+        audioStream = await navigator.mediaDevices.getUserMedia({
+          audio: true,
+          video: false
+        })
+        
+        setupAudioVisualization(audioStream)
+        
+        status.textContent = 'Establishing connection...'
+        
+        peerConnection = await createRealtimeSession(
+          audioStream,
+          tokenInput.value,
+          voiceSelect.value,
+          modelSelect.value,
+          documentInput.value.trim()
+        )
+
+        status.className = 'status success'
+        status.textContent = 'Session established successfully!'
+        startButton.textContent = 'Stop Session'
+        muteButton.disabled = false
+        muteButton.textContent = 'Mute Mic'
+        micMuted = false
+        
+      } catch (err) {
+        status.className = 'status error'
+        status.textContent = `Error: ${err.message}`
+        console.error('Session error:', err)
+        stopSession()
+      }
+    }
+
+    function stopSession() {
+      if (peerConnection) {
+        peerConnection.close()
+        peerConnection = null
+      }
+      
+      if (audioContext) {
+        audioContext.close()
+        audioContext = null
+      }
+      
+      if (audioStream) {
+        audioStream.getTracks().forEach(track => track.stop())
+        audioStream = null
+      }
+      
+      audioIndicator.classList.remove('active')
+      startButton.textContent = 'Start Session'
+      muteButton.disabled = true
+      muteButton.textContent = 'Mute Mic'
+      micMuted = false
+    }
+
+    function toggleMicMute() {
+      if (!audioStream) {
+        return
+      }
+
+      micMuted = !micMuted
+      audioStream.getAudioTracks().forEach(track => {
+        track.enabled = !micMuted
+      })
+
+      muteButton.textContent = micMuted ? 'Unmute Mic' : 'Mute Mic'
+    }
+
+    startButton.addEventListener('click', () => {
+      if (peerConnection) {
+        stopSession()
+      } else {
+        if (!tokenInput.value) {
+          status.className = 'status error'
+          status.textContent = 'Please enter an API token'
+          return
+        }
+        startSession()
+      }
+    })
+
+    muteButton.addEventListener('click', toggleMicMute)
+
+    // Cleanup on page unload
+    window.addEventListener('beforeunload', stopSession)
+  </script>
+</body>
+</html>

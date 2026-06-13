@@ -214,6 +214,36 @@ const artifacts = [
   { name: "mermaid-viewer (bonomani)", path: "examples/interactive/mermaid-viewer-bonomani.html", tags: ["diagram", "interactive", "app"], source: "github", loading: "esm" },
   { name: "mermaid-viewer (KevinOBytes)", path: "examples/interactive/mermaid-viewer-kevinobytes.html", tags: ["diagram", "interactive"], source: "github", loading: "esm" },
   { name: "d3-graphviz-basic", path: "examples/interactive/d3-graphviz-basic.html", tags: ["diagram", "viz"], source: "github", loading: "script" },
+  // Simon Willison's tools — real, widely-used LLM-generated single-file tools (tools.simonwillison.net)
+  { name: "ocr", path: "examples/simonw-tools/ocr.html", tags: ["tool", "image"], source: "simonw", loading: "esm" },
+  { name: "qr", path: "examples/simonw-tools/qr.html", tags: ["tool"], source: "simonw", loading: "script" },
+  { name: "qr-code-generator", path: "examples/simonw-tools/qr-code-generator.html", tags: ["tool"], source: "simonw", loading: "script" },
+  { name: "haiku (LLM-powered)", path: "examples/simonw-tools/haiku.html", tags: ["tool", "ai", "llm"], source: "simonw", loading: "esm" },
+  { name: "omit-needless-words (LLM)", path: "examples/simonw-tools/omit-needless-words.html", tags: ["tool", "ai", "llm"], source: "simonw", loading: "esm" },
+  { name: "gemini-chat (LLM)", path: "examples/simonw-tools/gemini-chat.html", tags: ["tool", "ai", "llm"], source: "simonw", loading: "esm" },
+  { name: "openai-webrtc (LLM voice)", path: "examples/simonw-tools/openai-webrtc.html", tags: ["tool", "ai", "llm", "audio"], source: "simonw", loading: "esm" },
+  { name: "image-to-svg", path: "examples/simonw-tools/image-to-svg.html", tags: ["tool", "image"], source: "simonw", loading: "script" },
+  { name: "json-to-yaml", path: "examples/simonw-tools/json-to-yaml.html", tags: ["tool"], source: "simonw", loading: "script" },
+  { name: "json-diff", path: "examples/simonw-tools/json-diff.html", tags: ["tool"], source: "simonw", loading: "script" },
+  { name: "text-diff", path: "examples/simonw-tools/text-diff.html", tags: ["tool"], source: "simonw", loading: "script" },
+  { name: "markdown-math", path: "examples/simonw-tools/markdown-math.html", tags: ["tool"], source: "simonw", loading: "script" },
+  { name: "word-counter", path: "examples/simonw-tools/word-counter.html", tags: ["tool"], source: "simonw", loading: "script" },
+  { name: "encrypt", path: "examples/simonw-tools/encrypt.html", tags: ["tool"], source: "simonw", loading: "script" },
+  { name: "audio-spectrum", path: "examples/simonw-tools/audio-spectrum.html", tags: ["tool", "audio", "interactive"], source: "simonw", loading: "esm" },
+  { name: "speech-synthesis", path: "examples/simonw-tools/speech-synthesis.html", tags: ["tool", "audio"], source: "simonw", loading: "esm" },
+  { name: "minesweeper", path: "examples/simonw-tools/minesweeper.html", tags: ["game", "interactive"], source: "simonw", loading: "script" },
+  { name: "pomodoro", path: "examples/simonw-tools/pomodoro.html", tags: ["tool", "interactive"], source: "simonw", loading: "script" },
+  { name: "gradient-card", path: "examples/simonw-tools/gradient-card.html", tags: ["tool", "design"], source: "simonw", loading: "script" },
+  { name: "animated-word-cloud", path: "examples/simonw-tools/animated-word-cloud.html", tags: ["viz", "animation"], source: "simonw", loading: "script" },
+  { name: "svg-render", path: "examples/simonw-tools/svg-render.html", tags: ["tool"], source: "simonw", loading: "script" },
+  { name: "flexbox-playground", path: "examples/simonw-tools/flexbox-playground.html", tags: ["tool", "interactive"], source: "simonw", loading: "script" },
+  { name: "box-shadow", path: "examples/simonw-tools/box-shadow.html", tags: ["tool", "design"], source: "simonw", loading: "script" },
+  { name: "sqlite-wasm", path: "examples/simonw-tools/sqlite-wasm.html", tags: ["data", "tool"], source: "simonw", loading: "esm" },
+  { name: "pyodide-repl (Python)", path: "examples/simonw-tools/pyodide-repl.html", tags: ["tool", "python"], source: "simonw", loading: "esm" },
+  { name: "numpy-pyodide-lab (Python)", path: "examples/simonw-tools/numpy-pyodide-lab.html", tags: ["tool", "python", "data"], source: "simonw", loading: "script" },
+  { name: "micropython", path: "examples/simonw-tools/micropython.html", tags: ["tool", "python"], source: "simonw", loading: "esm" },
+  { name: "quickjs", path: "examples/simonw-tools/quickjs.html", tags: ["tool"], source: "simonw", loading: "esm" },
+  { name: "v86 (x86 emulator!)", path: "examples/simonw-tools/v86.html", tags: ["interactive", "wasm"], source: "simonw", loading: "esm" },
 ];
 
 const ALL_TAGS = [...new Set(artifacts.flatMap(a => a.tags))].sort();
@@ -321,6 +351,18 @@ function openLightbox(artifact) {
   lb.classList.add('open');
 }
 
+// Lazy-load iframe previews only when scrolled near the viewport — with ~150
+// cards, eager-loading every iframe is slow and noisy. Assign real src on enter.
+const lazyObserver = new IntersectionObserver((entries) => {
+  for (const e of entries) {
+    if (e.isIntersecting) {
+      const ifr = e.target;
+      if (!ifr.src && ifr.dataset.src) ifr.src = ifr.dataset.src;
+      lazyObserver.unobserve(ifr);
+    }
+  }
+}, { rootMargin: '300px' });
+
 function buildGrid() {
   const grid = document.getElementById('grid');
   artifacts.forEach(a => {
@@ -335,9 +377,8 @@ function buildGrid() {
 
     const iframe = document.createElement('iframe');
     iframe.className = 'preview';
-    iframe.src = a.path;
+    iframe.dataset.src = a.path;   // lazy: real src assigned by IntersectionObserver
     iframe.sandbox = 'allow-scripts allow-same-origin';
-    iframe.loading = 'lazy';
 
     const overlay = document.createElement('div');
     overlay.className = 'preview-overlay';
@@ -349,6 +390,7 @@ function buildGrid() {
     };
     iframe.addEventListener('load', scaleIframe);
     new ResizeObserver(scaleIframe).observe(wrap);
+    lazyObserver.observe(iframe);
 
     if (a.loading) {
       const badge = document.createElement('span');

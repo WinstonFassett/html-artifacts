@@ -318,6 +318,7 @@ The key insight: **any *runtime* React library works no-build via esm.sh + esm.s
 - **Svelte** — confirmed: `compile()` converts `.svelte` → JS module; raw `.svelte` can't run in-browser. `svelte-browser-import` bundles the compiler but uses `eval`, is dev-only, Svelte 4 only. Svelte 5 explicitly can't be CDN-bundled (maintainer: "Resolving all the imports necessary is a huge pain"). Source: sveltejs/svelte#15658, svelte.dev/docs/svelte-compiler.
 - **Solid via TSX** — esm.sh/tsx uses swc's generic jsx-runtime; Solid needs compile-time `babel-preset-solid` for fine-grained reactivity. The TSX path would silently produce non-reactive Solid. **Use `solid-js/html` tagged templates instead.**
 - **Remotion rendering** — Player previews in-browser fine (tested: composition plays with timeline/controls), but mp4 export needs Remotion's Node render toolchain.
+- **BlockSuite** — confirmed browser-tested: its ~20 internal `@blocksuite/affine-*` packages can't be served coherently by esm.sh/jsdelivr (dual-package hazard, `REFERENCE_NODE` missing-export). Needs Vite. See Round 6.
 
 ### Power / capability libs (build-tested)
 
@@ -331,6 +332,66 @@ The key insight: **any *runtime* React library works no-build via esm.sh + esm.s
 ### esm.sh externalization gotcha
 
 When a package is loaded with `?external=react` (etc.), esm.sh keeps the bare specifier (`react`, `preact`, `remotion/no-react`) instead of inlining it — so you **must** provide an import map entry for each externalized specifier, including deep sub-paths the library imports internally (e.g. `remotion/no-react`, `preact/hooks`). Missing one → `Failed to resolve module specifier`.
+
+---
+
+## Round 6 — BlockSuite (AFFiNE's block editor): ❌ NOT no-build-able from CDN (browser-tested)
+
+**Goal:** port the BlockSuite `preact-basic`/`react-basic` starters (from `~/dev/personal/try/blocksuite-examples`) to a single-file artifact.
+
+**Verdict: impossible from public ESM CDNs.** This is a structural limitation, not a missing flag. Tested in a real headless browser against esm.sh and jsdelivr, BlockSuite **0.19.5** (esm.sh `latest`; repo is now on v0.22).
+
+**Root cause — dual-package hazard in a tightly-coupled monorepo:**
+BlockSuite is ~20 internal `@blocksuite/affine-*` packages (`affine-components`, `affine-block-surface`, `affine-model`, `affine-shared`, `block-std`, `inline`, …) that share singleton state (yjs, the block-std element registry, the inline editor) and import each other by **bare specifiers + subpaths**. esm.sh serves each as a *separate* module whose builds disagree on exports, so you hit:
+
+```
+The requested module '/@blocksuite/affine-components@0.19.5/.../rich-text.mjs'
+does not provide an export named 'REFERENCE_NODE'
+```
+
+**Every escape hatch tried (all failed):**
+
+| Strategy | Result |
+|---|---|
+| Per-package `?external=yjs,@blocksuite/store,…` import map | `REFERENCE_NODE` missing-export |
+| Trailing-slash subpath prefix mappings (`@blocksuite/blocks/` → …) | drops `?external`, re-duplicates deps → same error |
+| esm.sh `?bundle-deps` | esm.sh build fails outright (graph too big) |
+| esm.sh `*@blocksuite/presets` standalone | back to bare-subpath `Failed to resolve` |
+| esm.sh `?deps=` pinning all 9 internals to 0.19.5 | esm.sh build timeout |
+| **jsdelivr `/+esm`** (different bundler) | fails to resolve too |
+
+**The framework wrapper was never the blocker.** BlockSuite editors are just Lit web components — Preact/React only `appendChild(new PageEditor())`. So Preact and React fail *identically*; it's BlockSuite's own packaging. Correct 0.19 API for reference (needs Vite): `effects()` from `@blocksuite/blocks/effects` + `@blocksuite/presets/effects`, then `createEmptyDoc().init()` + `new PageEditor()`.
+
+**Takeaway:** BlockSuite requires a real bundler (Vite — which every official starter uses). Adds to the compiler/bundler-required gap list alongside Svelte. If a no-build block editor is wanted, evaluate BlockNote / Editor.js / TipTap instead.
+
+---
+
+## Round 6 — What's actually POPULAR + the coolest real artifacts
+
+### What people actually reach for (high confidence)
+
+**The dominant artifact stack is fixed by Claude's environment:** React + Tailwind + shadcn/ui + Lucide React (icons) + **Recharts** (charts) + Three.js (r128, core only). It's the default *because* it's what Claude Artifacts ships pre-loaded — no install.
+
+- **Recharts** is the featured chart lib — the ONLY one with a dedicated example in Claude's system prompt (not Chart.js/D3/Plotly). React-native, matches the React+Tailwind default.
+- **Tailwind** in single-file artifacts = Play/browser CDN: `<script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4">` (v4) in `<head>`. v3 used `cdn.tailwindcss.com`. **Claude's sandbox blocks `cdn.tailwindcss.com`** — serve from cdnjs instead, or rely on Claude's pre-injected Tailwind.
+- **Claude Artifacts CSP whitelist**: `cdnjs.cloudflare.com`, `cdn.jsdelivr.net/pyodide`, `fonts.googleapis.com`. Enables Pyodide (Python WASM), `@sqlite.org/sqlite-wasm`, jsQR, Fabric.js.
+- **Artifacts can call LLMs + CORS APIs directly from the client** — no backend. The "AI inside the artifact" pattern.
+
+**The vanilla counter-current** — Simon Willison's 216 single-file tools at tools.simonwillison.net, almost all LLM-generated, frequently prompted with **"no react"**. CDN-loaded deps, direct API/LLM calls from the client. This is the most-cited real-world body of agentic HTML artifacts.
+
+Sources: leaked/reverse-engineered Claude Artifacts system prompt (reidbarber.com, the dedlim gist), Tailwind Play CDN docs, Simon Willison's "Everything I built with Claude Artifacts" (simonw.substack.com), claudio-silva/claude-artifact-runner.
+
+### The coolest real artifacts (verified showcases)
+
+- **tools.simonwillison.net** ([github.com/simonw/tools](https://github.com/simonw/tools)) — 216 single-file tools. **Vendored a curated 29 into `examples/simonw-tools/`.** Standouts: `v86` (x86 emulator in-browser), `micropython`/`quickjs` (language runtimes), `sqlite-wasm`, `pyodide-repl`/`numpy-pyodide-lab` (Python), `ocr`, and the LLM-from-inside-the-artifact ones (`haiku`, `omit-needless-words`, `gemini-chat`, `openai-webrtc`).
+- **madewithclaude.com** — curated gallery (Tools/Design/Data/Graphics/Education/Programming/...). Homepage 403s to scrapers; medium confidence.
+- **Anthropic in-app "Inspiration" gallery** — Learn something / Life hacks / Play a game / Be creative / Touch grass.
+
+**Honest gap:** specific viral named artifacts (particle sims, generative art, tone.js music, explorable explanations) were NOT individually verifiable. The Nicky Case "explorable explanations" → artifact link was refuted. Simon's collection is the one concrete, link-backed body of work.
+
+### Gallery perf note
+
+With ~150 cards, eager-loading every preview iframe times out the `load` event and is noisy. The gallery uses an `IntersectionObserver` (300px rootMargin) so only ~12 iframes load on init; the rest load on scroll.
 
 ---
 

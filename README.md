@@ -40,6 +40,10 @@ This is about **HTML artifacts with the powers of npm / ESM imports / React + TS
 | Canvas / games | (vanilla) | script | ✓ | [canvas-life](starters/canvas-life.html) |
 | Tools | marked · regex · JSON | script | ✓ | [markdown-editor](starters/markdown-editor.html) · [regex-tester](starters/regex-tester.html) · [json-viewer](starters/json-viewer.html) |
 
+## What people actually use (popularity, not just possibility)
+
+The **dominant** artifact stack is fixed by Claude's environment: **React + Tailwind + shadcn/ui + Lucide + Recharts** (+ Three.js). Recharts is Claude's featured chart lib (the only one with a dedicated system-prompt example). Tailwind loads via Play CDN (`@tailwindcss/browser@4`). The big **counter-current** is vanilla HTML/CSS/JS — Simon Willison's 216 tools (`examples/simonw-tools/`), mostly LLM-generated, often prompted "no react". Most of our hand-built starters above are the *niche/long-tail* — real, tested, but not what most artifacts actually use. See [RESEARCH.md](RESEARCH.md) Round 6.
+
 ## The rule that cuts across everything
 
 **Any *runtime* React library works** via `esm.sh` + `esm.sh/tsx` — R3F, Remotion Player, Framer Motion, etc. The only things that *don't* work no-build are **compiler-dependent** tools:
@@ -74,6 +78,7 @@ starters/        ← 31 hand-built, tested single-file starters
 examples/
   html-anything/ ← 87 templates from nexu-io/html-anything (mostly static docs — the "Templates" collection)
   interactive/   ← pulled real-world examples (Mermaid viewers, d3-graphviz)
+  simonw-tools/  ← 216 real LLM-generated single-file tools (Simon Willison); 29 curated into the gallery
 skills/          ← AI skills that generate HTML artifacts (html-anything, html-artifacts, md2html, claude-design)
 platforms/       ← generator platforms (open-artifacts, vibes.diy, anthropic web-artifacts-builder)
 collections/     ← awesome-claude-artifacts
