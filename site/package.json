@@ -8,9 +8,10 @@
   "scripts": {
     "data": "node scripts/extract-data.mjs",
     "sync": "node scripts/sync-assets.mjs",
-    "dev": "npm run sync && astro dev",
+    "dev": "npm run sync && portless html-artifacts astro dev",
+    "dev:local": "npm run sync && astro dev",
     "build": "npm run sync && astro build",
-    "preview": "astro preview",
+    "preview": "portless html-artifacts astro preview",
     "astro": "astro"
   },
   "dependencies": {
