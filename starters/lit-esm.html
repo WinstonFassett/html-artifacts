@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lit — web components, no build</title>
+  <style>
+    body { margin: 0; font-family: system-ui, sans-serif; max-width: 480px; margin: 2rem auto; padding: 0 1rem; }
+  </style>
+</head>
+<body>
+<h1>Lit web components</h1>
+<counter-element></counter-element>
+<counter-element start="10"></counter-element>
+
+<!-- Lit: reactive web components, no build. ESM from esm.sh. Defines real
+     custom elements you can use as <counter-element> anywhere in the page. -->
+<script type="module">
+import { LitElement, html, css } from 'https://esm.sh/lit@3';
+
+class CounterElement extends LitElement {
+  static properties = { count: { type: Number } };
+  static styles = css`
+    :host { display: inline-block; margin: 0.5rem; padding: 1rem; border: 1px solid #ddd; border-radius: 8px; }
+    button { font-size: 1.1rem; padding: 0.2rem 0.7rem; cursor: pointer; }
+    .n { font-size: 1.5rem; font-weight: 600; margin: 0 0.75rem; }
+  `;
+  constructor() {
+    super();
+    this.count = Number(this.getAttribute('start') || 0);
+  }
+  render() {
+    return html`
+      <button @click=${() => this.count--}>−</button>
+      <span class="n">${this.count}</span>
+      <button @click=${() => this.count++}>+</button>
+    `;
+  }
+}
+customElements.define('counter-element', CounterElement);
+</script>
+</body>
+</html>

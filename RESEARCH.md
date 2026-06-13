@@ -294,6 +294,46 @@ vs. **esm.sh/tsx** (ESM): ~1.7KB loader, real TSX, needs HTTP (uses `import.meta
 
 ---
 
+## Round 5 — Reactive view stacks + power libs (build-tested, not just researched)
+
+The key insight: **any *runtime* React library works no-build via esm.sh + esm.sh/tsx.** Compiler-dependent tools are the only exceptions.
+
+### View / reactive stacks
+
+| Stack | Reactivity | Loading | file://? | Verdict |
+|-------|-----------|---------|----------|---------|
+| React (esm.sh/tsx) | hooks, real TSX | ESM | ✗ | ✅ tested |
+| React (Babel Standalone) | hooks, real JSX | script | ✓ | ✅ tested |
+| React (htm) | hooks, tagged templates | script | ✓ | ✅ tested |
+| Preact + htm | hooks, 3KB | ESM | ✗ | ✅ tested (needs import map for externalized `preact`) |
+| Solid + `solid-js/html` | fine-grained signals | ESM | ✗ | ✅ tested |
+| Vue 3 (full global) | composition API | script | ✓ | ✅ tested |
+| petite-vue | directives, 6KB | ESM | ✗ | ✅ tested |
+| Alpine | directives | script | ✓ | ✅ tested |
+| Lit | reactive web components | ESM | ✗ | ✅ tested (shadow DOM) |
+| **Svelte** | — | — | — | ❌ **compiler-required** |
+
+### Compiler-required gaps (the things that DON'T work no-build)
+
+- **Svelte** — confirmed: `compile()` converts `.svelte` → JS module; raw `.svelte` can't run in-browser. `svelte-browser-import` bundles the compiler but uses `eval`, is dev-only, Svelte 4 only. Svelte 5 explicitly can't be CDN-bundled (maintainer: "Resolving all the imports necessary is a huge pain"). Source: sveltejs/svelte#15658, svelte.dev/docs/svelte-compiler.
+- **Solid via TSX** — esm.sh/tsx uses swc's generic jsx-runtime; Solid needs compile-time `babel-preset-solid` for fine-grained reactivity. The TSX path would silently produce non-reactive Solid. **Use `solid-js/html` tagged templates instead.**
+- **Remotion rendering** — Player previews in-browser fine (tested: composition plays with timeline/controls), but mp4 export needs Remotion's Node render toolchain.
+
+### Power / capability libs (build-tested)
+
+| Capability | Library | Loading | file://? | Verdict |
+|-----------|---------|---------|----------|---------|
+| Declarative 3D in React | React Three Fiber v9 | ESM via esm.sh/tsx | ✗ | ✅ tested — `?external=react,react-dom,three` |
+| Programmatic video preview | Remotion Player v4 | ESM via esm.sh/tsx | ✗ | ✅ tested — needs `remotion/no-react` in import map |
+| In-browser SQLite | SQL.js 1.14 | script + WASM | ✓ | ✅ tested — `locateFile` → CDN for the .wasm |
+| Local-first persistence | Fireproof | ESM | ✗ | ✅ tested (persists to IndexedDB) |
+
+### esm.sh externalization gotcha
+
+When a package is loaded with `?external=react` (etc.), esm.sh keeps the bare specifier (`react`, `preact`, `remotion/no-react`) instead of inlining it — so you **must** provide an import map entry for each externalized specifier, including deep sub-paths the library imports internally (e.g. `remotion/no-react`, `preact/hooks`). Missing one → `Failed to resolve module specifier`.
+
+---
+
 ## Naming convention for this archive
 
 - **`-esm` suffix** = uses ES module imports → needs an HTTP server (breaks from raw `file://` due to CORS on module loads)

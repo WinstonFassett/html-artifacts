@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vue 3 — full, global build, file://-safe</title>
+  <!-- Full Vue 3 global build (UMD). Not petite-vue — the whole framework.
+       file://-safe: single script tag, exposes window.Vue, no ESM imports. -->
+  <script src="https://cdn.jsdelivr.net/npm/vue@3/dist/vue.global.prod.js"></script>
+  <style>
+    body { margin: 0; font-family: system-ui, sans-serif; max-width: 480px; margin: 2rem auto; padding: 0 1rem; }
+    input { padding: 0.5rem; width: 70%; border: 1px solid #ccc; border-radius: 4px; }
+    button { padding: 0.5rem 0.8rem; border: none; border-radius: 4px; background: #42b883; color: #fff; cursor: pointer; }
+    ul { list-style: none; padding: 0; }
+    li { display: flex; gap: 0.5rem; padding: 0.4rem 0; border-bottom: 1px solid #eee; }
+    .done { text-decoration: line-through; color: #999; }
+  </style>
+</head>
+<body>
+<div id="app">
+  <h1>Vue 3 (full)</h1>
+  <form @submit.prevent="add">
+    <input v-model="text" placeholder="Add a todo">
+    <button type="submit">Add</button>
+  </form>
+  <p>{{ remaining }} of {{ items.length }} remaining</p>
+  <ul>
+    <li v-for="(item, i) in items" :key="i">
+      <input type="checkbox" v-model="item.done">
+      <span :class="{ done: item.done }">{{ item.text }}</span>
+    </li>
+  </ul>
+</div>
+
+<script>
+const { createApp, ref, computed } = Vue;
+createApp({
+  setup() {
+    const text = ref('');
+    const items = ref([
+      { text: 'Use full Vue from CDN', done: true },
+      { text: 'Build an artifact', done: false },
+    ]);
+    const remaining = computed(() => items.value.filter(i => !i.done).length);
+    const add = () => { if (text.value.trim()) { items.value.push({ text: text.value.trim(), done: false }); text.value = ''; } };
+    return { text, items, remaining, add };
+  }
+}).mount('#app');
+</script>
+</body>
+</html>

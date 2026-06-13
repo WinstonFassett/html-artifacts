@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Remotion Player — programmatic video preview, no build</title>
+  <script type="importmap">
+  {
+    "imports": {
+      "react": "https://esm.sh/react@19",
+      "react/jsx-runtime": "https://esm.sh/react@19/jsx-runtime",
+      "react-dom": "https://esm.sh/react-dom@19",
+      "react-dom/client": "https://esm.sh/react-dom@19/client",
+      "remotion": "https://esm.sh/remotion@4?external=react,react-dom",
+      "remotion/no-react": "https://esm.sh/remotion@4/no-react?external=react,react-dom",
+      "@remotion/player": "https://esm.sh/@remotion/player@4?external=react,react-dom,remotion"
+    }
+  }
+  </script>
+  <script type="module" src="https://esm.sh/tsx"></script>
+  <style>
+    body { margin: 0; font-family: system-ui, sans-serif; background: #0c0c14; color: #ddd; display: flex; flex-direction: column; align-items: center; padding: 2rem; }
+    #root { width: 640px; max-width: 100%; }
+    .note { color: #888; font-size: 0.85rem; max-width: 640px; }
+  </style>
+</head>
+<body>
+<h1 style="color:#fff">Remotion Player</h1>
+<div id="root"></div>
+<p class="note">The Remotion <strong>Player</strong> previews React-defined video compositions in-browser with no build. Note: rendering to an actual mp4 file needs Remotion's build/render toolchain (Node) — only the in-browser preview is no-build.</p>
+
+<script type="text/tsx">
+import { createRoot } from 'react-dom/client'
+import { Player } from '@remotion/player'
+import { useCurrentFrame, interpolate, AbsoluteFill } from 'remotion'
+
+const FPS = 30, DURATION = 90
+
+function MyComposition() {
+  const frame = useCurrentFrame()
+  const opacity = interpolate(frame, [0, 20], [0, 1], { extrapolateRight: 'clamp' })
+  const scale = interpolate(frame, [0, 45, 90], [0.8, 1.1, 0.9])
+  const hue = interpolate(frame, [0, 90], [140, 320])
+  return (
+    <AbsoluteFill style={{ background: '#0c0c14', justifyContent: 'center', alignItems: 'center' }}>
+      <div style={{ opacity, transform: `scale(${scale})`, color: `hsl(${hue}, 70%, 60%)`, fontSize: 72, fontWeight: 800, fontFamily: 'system-ui' }}>
+        Frame {frame}
+      </div>
+    </AbsoluteFill>
+  )
+}
+
+createRoot(document.getElementById('root')!).render(
+  <Player
+    component={MyComposition}
+    durationInFrames={DURATION}
+    fps={FPS}
+    compositionWidth={640}
+    compositionHeight={360}
+    controls
+    autoPlay
+    loop
+    style={{ width: '100%', borderRadius: 8, overflow: 'hidden' }}
+  />
+)
+</script>
+</body>
+</html>

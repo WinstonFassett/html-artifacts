@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Preact + htm — no build, no transform</title>
+  <style>
+    body { margin: 0; font-family: system-ui, sans-serif; max-width: 480px; margin: 2rem auto; padding: 0 1rem; }
+    button { padding: 0.4rem 0.8rem; border: 1px solid #ccc; border-radius: 4px; background: #fff; cursor: pointer; margin-right: 0.25rem; }
+    .count { font-size: 2rem; font-weight: 600; margin: 1rem 0; }
+  </style>
+</head>
+<body>
+<div id="root"></div>
+
+<!-- Preact (3KB React alternative) + htm (JSX-like tagged templates).
+     No JSX compile, no Babel, no esm.sh/tsx. Pure ESM from esm.sh.
+     Import map resolves the externalized bare "preact" specifier. -->
+<script type="importmap">
+{
+  "imports": {
+    "preact": "https://esm.sh/preact@10",
+    "preact/hooks": "https://esm.sh/preact@10/hooks?external=preact"
+  }
+}
+</script>
+<script type="module">
+import { html, render } from 'https://esm.sh/htm@3/preact?external=preact';
+import { useState } from 'preact/hooks';
+
+function App() {
+  const [count, setCount] = useState(0);
+  return html`
+    <div>
+      <h1>Preact + htm</h1>
+      <p>3KB Preact + htm tagged templates. No JSX transform needed.</p>
+      <div class="count">${count}</div>
+      <button onClick=${() => setCount(count + 1)}>+1</button>
+      <button onClick=${() => setCount(count - 1)}>−1</button>
+      <button onClick=${() => setCount(0)}>reset</button>
+    </div>
+  `;
+}
+
+render(html`<${App} />`, document.getElementById('root'));
+</script>
+</body>
+</html>

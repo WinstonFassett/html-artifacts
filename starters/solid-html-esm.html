@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Solid.js + html — fine-grained reactivity, no build</title>
+  <style>
+    body { margin: 0; font-family: system-ui, sans-serif; max-width: 480px; margin: 2rem auto; padding: 0 1rem; }
+    button { padding: 0.4rem 0.8rem; border: 1px solid #ccc; border-radius: 4px; background: #fff; cursor: pointer; margin-right: 0.25rem; }
+    .count { font-size: 2rem; font-weight: 600; margin: 1rem 0; color: #2c4f7c; }
+    input { padding: 0.5rem; width: 60%; border: 1px solid #ccc; border-radius: 4px; }
+    ul { list-style: none; padding: 0; }
+    li { padding: 0.3rem 0; border-bottom: 1px solid #eee; }
+  </style>
+</head>
+<body>
+<div id="root"></div>
+
+<!-- Solid.js with the `html` tagged-template renderer — no JSX transform needed.
+     Solid's signals give true fine-grained reactivity (no virtual DOM diffing).
+     Import map resolves the externalized bare "solid-js" specifier. -->
+<script type="importmap">
+{
+  "imports": {
+    "solid-js": "https://esm.sh/solid-js@1",
+    "solid-js/web": "https://esm.sh/solid-js@1/web?external=solid-js",
+    "solid-js/html": "https://esm.sh/solid-js@1/html?external=solid-js"
+  }
+}
+</script>
+<script type="module">
+import { createSignal } from 'solid-js';
+import { render } from 'solid-js/web';
+import html from 'solid-js/html';
+
+function App() {
+  const [count, setCount] = createSignal(0);
+  const [text, setText] = createSignal('');
+  const [items, setItems] = createSignal(['Signals, not hooks', 'No re-render of whole component']);
+
+  const add = (e) => {
+    e.preventDefault();
+    if (text().trim()) { setItems([...items(), text().trim()]); setText(''); }
+  };
+
+  return html`
+    <div>
+      <h1>Solid.js + html</h1>
+      <p>Fine-grained signals. Only what changes updates the DOM.</p>
+      <div class="count">${count}</div>
+      <button onClick=${() => setCount(count() + 1)}>+1</button>
+      <button onClick=${() => setCount(count() - 1)}>−1</button>
+      <button onClick=${() => setCount(0)}>reset</button>
+
+      <h2>Todo</h2>
+      <form onSubmit=${add}>
+        <input value=${text} onInput=${(e) => setText(e.target.value)} placeholder="Add item">
+        <button type="submit">Add</button>
+      </form>
+      <ul>${() => items().map(i => html`<li>${i}</li>`)}</ul>
+    </div>
+  `;
+}
+
+render(App, document.getElementById('root'));
+</script>
+</body>
+</html>
