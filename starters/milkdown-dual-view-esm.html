@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Milkdown dual-view — WYSIWYG ↔ markdown, no build</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@milkdown/crepe@7/lib/theme/common/style.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@milkdown/crepe@7/lib/theme/frame/style.css">
+  <!-- Crepe statically imports `codemirror` at module-eval (even with the feature
+       off), and esm.sh's bundled copy doesn't export basicSetup. Fix: externalize
+       codemirror on the crepe URL (below) so it emits a bare specifier, and map
+       that bare specifier to Deno's pre-bundled CodeMirror ESM here. -->
+  <script type="importmap">
+  {
+    "imports": {
+      "codemirror": "https://deno.land/x/codemirror_esm@v6.0.1/esm/codemirror/dist/index.js",
+      "codemirror/": "https://deno.land/x/codemirror_esm@v6.0.1/esm/",
+      "@codemirror/state": "https://deno.land/x/codemirror_esm@v6.0.1/esm/state/dist/index.js",
+      "@codemirror/view": "https://deno.land/x/codemirror_esm@v6.0.1/esm/view/dist/index.js",
+      "@codemirror/commands": "https://deno.land/x/codemirror_esm@v6.0.1/esm/commands/dist/index.js",
+      "@codemirror/language": "https://deno.land/x/codemirror_esm@v6.0.1/esm/language/dist/index.js",
+      "@codemirror/search": "https://deno.land/x/codemirror_esm@v6.0.1/esm/search/dist/index.js",
+      "@codemirror/autocomplete": "https://deno.land/x/codemirror_esm@v6.0.1/esm/autocomplete/dist/index.js",
+      "@codemirror/lint": "https://deno.land/x/codemirror_esm@v6.0.1/esm/lint/dist/index.js"
+    }
+  }
+  </script>
+  <style>
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: system-ui, sans-serif; height: 100vh; display: flex; flex-direction: column; }
+    header { padding: 0.5rem 1rem; background: #1a1a22; color: #ddd; font-size: 0.85rem; display: flex; gap: 1rem; align-items: center; }
+    header .saved { margin-left: auto; color: #6ee7a0; opacity: 0; transition: opacity 0.3s; }
+    header .saved.show { opacity: 1; }
+    .split { flex: 1; display: flex; min-height: 0; }
+    .pane { flex: 1; overflow: auto; min-width: 0; }
+    .pane.editor { border-right: 1px solid #ddd; }
+    .pane.raw { display: flex; flex-direction: column; background: #0d1117; }
+    .pane.raw textarea { flex: 1; border: none; outline: none; resize: none; padding: 1rem; font-family: ui-monospace, monospace; font-size: 13px; line-height: 1.5; background: #0d1117; color: #c9d1d9; }
+    .pane-label { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.05em; color: #888; padding: 0.4rem 1rem; border-bottom: 1px solid #eee; }
+    .pane.raw .pane-label { border-color: #222; }
+    /* Crepe defaults are loud — tone down headings + outer padding */
+    .milkdown { max-width: none; }
+    .milkdown .ProseMirror { padding: 1rem 1.25rem !important; }
+    .milkdown .ProseMirror h1 { font-size: 1.5rem; margin: 0.5em 0 0.3em; }
+    .milkdown .ProseMirror h2 { font-size: 1.25rem; }
+    .milkdown .ProseMirror h3 { font-size: 1.1rem; }
+    .milkdown .ProseMirror p { margin: 0.5em 0; line-height: 1.55; }
+  </style>
+</head>
+<body>
+<header>
+  <strong>Milkdown dual-view</strong>
+  <span style="color:#888">WYSIWYG ↔ raw markdown · persists to localStorage</span>
+  <span class="saved" id="saved">saved ✓</span>
+</header>
+<div class="split">
+  <div class="pane editor">
+    <div class="pane-label">WYSIWYG (Milkdown Crepe)</div>
+    <div id="app"></div>
+  </div>
+  <div class="pane raw">
+    <div class="pane-label">Raw markdown (editable)</div>
+    <textarea id="raw" spellcheck="false"></textarea>
+  </div>
+</div>
+
+<!--
+  Non-collab single-file Milkdown. Crepe's CodeMirror + Latex features are off
+  (they pull deps that fight esm.sh resolution); everything else loads no-build.
+  Two-way sync: edit WYSIWYG → raw updates; edit raw → WYSIWYG replaceAll.
+  Patterns (markdownUpdated listener, replaceAll) lifted from a real Crepe app.
+-->
+<script type="module">
+import { Crepe } from 'https://esm.sh/@milkdown/crepe@7?external=codemirror,@codemirror/state,@codemirror/view,@codemirror/commands,@codemirror/language,@codemirror/search,@codemirror/autocomplete,@codemirror/lint';
+import { replaceAll } from 'https://esm.sh/@milkdown/kit@7/utils';
+
+const KEY = 'milkdown-dual-view-doc';
+const raw = document.getElementById('raw');
+const savedBadge = document.getElementById('saved');
+
+const initial = localStorage.getItem(KEY) ?? `# Dual-view Milkdown
+
+Edit here in **rich text**, or in the raw markdown pane on the right — they stay in sync.
+
+- WYSIWYG via Milkdown Crepe
+- No build step
+- Persists to localStorage
+
+> Try editing both sides.
+`;
+
+let lastMarkdown = initial;
+let applyingFromRaw = false;
+
+function flashSaved() {
+  savedBadge.classList.add('show');
+  clearTimeout(window._savedT);
+  window._savedT = setTimeout(() => savedBadge.classList.remove('show'), 800);
+}
+
+function persist(md) {
+  localStorage.setItem(KEY, md);
+  flashSaved();
+}
+
+const crepe = new Crepe({
+  root: '#app',
+  defaultValue: initial,
+  features: {
+    [Crepe.Feature.CodeMirror]: false,
+    [Crepe.Feature.Latex]: false,
+  },
+});
+
+let ready = false;
+crepe.on((listener) => {
+  listener.markdownUpdated((_ctx, markdown) => {
+    if (!ready || applyingFromRaw) return;
+    if (markdown !== lastMarkdown) {
+      lastMarkdown = markdown;
+      raw.value = markdown;       // WYSIWYG → raw
+      persist(markdown);
+    }
+  });
+});
+
+await crepe.create();
+ready = true;
+raw.value = crepe.getMarkdown();
+
+// raw → WYSIWYG
+let rawTimer;
+raw.addEventListener('input', () => {
+  clearTimeout(rawTimer);
+  rawTimer = setTimeout(() => {
+    const md = raw.value;
+    if (md === lastMarkdown) return;
+    lastMarkdown = md;
+    applyingFromRaw = true;
+    crepe.editor.action(replaceAll(md));
+    applyingFromRaw = false;
+    persist(md);
+  }, 250);
+});
+</script>
+</body>
+</html>

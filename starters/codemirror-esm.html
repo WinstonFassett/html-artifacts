@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CodeMirror 6 — no build (the recipe people give up on)</title>
+  <style>
+    body { margin: 0; font-family: system-ui, sans-serif; max-width: 820px; margin: 1.5rem auto; padding: 0 1rem; }
+    .note { color: #666; font-size: 0.85rem; line-height: 1.5; }
+    .cm-host { border: 1px solid #ddd; border-radius: 6px; margin-top: 1rem; overflow: hidden; }
+    code { background: #f0f0f0; padding: 0 0.25rem; border-radius: 3px; }
+  </style>
+
+  <!-- THE RECIPE. CodeMirror 6 is split into ~8 packages (@codemirror/state, /view,
+       /commands, /language, /autocomplete… + @lezer/*). The wall everyone hits:
+       loading them from a generic CDN pulls TWO copies of @codemirror/state, and
+       CodeMirror throws because instanceof checks fail across copies.
+
+       Cleanest fix: Deno's pre-bundled CodeMirror ESM — the dedup is solved upstream,
+       so it's a ONE-LINE import map with no scopes block. (JSPM + a full `scopes`
+       block is the alternative when you need exact per-package versions/themes/langs.) -->
+  <script type="importmap">
+  {
+    "imports": {
+      "codemirror/": "https://deno.land/x/codemirror_esm@v6.0.1/esm/"
+    }
+  }
+  </script>
+</head>
+<body>
+<h1>CodeMirror 6 — single file, no build</h1>
+<p class="note">
+  The hard part of CodeMirror in a no-build artifact is its multi-package architecture —
+  a naive CDN load gives you two copies of <code>@codemirror/state</code> and it breaks.
+  This uses Deno's pre-bundled ESM build so one import map line covers everything.
+</p>
+<div class="cm-host" id="host"></div>
+
+<script type="module">
+import { basicSetup, EditorView } from 'codemirror/codemirror/dist/index.js';
+import { javascript } from 'codemirror/lang-javascript/dist/index.js';
+
+new EditorView({
+  doc: `// CodeMirror 6, no build step.
+function fib(n) {
+  return n < 2 ? n : fib(n - 1) + fib(n - 2);
+}
+const xs = [1, 2, 3].map(fib);
+`,
+  extensions: [basicSetup, javascript({ jsx: true, typescript: true })],
+  parent: document.getElementById('host'),
+});
+</script>
+</body>
+</html>

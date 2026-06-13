@@ -395,6 +395,42 @@ With ~150 cards, eager-loading every preview iframe times out the `load` event a
 
 ---
 
+## Round 8 — CodeMirror 6 + Milkdown/Crepe no-build (hard-won, tested)
+
+### The CodeMirror-6-from-CDN wall (and the fix)
+
+CodeMirror 6 is ~8 packages (`@codemirror/state`, `/view`, `/commands`, `/language`, `/autocomplete`, `/lint`, `/search` + `@lezer/*`). A naive multi-package CDN load pulls **two copies of `@codemirror/state`**, and CM throws because `instanceof` checks fail across copies (same class-identity problem as Yjs).
+
+**Two working recipes:**
+
+1. **Deno pre-bundled ESM (simplest)** — dedup solved upstream, one import-map line:
+   ```html
+   <script type="importmap">{ "imports": { "codemirror/": "https://deno.land/x/codemirror_esm@v6.0.1/esm/" } }</script>
+   <script type="module">
+     import { basicSetup, EditorView } from 'codemirror/codemirror/dist/index.js';
+     import { javascript } from 'codemirror/lang-javascript/dist/index.js';
+   </script>
+   ```
+   Captured as `starters/codemirror-esm.html`. Tested.
+
+2. **JSPM + `scopes` block** — verbose (~25 lines) but lets you pin exact per-package versions/themes/langs. Pattern: `ga.jspm.io/npm:codemirror@6.0.1/...` in `imports`, every `@codemirror/*` + `@lezer/*` in a `scopes["https://ga.jspm.io/"]` block. (Source: Winston's CodeSandbox recipes.)
+
+### Milkdown Crepe in a single file (the non-obvious part)
+
+`@milkdown/crepe` **statically imports `codemirror` at module-eval** — even with `features: { CodeMirror: false }`, the import graph still resolves it, and esm.sh's bundled `codemirror@^6` doesn't export `basicSetup`. Fix:
+- Load crepe with `?external=codemirror,@codemirror/state,@codemirror/view,@codemirror/commands,@codemirror/language,@codemirror/search,@codemirror/autocomplete,@codemirror/lint` so esm.sh emits bare specifiers
+- Map all those bare specifiers to the Deno bundle in the import map
+- **CSS lives at `cdn.jsdelivr.net/npm/@milkdown/crepe@7/lib/theme/common/style.css` and `.../lib/theme/frame/style.css`** (NOT `esm.sh/.../theme/...` — that 404s)
+- Crepe defaults are loud: override `.ProseMirror` padding + heading sizes
+
+Captured as `starters/milkdown-dual-view-esm.html` (WYSIWYG ↔ raw markdown, localStorage). Tested: editor mounts, two-way sync works, zero errors/404s.
+
+### The honest Yjs-collab gap
+
+Single-file **Yjs collab with a rich editor (Crepe) does NOT work cleanly** — Yjs gets duplicated across 6 transitive packages (crepe, plugin-collab, y-prosemirror, y-trystero, y-indexeddb, y-protocols), and esm.sh `?external` dedup is whack-a-mole. `starters/collab-milkdown-yjs-esm.html` is shelved (WIP, not in gallery). Winston confirmed he's never done single-page Yjs+rich-editor collab either — it likely needs a bundler or an exhaustively-tuned import map. CodeMirror+Yjs collab (fewer transitive deps) is probably tractable; rich-editor collab is the real wall.
+
+---
+
 ## Naming convention for this archive
 
 - **`-esm` suffix** = uses ES module imports → needs an HTTP server (breaks from raw `file://` due to CORS on module loads)
