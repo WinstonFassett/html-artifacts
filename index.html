@@ -199,6 +199,8 @@ const artifacts = [
   { name: "remotion-player-esm", path: "starters/remotion-player-esm.html", tags: ["starter", "react", "animation", "video"], source: "starters", loading: "esm" },
   // power libs
   { name: "sqljs", path: "starters/sqljs.html", tags: ["starter", "data", "tool"], source: "starters", loading: "script" },
+  { name: "pglite (Postgres WASM)", path: "starters/pglite-esm.html", tags: ["starter", "data", "wasm"], source: "starters", loading: "esm" },
+  { name: "collab-milkdown (Yjs+Trystero)", path: "starters/collab-milkdown-yjs-esm.html", tags: ["starter", "app", "collab", "editor"], source: "starters", loading: "esm" },
   { name: "leaflet-map", path: "starters/leaflet-map.html", tags: ["starter", "map", "viz"], source: "starters", loading: "script" },
   { name: "json-viewer", path: "starters/json-viewer.html", tags: ["starter", "tool", "interactive"], source: "starters", loading: "script" },
   { name: "regex-tester", path: "starters/regex-tester.html", tags: ["starter", "tool", "interactive"], source: "starters", loading: "script" },
@@ -210,6 +212,16 @@ const artifacts = [
   { name: "anime", path: "starters/anime.html", tags: ["starter", "animation", "motion"], source: "starters", loading: "esm" },
   { name: "motion-esm", path: "starters/motion-esm.html", tags: ["starter", "animation", "motion"], source: "starters", loading: "esm" },
   { name: "lottie", path: "starters/lottie.html", tags: ["starter", "animation", "motion"], source: "starters", loading: "script" },
+  // matchina × view-lib starters (Winston's — state machine + 9 reactive view layers, progressive-enhancement matrix)
+  { name: "matchina + vanilla", path: "examples/matchina/standalone-esmsh.html", tags: ["matchina", "reactive", "app"], source: "matchina", loading: "esm" },
+  { name: "matchina + Stimulus", path: "examples/matchina/standalone-stimulus.html", tags: ["matchina", "reactive", "app"], source: "matchina", loading: "esm" },
+  { name: "matchina + Alpine", path: "examples/matchina/standalone-petite-vue.html", tags: ["matchina", "reactive", "app"], source: "matchina", loading: "esm" },
+  { name: "matchina + petite-vue", path: "examples/matchina/standalone-petite-vue.html", tags: ["matchina", "reactive", "app"], source: "matchina", loading: "esm" },
+  { name: "matchina + Vue 3", path: "examples/matchina/standalone-vue.html", tags: ["matchina", "reactive", "app"], source: "matchina", loading: "esm" },
+  { name: "matchina + VanJS", path: "examples/matchina/standalone-van.html", tags: ["matchina", "reactive", "app"], source: "matchina", loading: "esm" },
+  { name: "matchina + Solid", path: "examples/matchina/standalone-solid.html", tags: ["matchina", "reactive", "app"], source: "matchina", loading: "esm" },
+  { name: "matchina + Preact", path: "examples/matchina/standalone-preact.html", tags: ["matchina", "reactive", "app"], source: "matchina", loading: "esm" },
+  { name: "matchina + ArrowJS", path: "examples/matchina/standalone-arrow.html", tags: ["matchina", "reactive", "app"], source: "matchina", loading: "esm" },
   // pulled interactive examples
   { name: "mermaid-viewer (bonomani)", path: "examples/interactive/mermaid-viewer-bonomani.html", tags: ["diagram", "interactive", "app"], source: "github", loading: "esm" },
   { name: "mermaid-viewer (KevinOBytes)", path: "examples/interactive/mermaid-viewer-kevinobytes.html", tags: ["diagram", "interactive"], source: "github", loading: "esm" },

@@ -1,0 +1,227 @@
+/* Matchina CDN demos — vanilla CSS.
+   Linked from each demo page:
+     <link rel="stylesheet" href="/cdn-demos/demo.css">
+*/
+
+:root {
+    --font-sans: "Geist", system-ui, sans-serif;
+    --font-mono: "Geist Mono", ui-monospace, monospace;
+    --font-serif: "Source Serif 4", Georgia, serif;
+    --bg: #f6f5f1;
+    --panel: #ffffff;
+    --panel-2: #faf9f6;
+    --hairline: #e3e0d8;
+    --ink: #15130f;
+    --ink-2: #6a665d;
+    --ink-3: #a09b91;
+    --red: #b3332e;
+    --yellow: #c9961a;
+    --green: #2f7a3a;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --bg: #0e0e0f;
+        --panel: #141416;
+        --panel-2: #1a1a1c;
+        --hairline: #262628;
+        --ink: #ececec;
+        --ink-2: #8a8a90;
+        --ink-3: #56565c;
+        --red: #e68a8a;
+        --yellow: #e6b86a;
+        --green: #8fd1a3;
+    }
+    html { color-scheme: dark; }
+}
+
+* { box-sizing: border-box; }
+
+/* Hide Vue/petite-vue/Alpine scopes until they mount — prevents flash
+   of unbound `:attrs` and pre-mount text values. */
+[v-cloak],
+[x-cloak] { visibility: hidden; }
+
+body {
+    margin: 0;
+    padding: 4rem 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--font-sans);
+    line-height: 1.5;
+}
+
+.container {
+    max-width: 56rem;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+}
+
+h1 {
+    margin: 0;
+    font-family: var(--font-serif);
+    font-weight: 500;
+    font-size: clamp(2rem, 3.5vw, 2.75rem);
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+}
+
+h1 em {
+    font-style: italic;
+    font-weight: 500;
+    color: var(--ink-2);
+}
+
+.eyebrow,
+.card-eyebrow {
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+}
+
+.eyebrow { margin: 0 0 0.75rem; }
+
+.subtitle {
+    margin: 0.5rem 0 0;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--ink-2);
+    word-break: break-all;
+}
+
+.grid {
+    margin-top: 2rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr));
+    border: 1px solid var(--hairline);
+}
+
+.card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.5rem;
+    background: var(--panel);
+    text-align: center;
+}
+
+.card + .card { border-left: 1px solid var(--hairline); }
+
+@media (max-width: 44rem) {
+    .card + .card { border-left: 0; border-top: 1px solid var(--hairline); }
+}
+
+.card-eyebrow {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--hairline);
+}
+
+.card-stage {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 9rem;
+}
+
+.card footer {
+    width: 100%;
+    padding-top: 0.75rem;
+    border-top: 1px solid var(--hairline);
+}
+
+.traffic {
+    display: inline-flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 0.75rem;
+    background: var(--panel-2);
+    border: 1px solid var(--hairline);
+}
+
+.light {
+    width: 2.25rem;
+    height: 2.25rem;
+    border-radius: 50%;
+    background: var(--hairline);
+    transition: background 180ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.light.red    { background: var(--red); }
+.light.yellow { background: var(--yellow); }
+.light.green  { background: var(--green); }
+
+/* Data-attribute variant — server renders truth, frameworks update it.
+   Used by Vue/petite-vue demos to avoid template-syntax flash. */
+.light[data-color="Red"][data-active="true"]    { background: var(--red); }
+.light[data-color="Yellow"][data-active="true"] { background: var(--yellow); }
+.light[data-color="Green"][data-active="true"]  { background: var(--green); }
+
+.state-line {
+    margin: 0;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--ink-2);
+}
+
+.state-line code {
+    font-family: var(--font-mono);
+    color: var(--ink);
+    font-weight: 500;
+}
+
+.count {
+    margin: 0;
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-size: clamp(3rem, 6vw, 4.5rem);
+    font-variant-numeric: tabular-nums;
+    line-height: 1;
+}
+
+.log {
+    display: block;
+    min-height: 1.4em;
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    color: var(--ink-3);
+}
+
+.row {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+button {
+    padding: 0.5rem 0.875rem;
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--bg);
+    background: var(--ink);
+    border: 1px solid var(--ink);
+    cursor: pointer;
+    transition: background 120ms, color 120ms;
+}
+
+button:hover { background: transparent; color: var(--ink); }
+
+button.secondary { background: transparent; color: var(--ink); }
+button.secondary:hover { background: var(--panel-2); }
+
+button.outline {
+    background: transparent;
+    color: var(--ink-2);
+    border-color: var(--hairline);
+}
+button.outline:hover { color: var(--ink); border-color: var(--ink-2); }

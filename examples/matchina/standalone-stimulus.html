@@ -1,0 +1,69 @@
+<!DOCTYPE html><html lang="en"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Matchina + Stimulus</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&family=Source+Serif+4:ital,wght@0,400;0,500;1,400;1,500&display=swap"><link rel="stylesheet" href="demo.css"></head> <body> <main class="container"> <p class="eyebrow">Matchina · CDN demo · Stimulus</p> <h1>Hotwire-style hydration with <em>Stimulus</em></h1> <p class="subtitle">matchina@0.3.0-alpha.0 + @hotwired/stimulus@3.2 · server-rendered HTML, attached on connect — no FOUC</p> <div class="grid"> <article class="card" data-controller="traffic" data-traffic-state-value="Red"> <div class="card-eyebrow"><span>fig.01 — Traffic light</span><span class="meta">matchina + stimulus</span></div> <div class="card-stage"> <div class="traffic"> <div class="light" data-traffic-target="light" data-color="Red" data-active="true"></div> <div class="light" data-traffic-target="light" data-color="Yellow" data-active="false"></div> <div class="light" data-traffic-target="light" data-color="Green" data-active="false"></div> </div> </div> <p class="state-line">state <code data-traffic-target="label">Red</code></p> <div class="row"> <button data-action="traffic#dispatch" data-traffic-event-param="next">Next →</button> <button class="secondary" data-action="traffic#dispatch" data-traffic-event-param="reset">Reset</button> </div> <footer><span class="log" data-traffic-target="log">waiting…</span></footer> </article> <article class="card" data-controller="counter"> <div class="card-eyebrow"><span>fig.02 — Counter store</span><span class="meta">createStore + stimulus</span></div> <div class="card-stage"><p class="count" data-counter-target="value">0</p></div> <div class="row"> <button class="secondary" data-action="counter#dispatch" data-counter-event-param="decrement" data-counter-args-param="[5]">−5</button> <button class="secondary" data-action="counter#dispatch" data-counter-event-param="decrement">−1</button> <button data-action="counter#dispatch" data-counter-event-param="increment">+1</button> <button data-action="counter#dispatch" data-counter-event-param="increment" data-counter-args-param="[5]">+5</button> </div> <div class="row"> <button class="outline" data-action="counter#dispatch" data-counter-event-param="set" data-counter-args-param="[100]">Set 100</button> <button class="outline" data-action="counter#dispatch" data-counter-event-param="reset">Reset</button> </div> <footer><span class="log" data-counter-target="log">waiting…</span></footer> </article>   </div> </main> <script type="module">const matchinaUrl = "https://esm.sh/matchina@0.3.0-alpha.0?bundle&exports=matchina,createStore,defineStates,storeApi";
+const stimulusUrl = "https://esm.sh/@hotwired/stimulus@3.2.2";
+
+        const { matchina, defineStates, createStore, storeApi } = await import(matchinaUrl);
+        const { Application, Controller } = await import(stimulusUrl);
+
+        // ── Integration ────────────────────────────────────────────
+        // One reusable base controller — sketch of @matchina/stimulus.
+        // Both matchina state machines and storeApi() expose transition
+        // keys as methods, so `dispatch` just calls them by name.
+        class MatchinaController extends Controller {
+            initialize() { this.api = this.createMachine(); }
+            connect() {
+                this.api.subscribe?.(ev => {
+                    this.render(ev.to);
+                    if (this.hasLogTarget) {
+                        const from = ev.from?.key ?? ev.from;
+                        const to = ev.to?.key ?? ev.to;
+                        this.logTarget.textContent = `${from} → ${to}`;
+                    }
+                });
+            }
+            dispatch(event) {
+                const action = event.params.event;
+                const rawArgs = event.params.args;
+                const args = rawArgs ? (typeof rawArgs === 'string' ? JSON.parse(rawArgs) : rawArgs) : [];
+                this.api[action](...args);
+            }
+            render(_state) { /* override */ }
+        }
+        // ────────────────────────────────────────────────────────────
+
+        class TrafficController extends MatchinaController {
+            static targets = ['light', 'label', 'log'];
+            createMachine() {
+                const states = defineStates({ Red: undefined, Yellow: undefined, Green: undefined });
+                return matchina(states, {
+                    Red:    { next: 'Green',  reset: 'Red' },
+                    Green:  { next: 'Yellow', reset: 'Red' },
+                    Yellow: { next: 'Red',    reset: 'Red' },
+                }, 'Red');
+            }
+            render(state) {
+                const key = state.key;
+                this.labelTarget.textContent = key;
+                this.lightTargets.forEach(el => {
+                    el.dataset.active = el.dataset.color === key ? 'true' : 'false';
+                });
+            }
+        }
+
+        class CounterController extends MatchinaController {
+            static targets = ['value', 'log'];
+            createMachine() {
+                const store = createStore(0, {
+                    increment: (amt = 1) => (ch) => ch.from + amt,
+                    decrement: (amt = 1) => (ch) => ch.from - amt,
+                    set: (value) => value,
+                    reset: () => 0,
+                });
+                return Object.assign(storeApi(store), { subscribe: store.subscribe.bind(store) });
+            }
+            render(value) { this.valueTarget.textContent = value; }
+        }
+
+        const app = Application.start();
+        app.register('traffic', TrafficController);
+        app.register('counter', CounterController);
+    </script> </body></html>

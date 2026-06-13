@@ -1,0 +1,74 @@
+<!DOCTYPE html><html lang="en"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Matchina + ArrowJS</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&family=Source+Serif+4:ital,wght@0,400;0,500;1,400;1,500&display=swap"><link rel="stylesheet" href="demo.css"></head> <body> <main class="container"> <p class="eyebrow">Matchina · CDN demo · ArrowJS</p> <h1>Reactive rendering with <em>ArrowJS</em></h1> <p class="subtitle">matchina state machine drives Arrow reactive rendering · both via esm.sh</p> <div class="grid">  <article class="card" id="tl-card"></article> <article class="card" id="cnt-card"></article>   </div> </main> <script type="module">const matchinaUrl = "https://esm.sh/matchina@0.3.0-alpha.0?bundle&exports=matchina,createStore,defineStates";
+const arrowUrl = "https://esm.sh/@arrow-js/core@1.0.6";
+
+        const { matchina, defineStates, createStore } = await import(matchinaUrl);
+        const { reactive, html } = await import(arrowUrl);
+
+        const states = defineStates({ Red: undefined, Yellow: undefined, Green: undefined });
+        const traffic = matchina(
+            states,
+            {
+                Red:    { next: 'Green',  reset: 'Red' },
+                Green:  { next: 'Yellow', reset: 'Red' },
+                Yellow: { next: 'Red',    reset: 'Red' },
+            },
+            'Red'
+        );
+
+        const tl = reactive({ state: traffic.getState().key, log: 'waiting…' });
+        traffic.subscribe(ev => {
+            tl.state = ev.to.key;
+            tl.log = `${ev.from.key} → ${ev.to.key}`;
+        });
+
+        html`
+            <div class="card-eyebrow"><span>fig.01 — Traffic light</span><span class="meta">matchina + arrow</span></div>
+            <div class="card-stage">
+                <div class="traffic">
+                    <div class="${() => `light ${tl.state === 'Red'    ? 'red'    : ''}`}"></div>
+                    <div class="${() => `light ${tl.state === 'Yellow' ? 'yellow' : ''}`}"></div>
+                    <div class="${() => `light ${tl.state === 'Green'  ? 'green'  : ''}`}"></div>
+                </div>
+            </div>
+            <p class="state-line">state <code>${() => tl.state}</code></p>
+            <div class="row">
+                <button @click="${() => traffic.next()}">Next →</button>
+                <button class="secondary" @click="${() => traffic.reset()}">Reset</button>
+            </div>
+            <footer><span class="log">${() => tl.log}</span></footer>
+        `(document.getElementById('tl-card'));
+
+        const counter = createStore(0, {
+            increment: (amt = 1) => (ch) => ch.from + amt,
+            decrement: (amt = 1) => (ch) => ch.from - amt,
+            set: (value) => value,
+            reset: () => 0,
+        });
+
+        const cnt = reactive({ value: counter.getState(), log: 'waiting…' });
+        counter.subscribe(ev => {
+            cnt.value = counter.getState();
+            cnt.log = `${ev.from} → ${ev.to}`;
+        });
+
+        html`
+            <div class="card-eyebrow"><span>fig.02 — Counter store</span><span class="meta">createStore + arrow</span></div>
+            <div class="card-stage">
+                <p class="count">${() => cnt.value}</p>
+            </div>
+            <div class="row">
+                <button class="secondary" @click="${() => counter.decrement(5)}">−5</button>
+                <button class="secondary" @click="${() => counter.decrement()}">−1</button>
+                <button @click="${() => counter.increment()}">+1</button>
+                <button @click="${() => counter.increment(5)}">+5</button>
+            </div>
+            <div class="row">
+                <button class="outline" @click="${() => counter.set(100)}">Set 100</button>
+                <button class="outline" @click="${() => counter.reset()}">Reset</button>
+            </div>
+            <footer><span class="log">${() => cnt.log}</span></footer>
+        `(document.getElementById('cnt-card'));
+
+        window.traffic = traffic;
+        window.counter = counter;
+    </script> </body></html>

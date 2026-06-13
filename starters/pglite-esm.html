@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PGlite — full Postgres in the browser (WASM)</title>
+  <style>
+    body { margin: 0; font-family: system-ui, sans-serif; max-width: 800px; margin: 2rem auto; padding: 0 1rem; }
+    textarea { width: 100%; height: 90px; font-family: ui-monospace, monospace; font-size: 14px; padding: 0.5rem; box-sizing: border-box; }
+    button { padding: 0.5rem 1rem; border: none; border-radius: 4px; background: #336791; color: #fff; cursor: pointer; margin: 0.5rem 0; }
+    button:disabled { opacity: 0.5; }
+    table { border-collapse: collapse; width: 100%; margin-top: 1rem; }
+    th, td { border: 1px solid #ddd; padding: 0.4rem 0.6rem; text-align: left; font-size: 14px; }
+    th { background: #f0f4f8; }
+    .status { color: #888; font-size: 0.85rem; }
+    .err { color: #c00; white-space: pre-wrap; font-family: ui-monospace, monospace; }
+    code { background: #f0f0f0; padding: 0 0.2rem; border-radius: 3px; }
+  </style>
+</head>
+<body>
+<h1>PGlite — real PostgreSQL, in the browser</h1>
+<p class="status" id="status">Booting Postgres (WASM)…</p>
+<p class="status">This is <strong>actual Postgres</strong> compiled to WASM — CTEs, window functions, JSON, full SQL. Not SQLite, not a shim. ~3MB, runs entirely client-side, persists to IndexedDB.</p>
+<textarea id="sql" spellcheck="false">SELECT name, dept, salary,
+       rank() OVER (PARTITION BY dept ORDER BY salary DESC) AS dept_rank
+FROM staff
+ORDER BY dept, dept_rank;</textarea>
+<button id="run" disabled>Run query</button>
+<div id="out"></div>
+
+<script type="module">
+import { PGlite } from 'https://esm.sh/@electric-sql/pglite@0.5';
+
+const status = document.getElementById('status');
+const out = document.getElementById('out');
+
+// idb:// gives durable persistence across reloads
+const db = new PGlite('idb://pglite-artifact-demo');
+await db.waitReady;
+
+await db.exec(`
+  CREATE TABLE IF NOT EXISTS staff (name TEXT, dept TEXT, salary INTEGER);
+  DELETE FROM staff;
+  INSERT INTO staff VALUES
+    ('Ada','Eng',150000),('Dana','Eng',145000),('Eli','Eng',130000),
+    ('Bob','Design',120000),('Mai','Design',125000),
+    ('Cleo','PM',135000);
+`);
+
+status.innerHTML = '✅ Postgres ready (window functions, CTEs, JSON — the real thing).';
+document.getElementById('run').disabled = false;
+
+async function runQuery() {
+  try {
+    const res = await db.query(document.getElementById('sql').value);
+    if (!res.rows.length) { out.innerHTML = '<p class="status">No rows.</p>'; return; }
+    const cols = res.fields.map(f => f.name);
+    let html = '<table><thead><tr>' + cols.map(c => `<th>${c}</th>`).join('') + '</tr></thead><tbody>';
+    html += res.rows.map(r => '<tr>' + cols.map(c => `<td>${r[c]}</td>`).join('') + '</tr>').join('');
+    out.innerHTML = html + '</tbody></table>';
+  } catch (e) {
+    out.innerHTML = `<p class="err">${e.message}</p>`;
+  }
+}
+document.getElementById('run').onclick = runQuery;
+runQuery();
+</script>
+</body>
+</html>

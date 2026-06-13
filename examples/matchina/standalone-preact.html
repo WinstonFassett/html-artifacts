@@ -1,0 +1,91 @@
+<!DOCTYPE html><html lang="en"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Matchina + Preact signals</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&family=Source+Serif+4:ital,wght@0,400;0,500;1,400;1,500&display=swap"><link rel="stylesheet" href="demo.css"></head> <body> <main class="container"> <p class="eyebrow">Matchina · CDN demo · Preact</p> <h1>Signals-bound components with <em>Preact</em></h1> <p class="subtitle">matchina@0.3.0-alpha.0 + preact@10 + @preact/signals + htm · ~10 KB total</p> <div class="grid">  <article class="card" id="tl-card"></article> <article class="card" id="cnt-card"></article>   </div> </main> <script type="module">const matchinaUrl = "https://esm.sh/matchina@0.3.0-alpha.0?bundle&exports=matchina,createStore,defineStates,storeApi";
+const preactUrl = "https://esm.sh/preact@10.24.0";
+const signalsUrl = "https://esm.sh/@preact/signals@1.3.0?deps=preact@10.24.0";
+const htmUrl = "https://esm.sh/htm@3.1.1";
+
+        const { matchina, defineStates, createStore, storeApi } = await import(matchinaUrl);
+        const { h, render } = await import(preactUrl);
+        const { signal } = await import(signalsUrl);
+        const { default: htm } = await import(htmUrl);
+        const html = htm.bind(h);
+
+        // ── Integration ────────────────────────────────────────────
+        // Preact signals are subscribe-able external state — exactly
+        // matchina's shape. After matchina's `notify` phase fires,
+        // getState() is already the new value; mirror it into a signal
+        // and Preact rerenders any component that reads `.value`.
+        const useMatchina = (m) => {
+            const s = signal(m.getState());
+            m.subscribe(() => { s.value = m.getState(); });
+            return s;
+        };
+        // ────────────────────────────────────────────────────────────
+
+        // Traffic light
+        const trafficStates = defineStates({ Red: undefined, Yellow: undefined, Green: undefined });
+        const traffic = matchina(
+            trafficStates,
+            {
+                Red:    { next: 'Green',  reset: 'Red' },
+                Green:  { next: 'Yellow', reset: 'Red' },
+                Yellow: { next: 'Red',    reset: 'Red' },
+            },
+            'Red'
+        );
+        const tlState = useMatchina(traffic);
+        const tlLog = signal('waiting…');
+        traffic.subscribe(ev => { tlLog.value = `${ev.from.key} → ${ev.to.key}`; });
+
+        const TrafficCard = () => {
+            const key = tlState.value.key;
+            return html`
+                <div class="card-eyebrow"><span>fig.01 — Traffic light</span><span class="meta">matchina + preact</span></div>
+                <div class="card-stage">
+                    <div class="traffic">
+                        <div class=${`light ${key === 'Red' ? 'red' : ''}`}></div>
+                        <div class=${`light ${key === 'Yellow' ? 'yellow' : ''}`}></div>
+                        <div class=${`light ${key === 'Green' ? 'green' : ''}`}></div>
+                    </div>
+                </div>
+                <p class="state-line">state <code>${key}</code></p>
+                <div class="row">
+                    <button onClick=${() => traffic.next()}>Next →</button>
+                    <button class="secondary" onClick=${() => traffic.reset()}>Reset</button>
+                </div>
+                <footer><span class="log">${tlLog.value}</span></footer>
+            `;
+        };
+        render(html`<${TrafficCard} />`, document.getElementById('tl-card'));
+
+        // Counter
+        const counter = createStore(0, {
+            increment: (amt = 1) => (ch) => ch.from + amt,
+            decrement: (amt = 1) => (ch) => ch.from - amt,
+            set: (value) => value,
+            reset: () => 0,
+        });
+        const api = storeApi(counter);
+        const cnt = useMatchina(counter);
+        const cntLog = signal('waiting…');
+        counter.subscribe(ev => { cntLog.value = `${ev.from} → ${ev.to}`; });
+
+        const CounterCard = () => html`
+            <div class="card-eyebrow"><span>fig.02 — Counter store</span><span class="meta">createStore + preact</span></div>
+            <div class="card-stage"><p class="count">${cnt.value}</p></div>
+            <div class="row">
+                <button class="secondary" onClick=${() => api.decrement(5)}>−5</button>
+                <button class="secondary" onClick=${() => api.decrement()}>−1</button>
+                <button onClick=${() => api.increment()}>+1</button>
+                <button onClick=${() => api.increment(5)}>+5</button>
+            </div>
+            <div class="row">
+                <button class="outline" onClick=${() => api.set(100)}>Set 100</button>
+                <button class="outline" onClick=${() => api.reset()}>Reset</button>
+            </div>
+            <footer><span class="log">${cntLog.value}</span></footer>
+        `;
+        render(html`<${CounterCard} />`, document.getElementById('cnt-card'));
+
+        window.traffic = traffic;
+        window.counter = counter;
+    </script> </body></html>

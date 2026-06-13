@@ -1,0 +1,89 @@
+<!DOCTYPE html><html lang="en"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Matchina + Vue 3</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&family=Source+Serif+4:ital,wght@0,400;0,500;1,400;1,500&display=swap"><link rel="stylesheet" href="demo.css"></head> <body> <main class="container"> <p class="eyebrow">Matchina · CDN demo · Vue 3</p> <h1>Declarative attribute bindings with <em>Vue 3</em></h1> <p class="subtitle">matchina@0.3.0-alpha.0 + vue@3.5 · attribute-driven bindings, no JSX build, no FOUC</p> <div class="grid">  
+    <article class="card" id="tl-card" v-cloak>
+        <div class="card-eyebrow"><span>fig.01 — Traffic light</span><span class="meta">matchina + vue</span></div>
+        <div class="card-stage">
+            <div class="traffic">
+                <div class="light" data-color="Red"    :data-active="state.key === 'Red'"></div>
+                <div class="light" data-color="Yellow" :data-active="state.key === 'Yellow'"></div>
+                <div class="light" data-color="Green"  :data-active="state.key === 'Green'"></div>
+            </div>
+        </div>
+        <p class="state-line">state <code v-text="state.key"></code></p>
+        <div class="row">
+            <button @click="machine.next()">Next →</button>
+            <button class="secondary" @click="machine.reset()">Reset</button>
+        </div>
+        <footer><span class="log" v-text="log"></span></footer>
+    </article>
+
+    <article class="card" id="cnt-card" v-cloak>
+        <div class="card-eyebrow"><span>fig.02 — Counter store</span><span class="meta">createStore + vue</span></div>
+        <div class="card-stage"><p class="count" v-text="value"></p></div>
+        <div class="row">
+            <button class="secondary" @click="api.decrement(5)">−5</button>
+            <button class="secondary" @click="api.decrement()">−1</button>
+            <button @click="api.increment()">+1</button>
+            <button @click="api.increment(5)">+5</button>
+        </div>
+        <div class="row">
+            <button class="outline" @click="api.set(100)">Set 100</button>
+            <button class="outline" @click="api.reset()">Reset</button>
+        </div>
+        <footer><span class="log" v-text="log"></span></footer>
+    </article>
+       </div> </main> <script type="module">const matchinaUrl = "https://esm.sh/matchina@0.3.0-alpha.0?bundle&exports=matchina,createStore,defineStates,storeApi";
+const vueUrl = "https://esm.sh/vue@3.5.13/dist/vue.esm-browser.prod.js";
+
+        const { matchina, defineStates, createStore, storeApi } = await import(matchinaUrl);
+        const { createApp, ref } = await import(vueUrl);
+
+        // ── Integration ────────────────────────────────────────────
+        // Vue's `ref` is subscribe-able external state. matchina's
+        // `subscribe` fires after `notify`, by which point getState()
+        // is the new value. Mirror it into a ref; Vue's template
+        // bindings react.
+        const useMatchina = (m) => {
+            const r = ref(m.getState());
+            m.subscribe(() => { r.value = m.getState(); });
+            return r;
+        };
+        // ────────────────────────────────────────────────────────────
+
+        // Traffic light
+        const trafficStates = defineStates({ Red: undefined, Yellow: undefined, Green: undefined });
+        const traffic = matchina(
+            trafficStates,
+            {
+                Red:    { next: 'Green',  reset: 'Red' },
+                Green:  { next: 'Yellow', reset: 'Red' },
+                Yellow: { next: 'Red',    reset: 'Red' },
+            },
+            'Red'
+        );
+        const tlLog = ref('waiting…');
+        traffic.subscribe(ev => { tlLog.value = `${ev.from.key} → ${ev.to.key}`; });
+        createApp({
+            setup() {
+                return { machine: traffic, state: useMatchina(traffic), log: tlLog };
+            }
+        }).mount('#tl-card');
+
+        // Counter
+        const counter = createStore(0, {
+            increment: (amt = 1) => (ch) => ch.from + amt,
+            decrement: (amt = 1) => (ch) => ch.from - amt,
+            set: (value) => value,
+            reset: () => 0,
+        });
+        const api = storeApi(counter);
+        const cntLog = ref('waiting…');
+        counter.subscribe(ev => { cntLog.value = `${ev.from} → ${ev.to}`; });
+        createApp({
+            setup() {
+                return { api, value: useMatchina(counter), log: cntLog };
+            }
+        }).mount('#cnt-card');
+
+        window.traffic = traffic;
+        window.counter = counter;
+    </script> </body></html>

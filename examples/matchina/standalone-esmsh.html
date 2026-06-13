@@ -1,0 +1,56 @@
+<!DOCTYPE html><html lang="en"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Matchina via esm.sh (tree-shaken)</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&family=Source+Serif+4:ital,wght@0,400;0,500;1,400;1,500&display=swap"><link rel="stylesheet" href="demo.css"></head> <body> <main class="container"> <p class="eyebrow">Matchina · CDN demo · esm.sh</p> <h1>Tree-shaken from <em>esm.sh</em></h1> <p class="subtitle">esm.sh/matchina@0.3.0-alpha.0?bundle&amp;exports=… · ~6.6 KB raw / ~2.8 KB gzip</p> <div class="grid">  <article class="card"> <div class="card-eyebrow"><span>fig.01 — Traffic light</span><span class="meta">matchina</span></div> <div class="card-stage"> <div class="traffic"> <div class="light" id="red"></div> <div class="light" id="yellow"></div> <div class="light" id="green"></div> </div> </div> <p class="state-line">state <code id="tl-state">Red</code></p> <div class="row"> <button id="tl-next">Next →</button> <button id="tl-reset" class="secondary">Reset</button> </div> <footer><span class="log" id="tl-log">waiting…</span></footer> </article> <article class="card"> <div class="card-eyebrow"><span>fig.02 — Counter store</span><span class="meta">createStore</span></div> <div class="card-stage"> <p class="count" id="counter-value">0</p> </div> <div class="row"> <button id="cnt-dec-5" class="secondary">−5</button> <button id="cnt-dec" class="secondary">−1</button> <button id="cnt-inc">+1</button> <button id="cnt-inc-5">+5</button> </div> <div class="row"> <button id="cnt-set" class="outline">Set 100</button> <button id="cnt-reset" class="outline">Reset</button> </div> <footer><span class="log" id="cnt-log">waiting…</span></footer> </article>   </div> </main> <script type="module">const esmUrl = "https://esm.sh/matchina@0.3.0-alpha.0?bundle&exports=matchina,createStore,defineStates";
+
+        const { matchina, defineStates, createStore } = await import(esmUrl);
+
+        const states = defineStates({ Red: undefined, Yellow: undefined, Green: undefined });
+        const traffic = matchina(
+            states,
+            {
+                Red:    { next: 'Green',  reset: 'Red' },
+                Green:  { next: 'Yellow', reset: 'Red' },
+                Yellow: { next: 'Red',    reset: 'Red' },
+            },
+            'Red'
+        );
+
+        const tlState = document.getElementById('tl-state');
+        const tlLog = document.getElementById('tl-log');
+        const lights = { Red: document.getElementById('red'), Yellow: document.getElementById('yellow'), Green: document.getElementById('green') };
+        function paintTraffic() {
+            const key = traffic.getState().key;
+            tlState.textContent = key;
+            for (const k of Object.keys(lights)) {
+                lights[k].className = `light ${k === key ? k.toLowerCase() : ''}`;
+            }
+        }
+        traffic.subscribe(ev => {
+            paintTraffic();
+            tlLog.textContent = `${ev.from.key} → ${ev.to.key}`;
+        });
+        paintTraffic();
+        document.getElementById('tl-next').onclick  = () => traffic.next();
+        document.getElementById('tl-reset').onclick = () => traffic.reset();
+
+        const counter = createStore(0, {
+            increment: (amt = 1) => (ch) => ch.from + amt,
+            decrement: (amt = 1) => (ch) => ch.from - amt,
+            set: (value) => value,
+            reset: () => 0,
+        });
+        const cntValue = document.getElementById('counter-value');
+        const cntLog = document.getElementById('cnt-log');
+        counter.subscribe(ev => {
+            cntValue.textContent = counter.getState();
+            cntLog.textContent = `${ev.from} → ${ev.to}`;
+        });
+        cntValue.textContent = counter.getState();
+        document.getElementById('cnt-inc').onclick   = () => counter.increment();
+        document.getElementById('cnt-dec').onclick   = () => counter.decrement();
+        document.getElementById('cnt-inc-5').onclick = () => counter.increment(5);
+        document.getElementById('cnt-dec-5').onclick = () => counter.decrement(5);
+        document.getElementById('cnt-set').onclick   = () => counter.set(100);
+        document.getElementById('cnt-reset').onclick = () => counter.reset();
+
+        window.traffic = traffic;
+        window.counter = counter;
+    </script> </body></html>
