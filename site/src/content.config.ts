@@ -16,6 +16,7 @@ const artifacts = defineCollection({
     loading: z.enum(['esm', 'script']).optional(),
     bucket: z.enum(['mine', 'collected', 'templates']),
     featured: z.boolean().default(false), // publisher highlight (not per-viewer faves)
+    size: z.number().default(0), // bytes of the source .html
     preview: z.string(),
   }),
 });

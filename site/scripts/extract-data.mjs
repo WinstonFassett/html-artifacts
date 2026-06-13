@@ -2,7 +2,7 @@
 // One-time-ish: extract the inline `artifacts` array from ../index.html into
 // src/data/artifacts.json, adding derived fields (id, bucket, featured, preview).
 // Re-runnable: re-derives from index.html, so it's the data-migration source.
-import { readFileSync, writeFileSync, mkdirSync, existsSync } from 'node:fs';
+import { readFileSync, writeFileSync, mkdirSync, existsSync, statSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -36,6 +36,8 @@ const out = raw.map((a) => {
   if (seen.has(id)) throw new Error(`duplicate id (slug collision): ${id} (${a.path})`);
   seen.add(id);
   const bucket = BUCKET[a.source] ?? 'collected';
+  let size = 0;
+  try { size = statSync(resolve(REPO, a.path)).size; } catch { /* missing file */ }
   return {
     id,
     name: a.name,
@@ -46,6 +48,7 @@ const out = raw.map((a) => {
     bucket,
     // featured = publisher highlight; seed true on authored work (mine bucket)
     featured: bucket === 'mine',
+    size,                          // bytes of the source .html (no-build single file)
     preview: `previews/${id}.png`,
   };
 });

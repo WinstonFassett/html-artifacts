@@ -1,11 +1,22 @@
 ---
 // Click-to-run modal. The iframe src is the artifact's /artifacts/<path> URL,
-// served verbatim from public/ so ESM imports resolve over HTTP.
+// served verbatim from public/ so ESM imports resolve over HTTP. Supports
+// download, size readout, and prev/next across the currently-visible cards.
 ---
 <div id="lightbox" class="fixed inset-0 z-50 hidden flex-col bg-black/90 p-4 backdrop-blur-sm">
   <div class="mb-3 flex items-center justify-between gap-4">
-    <h2 id="lb-title" class="truncate text-sm font-semibold text-white"></h2>
-    <div class="flex items-center gap-3">
+    <div class="flex min-w-0 items-center gap-3">
+      <button id="lb-prev" type="button" title="Previous (←)"
+              class="shrink-0 rounded border border-white/20 px-2.5 py-1 text-sm text-white/80 hover:border-accent hover:text-accent disabled:opacity-30">‹</button>
+      <button id="lb-next" type="button" title="Next (→)"
+              class="shrink-0 rounded border border-white/20 px-2.5 py-1 text-sm text-white/80 hover:border-accent hover:text-accent disabled:opacity-30">›</button>
+      <h2 id="lb-title" class="truncate text-sm font-semibold text-white"></h2>
+      <span id="lb-size" class="shrink-0 tabular-nums text-xs text-white/50"></span>
+      <span id="lb-pos" class="shrink-0 text-xs text-white/40"></span>
+    </div>
+    <div class="flex shrink-0 items-center gap-3">
+      <a id="lb-download" href="#" download
+         class="rounded border border-white/20 px-2.5 py-1 text-xs text-white/80 hover:border-accent hover:text-accent">↓ download</a>
       <a id="lb-open" href="#" target="_blank" rel="noopener"
          class="rounded border border-white/20 px-2.5 py-1 text-xs text-white/80 hover:border-accent hover:text-accent">open ↗</a>
       <button id="lb-close" type="button"
@@ -13,36 +24,69 @@
     </div>
   </div>
   <iframe id="lb-frame" class="h-full w-full flex-1 rounded border border-white/10 bg-white"
-          sandbox="allow-scripts allow-same-origin allow-forms"></iframe>
+          sandbox="allow-scripts allow-same-origin allow-forms allow-downloads"></iframe>
 </div>
 
 <script>
   const lb = document.getElementById('lightbox')!;
   const frame = document.getElementById('lb-frame') as HTMLIFrameElement;
   const title = document.getElementById('lb-title')!;
+  const sizeEl = document.getElementById('lb-size')!;
+  const posEl = document.getElementById('lb-pos')!;
   const openLink = document.getElementById('lb-open') as HTMLAnchorElement;
+  const dlLink = document.getElementById('lb-download') as HTMLAnchorElement;
+  const prevBtn = document.getElementById('lb-prev') as HTMLButtonElement;
+  const nextBtn = document.getElementById('lb-next') as HTMLButtonElement;
 
-  function open(run: string, name: string) {
-    title.textContent = name;
+  let cards: HTMLElement[] = []; // the visible (filtered) cards at open time
+  let idx = -1;
+
+  function visibleCards(): HTMLElement[] {
+    return Array.from(document.querySelectorAll<HTMLElement>('.card:not(.hidden)'));
+  }
+  function show(i: number) {
+    if (i < 0 || i >= cards.length) return;
+    idx = i;
+    const card = cards[idx];
+    const run = card.dataset.run!;
+    title.textContent = card.dataset.title || '';
+    sizeEl.textContent = card.dataset.size || '';
+    posEl.textContent = `${idx + 1} / ${cards.length}`;
     openLink.href = run;
+    dlLink.href = run;
+    dlLink.setAttribute('download', card.dataset.filename || '');
     frame.src = run;
+    prevBtn.disabled = idx <= 0;
+    nextBtn.disabled = idx >= cards.length - 1;
+  }
+  function openFromCard(card: HTMLElement) {
+    cards = visibleCards();
+    const i = cards.indexOf(card);
     lb.classList.remove('hidden');
     lb.classList.add('flex');
+    show(i < 0 ? 0 : i);
   }
   function close() {
     lb.classList.add('hidden');
     lb.classList.remove('flex');
     frame.src = '';
+    idx = -1;
   }
 
   document.addEventListener('click', (e) => {
     const trigger = (e.target as HTMLElement).closest('.preview-trigger');
     if (!trigger) return;
     const card = trigger.closest('.card') as HTMLElement | null;
-    if (!card) return;
-    open(card.dataset.run!, card.dataset.title || '');
+    if (card) openFromCard(card);
   });
+  prevBtn.addEventListener('click', () => show(idx - 1));
+  nextBtn.addEventListener('click', () => show(idx + 1));
   document.getElementById('lb-close')!.addEventListener('click', close);
   lb.addEventListener('click', (e) => { if (e.target === lb) close(); });
-  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') close(); });
+  document.addEventListener('keydown', (e) => {
+    if (lb.classList.contains('hidden')) return;
+    if (e.key === 'Escape') close();
+    else if (e.key === 'ArrowLeft') show(idx - 1);
+    else if (e.key === 'ArrowRight') show(idx + 1);
+  });
 </script>
