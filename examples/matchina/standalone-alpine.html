@@ -1,0 +1,93 @@
+<!DOCTYPE html><html lang="en"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Matchina + Alpine.js</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&family=Source+Serif+4:ital,wght@0,400;0,500;1,400;1,500&display=swap"><link rel="stylesheet" href="demo.css"></head> <body> <main class="container"> <p class="eyebrow">Matchina · CDN demo · Alpine.js</p> <h1>Attribute-driven reactivity with <em>Alpine.js</em></h1> <p class="subtitle">matchina@0.3.0 + alpinejs@3.14 · ~15 KB · attribute-driven, mounts onto existing HTML</p> <div class="grid"> 
+    <article class="card" x-data="trafficScope()" x-init="init()">
+        <div class="card-eyebrow"><span>fig.01 — Traffic light</span><span class="meta">matchina + alpine</span></div>
+        <div class="card-stage">
+            <div class="traffic">
+                <div class="light" data-color="Red"    data-active="true"  :data-active="state === 'Red'"></div>
+                <div class="light" data-color="Yellow" data-active="false" :data-active="state === 'Yellow'"></div>
+                <div class="light" data-color="Green"  data-active="false" :data-active="state === 'Green'"></div>
+            </div>
+        </div>
+        <p class="state-line">state <code x-text="state">Red</code></p>
+        <div class="row">
+            <button @click="machine.next()">Next →</button>
+            <button class="secondary" @click="machine.reset()">Reset</button>
+        </div>
+        <footer><span class="log" x-text="log">waiting…</span></footer>
+    </article>
+
+    <article class="card" x-data="counterScope()" x-init="init()">
+        <div class="card-eyebrow"><span>fig.02 — Counter store</span><span class="meta">createStore + alpine</span></div>
+        <div class="card-stage"><p class="count" x-text="value">0</p></div>
+        <div class="row">
+            <button class="secondary" @click="api.decrement(5)">−5</button>
+            <button class="secondary" @click="api.decrement()">−1</button>
+            <button @click="api.increment()">+1</button>
+            <button @click="api.increment(5)">+5</button>
+        </div>
+        <div class="row">
+            <button class="outline" @click="api.set(100)">Set 100</button>
+            <button class="outline" @click="api.reset()">Reset</button>
+        </div>
+        <footer><span class="log" x-text="log">waiting…</span></footer>
+    </article>
+       </div> </main> <script type="module">const matchinaUrl = "https://esm.sh/matchina@0.3.0?bundle&exports=matchina,createStore,defineStates,storeApi";
+const alpineUrl = "https://esm.sh/alpinejs@3.14.1";
+
+        const { matchina, defineStates, createStore, storeApi } = await import(matchinaUrl);
+        const Alpine = (await import(alpineUrl)).default;
+
+        // ── Integration ────────────────────────────────────────────
+        // Alpine's reactive scope is a plain object returned from x-data.
+        // Wire matchina's subscribe to mutate scope keys — Alpine picks
+        // up the change via its reactivity proxy. No helper needed; the
+        // scope IS the mirror. Same shape as petite-vue.
+        // ────────────────────────────────────────────────────────────
+
+        const trafficStates = defineStates({ Red: undefined, Yellow: undefined, Green: undefined });
+        const traffic = matchina(
+            trafficStates,
+            {
+                Red:    { next: 'Green',  reset: 'Red' },
+                Green:  { next: 'Yellow', reset: 'Red' },
+                Yellow: { next: 'Red',    reset: 'Red' },
+            },
+            'Red'
+        );
+
+        const counter = createStore(0, {
+            increment: (amt = 1) => (ch) => ch.from + amt,
+            decrement: (amt = 1) => (ch) => ch.from - amt,
+            set: (value) => value,
+            reset: () => 0,
+        });
+        const api = storeApi(counter);
+
+        window.trafficScope = () => ({
+            machine: traffic,
+            state: traffic.getState().key,
+            log: 'waiting…',
+            init() {
+                traffic.subscribe(ev => {
+                    this.state = ev.to.key;
+                    this.log = `${ev.from.key} → ${ev.to.key}`;
+                });
+            },
+        });
+        window.counterScope = () => ({
+            api,
+            value: counter.getState(),
+            log: 'waiting…',
+            init() {
+                counter.subscribe(ev => {
+                    this.value = ev.to;
+                    this.log = `${ev.from} → ${ev.to}`;
+                });
+            },
+        });
+
+        Alpine.start();
+
+        window.traffic = traffic;
+        window.counter = counter;
+    </script> </body></html>

@@ -33,8 +33,13 @@
     .card:hover { border-color: #333; transform: translateY(-1px); }
     .card.hidden { display: none; }
 
-    .preview-wrap { position: relative; height: 200px; overflow: hidden; background: #fff; }
-    .preview { width: 1280px; height: 960px; border: none; background: #fff; display: block; transform-origin: top left; pointer-events: none; }
+    .preview-wrap { position: relative; height: 200px; overflow: hidden; background: #15151a; }
+    /* Static screenshot thumbnail (previews/<slug>.png). Replaced the live
+       iframe previews — with ~165 cards, iframes tanked scroll perf even lazy. */
+    .preview { width: 100%; height: 100%; border: none; display: block;
+               object-fit: cover; object-position: top center; background: #15151a; }
+    .preview.missing { display: flex; align-items: center; justify-content: center;
+               color: #555; font-size: 0.7rem; letter-spacing: 0.04em; }
     .preview-overlay { position: absolute; inset: 0; cursor: pointer; }
     .card-body { padding: 0.75rem 1rem; }
     .card-name { font-size: 0.85rem; font-weight: 500; color: #d0d0d0; }
@@ -216,7 +221,8 @@ const artifacts = [
   // matchina × view-lib starters (Winston's — state machine + 9 reactive view layers, progressive-enhancement matrix)
   { name: "matchina + vanilla", path: "examples/matchina/standalone-esmsh.html", tags: ["matchina", "reactive", "app"], source: "matchina", loading: "esm" },
   { name: "matchina + Stimulus", path: "examples/matchina/standalone-stimulus.html", tags: ["matchina", "reactive", "app"], source: "matchina", loading: "esm" },
-  { name: "matchina + Alpine", path: "examples/matchina/standalone-petite-vue.html", tags: ["matchina", "reactive", "app"], source: "matchina", loading: "esm" },
+  { name: "matchina + Alpine", path: "examples/matchina/standalone-alpine.html", tags: ["matchina", "reactive", "app"], source: "matchina", loading: "esm" },
+  { name: "matchina + React", path: "examples/matchina/standalone-react.html", tags: ["matchina", "reactive", "app", "react"], source: "matchina", loading: "esm" },
   { name: "matchina + petite-vue", path: "examples/matchina/standalone-petite-vue.html", tags: ["matchina", "reactive", "app"], source: "matchina", loading: "esm" },
   { name: "matchina + Vue 3", path: "examples/matchina/standalone-vue.html", tags: ["matchina", "reactive", "app"], source: "matchina", loading: "esm" },
   { name: "matchina + VanJS", path: "examples/matchina/standalone-van.html", tags: ["matchina", "reactive", "app"], source: "matchina", loading: "esm" },
@@ -364,17 +370,9 @@ function openLightbox(artifact) {
   lb.classList.add('open');
 }
 
-// Lazy-load iframe previews only when scrolled near the viewport — with ~150
-// cards, eager-loading every iframe is slow and noisy. Assign real src on enter.
-const lazyObserver = new IntersectionObserver((entries) => {
-  for (const e of entries) {
-    if (e.isIntersecting) {
-      const ifr = e.target;
-      if (!ifr.src && ifr.dataset.src) ifr.src = ifr.dataset.src;
-      lazyObserver.unobserve(ifr);
-    }
-  }
-}, { rootMargin: '300px' });
+// Map an artifact path -> its screenshot thumbnail filename. MUST match the
+// slug_path() in tools/shoot.py that generated previews/<slug>.png.
+function slugPath(p) { return p.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, ''); }
 
 function buildGrid() {
   const grid = document.getElementById('grid');
@@ -388,22 +386,23 @@ function buildGrid() {
     const wrap = document.createElement('div');
     wrap.className = 'preview-wrap';
 
-    const iframe = document.createElement('iframe');
-    iframe.className = 'preview';
-    iframe.dataset.src = a.path;   // lazy: real src assigned by IntersectionObserver
-    iframe.sandbox = 'allow-scripts allow-same-origin';
+    // Static screenshot thumbnail. img[loading=lazy] is native + cheap;
+    // the live iframe now lives only in the click-to-run lightbox.
+    const img = document.createElement('img');
+    img.className = 'preview';
+    img.loading = 'lazy';
+    img.decoding = 'async';
+    img.alt = a.name;
+    img.src = `previews/${slugPath(a.path)}.png`;
+    img.addEventListener('error', () => {
+      img.classList.add('missing');
+      img.removeAttribute('src');
+      img.textContent = 'no preview';
+    });
 
     const overlay = document.createElement('div');
     overlay.className = 'preview-overlay';
     overlay.addEventListener('click', () => openLightbox(a));
-
-    const scaleIframe = () => {
-      const scale = wrap.offsetWidth / 1280;
-      iframe.style.transform = `scale(${scale})`;
-    };
-    iframe.addEventListener('load', scaleIframe);
-    new ResizeObserver(scaleIframe).observe(wrap);
-    lazyObserver.observe(iframe);
 
     if (a.loading) {
       const badge = document.createElement('span');
@@ -413,7 +412,7 @@ function buildGrid() {
       wrap.appendChild(badge);
     }
 
-    wrap.appendChild(iframe);
+    wrap.appendChild(img);
     wrap.appendChild(overlay);
 
     const body = document.createElement('div');
