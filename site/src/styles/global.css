@@ -1,0 +1,43 @@
+@import "tailwindcss";
+
+/* Dark-only v1 (the gallery has always been dark). Tokens live on :root directly
+   — no theme toggle, so no .dark / @custom-variant needed. shadcn-style HSL
+   vocabulary borrowed from ui26. */
+:root {
+  --background: hsl(240 6% 5%);
+  --foreground: hsl(0 0% 92%);
+  --card: hsl(240 5% 9%);
+  --card-foreground: hsl(0 0% 92%);
+  --muted: hsl(240 4% 14%);
+  --muted-foreground: hsl(240 4% 56%);
+  --border: hsl(240 4% 16%);
+  --accent: hsl(35 92% 55%);          /* warm amber — matches ESM badge */
+  --accent-foreground: hsl(240 6% 5%);
+  --ring: hsl(35 92% 55%);
+  --badge-esm: hsl(33 80% 42%);
+  --badge-script: hsl(140 50% 38%);
+  --featured: hsl(45 95% 58%);
+}
+
+/* Map tokens → Tailwind utilities (bg-card, text-muted-foreground, border-border…) */
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-border: var(--border);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-ring: var(--ring);
+  --color-featured: var(--featured);
+}
+
+/* Base styles at root (not @layer base — v4 cascade gotcha #8). */
+html { color-scheme: dark; }
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}

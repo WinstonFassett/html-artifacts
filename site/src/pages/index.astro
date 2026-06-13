@@ -1,0 +1,21 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import FilterBar from '../components/FilterBar.astro';
+import GalleryGrid from '../components/GalleryGrid.astro';
+import Lightbox from '../components/Lightbox.astro';
+
+const artifacts = await getCollection('artifacts');
+const tags = [...new Set(artifacts.flatMap((a) => a.data.tags))].sort();
+const sources = [...new Set(artifacts.map((a) => a.data.source))].sort();
+---
+<BaseLayout>
+  <header class="mx-auto max-w-7xl px-4 pt-6">
+    <h1 class="text-xl font-bold">HTML Artifact Gallery</h1>
+    <p class="text-sm text-muted-foreground">Single-file artifacts that run with no build step — featured first.</p>
+  </header>
+
+  <FilterBar tags={tags} sources={sources} />
+  <GalleryGrid artifacts={artifacts} />
+  <Lightbox />
+</BaseLayout>

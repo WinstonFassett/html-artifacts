@@ -1,0 +1,114 @@
+---
+// Search = the instant inline filter below (name/tag/source substring). No
+// full-text search — decent filtering is all v1 needs.
+interface Props { tags: string[]; sources: string[]; }
+const { tags, sources } = Astro.props;
+
+const views = [
+  ['featured', 'Featured'],
+  ['mine', 'Mine'],
+  ['collected', 'Collected'],
+  ['templates', 'Templates'],
+  ['all', 'All'],
+] as const;
+---
+<div class="sticky top-0 z-30 border-b border-border bg-background/95 backdrop-blur">
+  <div class="mx-auto flex max-w-7xl flex-col gap-3 px-4 py-3">
+    <div class="flex flex-wrap items-center gap-3">
+      <input
+        id="q"
+        type="search"
+        placeholder="Filter by name, tag, source…"
+        class="min-w-[220px] flex-1 rounded-md border border-border bg-card px-3 py-1.5 text-sm outline-none focus:border-accent"
+      />
+    </div>
+
+    <div class="flex flex-wrap items-center gap-1.5">
+      {views.map(([val, label]) => (
+        <button
+          class="view-btn rounded-full border border-border px-3 py-1 text-xs font-medium transition-colors hover:border-accent data-[active]:border-accent data-[active]:bg-accent data-[active]:text-accent-foreground"
+          data-view={val}
+          data-active={val === 'featured' ? '' : undefined}
+        >{label}</button>
+      ))}
+      <span class="mx-1 h-4 w-px bg-border"></span>
+      <button class="src-btn rounded-full border border-border px-2.5 py-1 text-xs text-muted-foreground hover:border-accent data-[active]:border-accent data-[active]:text-foreground" data-src="">all sources</button>
+      {sources.map((s) => (
+        <button class="src-btn rounded-full border border-border px-2.5 py-1 text-xs text-muted-foreground hover:border-accent data-[active]:border-accent data-[active]:text-foreground" data-src={s}>{s}</button>
+      ))}
+    </div>
+
+    <div class="flex flex-wrap items-center gap-1.5">
+      <button class="tag-btn rounded-full border border-border px-2.5 py-0.5 text-[0.7rem] text-muted-foreground hover:border-accent data-[active]:border-accent data-[active]:text-foreground" data-tag="">all tags</button>
+      {tags.map((t) => (
+        <button class="tag-btn rounded-full border border-border px-2.5 py-0.5 text-[0.7rem] text-muted-foreground hover:border-accent data-[active]:border-accent data-[active]:text-foreground" data-tag={t}>{t}</button>
+      ))}
+    </div>
+
+    <p id="count" class="text-xs text-muted-foreground"></p>
+  </div>
+</div>
+
+<script>
+  // Client-side faceting over rendered cards. Default view = featured.
+  const state = { view: 'featured', src: '', tag: '', q: '' };
+  const cards = Array.from(document.querySelectorAll<HTMLElement>('.card'));
+  const countEl = document.getElementById('count')!;
+
+  function inView(card: HTMLElement) {
+    if (state.view === 'all') return true;
+    if (state.view === 'featured') return card.dataset.featured === 'true';
+    return card.dataset.bucket === state.view; // mine | collected | templates
+  }
+  function apply() {
+    let n = 0;
+    for (const card of cards) {
+      const tags = (card.dataset.tags || '').split(',');
+      const show =
+        inView(card) &&
+        (!state.src || card.dataset.source === state.src) &&
+        (!state.tag || tags.includes(state.tag)) &&
+        (!state.q ||
+          (card.dataset.name || '').includes(state.q) ||
+          tags.some((t) => t.includes(state.q)) ||
+          (card.dataset.source || '').includes(state.q));
+      card.classList.toggle('hidden', !show);
+      if (show) n++;
+    }
+    countEl.textContent = `${n} artifact${n === 1 ? '' : 's'}`;
+  }
+  function setActive(group: string, attr: string, val: string) {
+    for (const b of document.querySelectorAll<HTMLElement>(group)) {
+      if (b.dataset[attr] === val) b.setAttribute('data-active', '');
+      else b.removeAttribute('data-active');
+    }
+  }
+
+  document.querySelectorAll<HTMLElement>('.view-btn').forEach((b) =>
+    b.addEventListener('click', () => {
+      state.view = b.dataset.view!;
+      setActive('.view-btn', 'view', state.view);
+      apply();
+    }));
+  document.querySelectorAll<HTMLElement>('.src-btn').forEach((b) =>
+    b.addEventListener('click', () => {
+      state.src = b.dataset.src!;
+      setActive('.src-btn', 'src', state.src);
+      apply();
+    }));
+  document.querySelectorAll<HTMLElement>('.tag-btn').forEach((b) =>
+    b.addEventListener('click', () => {
+      state.tag = b.dataset.tag!;
+      setActive('.tag-btn', 'tag', state.tag);
+      apply();
+    }));
+  document.getElementById('q')!.addEventListener('input', (e) => {
+    state.q = (e.target as HTMLInputElement).value.trim().toLowerCase();
+    apply();
+  });
+
+  // seed default-active states for source/tag "all"
+  setActive('.src-btn', 'src', '');
+  setActive('.tag-btn', 'tag', '');
+  apply();
+</script>

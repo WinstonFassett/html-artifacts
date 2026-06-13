@@ -1,0 +1,74 @@
+---
+import type { CollectionEntry } from 'astro:content';
+interface Props { artifact: CollectionEntry<'artifacts'>['data']; }
+const a = Astro.props.artifact;
+const runUrl = `/artifacts/${a.path}`;
+const previewUrl = `/${a.preview}`;
+---
+<article
+  class="card group relative flex flex-col overflow-hidden rounded-lg border border-border bg-card transition-colors hover:border-accent"
+  data-name={a.name.toLowerCase()}
+  data-tags={a.tags.join(',')}
+  data-source={a.source}
+  data-bucket={a.bucket}
+  data-featured={a.featured ? 'true' : 'false'}
+  data-run={runUrl}
+  data-title={a.name}
+>
+  <button
+    type="button"
+    class="preview-trigger relative block h-[200px] w-full overflow-hidden bg-muted text-left"
+    aria-label={`Run ${a.name}`}
+  >
+    <img
+      class="preview h-full w-full object-cover object-top"
+      src={previewUrl}
+      alt={a.name}
+      loading="lazy"
+      decoding="async"
+    />
+    {a.loading && (
+      <span
+        class:list={[
+          'absolute right-1.5 top-1.5 z-10 rounded px-1.5 py-0.5 text-[0.62rem] font-semibold tracking-wide text-white',
+          a.loading === 'esm' ? 'badge-esm' : 'badge-script',
+        ]}
+        title={a.loading === 'esm'
+          ? 'ES module imports — needs HTTP (breaks from file://)'
+          : 'Plain script tags — runs from file:// directly'}
+      >{a.loading === 'esm' ? 'ESM·http' : 'file://'}</span>
+    )}
+    {a.featured && (
+      <span class="featured-badge absolute left-1.5 top-1.5 z-10 rounded px-1.5 py-0.5 text-[0.62rem] font-semibold tracking-wide">★ featured</span>
+    )}
+  </button>
+
+  <div class="flex flex-col gap-1 p-3">
+    <h3 class="card-name text-sm font-semibold leading-tight">
+      <a href={runUrl} target="_blank" rel="noopener" class="hover:text-accent">{a.name}</a>
+    </h3>
+    <p class="card-tags text-xs text-muted-foreground">{a.tags.join(' · ')}</p>
+    <p class="card-source text-[0.7rem] uppercase tracking-wide text-muted-foreground/70">{a.source}</p>
+  </div>
+</article>
+
+<style>
+  .badge-esm { background: var(--badge-esm); }
+  .badge-script { background: var(--badge-script); }
+  .featured-badge { background: var(--featured); color: hsl(240 6% 5%); }
+  .preview.missing {
+    display: flex; align-items: center; justify-content: center;
+    color: var(--muted-foreground); font-size: 0.7rem; letter-spacing: 0.04em;
+  }
+</style>
+
+<script>
+  // Per-card image fallback: if a preview 404s, show a "no preview" placeholder.
+  for (const img of document.querySelectorAll<HTMLImageElement>('img.preview')) {
+    img.addEventListener('error', () => {
+      img.classList.add('missing');
+      img.removeAttribute('src');
+      img.alt = 'no preview';
+    });
+  }
+</script>

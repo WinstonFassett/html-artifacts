@@ -1,0 +1,17 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import ArtifactCard from './ArtifactCard.astro';
+interface Props { artifacts: CollectionEntry<'artifacts'>[]; }
+const { artifacts } = Astro.props;
+const sorted = [...artifacts].sort((a, b) => {
+  if (a.data.featured !== b.data.featured) return a.data.featured ? -1 : 1;
+  return a.data.name.localeCompare(b.data.name);
+});
+---
+<div
+  id="grid"
+  class="mx-auto grid max-w-7xl gap-4 px-4 py-6"
+  style="grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));"
+>
+  {sorted.map((a) => <ArtifactCard artifact={a.data} />)}
+</div>

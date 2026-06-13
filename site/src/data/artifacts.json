@@ -1,0 +1,2258 @@
+[
+  {
+    "id": "examples-html-anything-article-magazine-html",
+    "name": "article-magazine",
+    "path": "examples/html-anything/article-magazine.html",
+    "tags": [
+      "article",
+      "magazine"
+    ],
+    "source": "html-anything",
+    "bucket": "templates",
+    "featured": false,
+    "preview": "previews/examples-html-anything-article-magazine-html.png"
+  },
+  {
+    "id": "examples-html-anything-blog-post-html",
+    "name": "blog-post",
+    "path": "examples/html-anything/blog-post.html",
+    "tags": [
+      "article",
+      "blog"
+    ],
+    "source": "html-anything",
+    "bucket": "templates",
+    "featured": false,
+    "preview": "previews/examples-html-anything-blog-post-html.png"
+  },
+  {
+    "id": "examples-html-anything-card-twitter-html",
+    "name": "card-twitter",
+    "path": "examples/html-anything/card-twitter.html",
+    "tags": [
+      "card",
+      "social"
+    ],
+    "source": "html-anything",
+    "bucket": "templates",
+    "featured": false,
+    "preview": "previews/examples-html-anything-card-twitter-html.png"
+  },
+  {
+    "id": "examples-html-anything-card-xiaohongshu-html",
+    "name": "card-xiaohongshu",
+    "path": "examples/html-anything/card-xiaohongshu.html",
+    "tags": [
+      "card",
+      "social"
+    ],
+    "source": "html-anything",
+    "bucket": "templates",
+    "featured": false,
+    "preview": "previews/examples-html-anything-card-xiaohongshu-html.png"
+  },
+  {
+    "id": "examples-html-anything-competitive-teardown-html",
+    "name": "competitive-teardown",
+    "path": "examples/html-anything/competitive-teardown.html",
+    "tags": [
+      "report",
+      "dashboard"
+    ],
+    "source": "html-anything",
+    "bucket": "templates",
+    "featured": false,
+    "preview": "previews/examples-html-anything-competitive-teardown-html.png"
+  },
+  {
+    "id": "examples-html-anything-competitive-teardown-analyst-dossier-html",
+    "name": "competitive-teardown--analyst-dossier",
+    "path": "examples/html-anything/competitive-teardown--analyst-dossier.html",
+    "tags": [
+      "report"
+    ],
+    "source": "html-anything",
+    "bucket": "templates",
+    "featured": false,
+    "preview": "previews/examples-html-anything-competitive-teardown-analyst-dossier-html.png"
+  },
+  {
+    "id": "examples-html-anything-competitive-teardown-radar-map-html",
+    "name": "competitive-teardown--radar-map",
+    "path": "examples/html-anything/competitive-teardown--radar-map.html",
+    "tags": [
+      "report",
+      "chart"
+    ],
+    "source": "html-anything",
+    "bucket": "templates",
+    "featured": false,
+    "preview": "previews/examples-html-anything-competitive-teardown-radar-map-html.png"
+  },
+  {
+    "id": "examples-html-anything-competitive-teardown-war-room-grid-html",
+    "name": "competitive-teardown--war-room-grid",
+    "path": "examples/html-anything/competitive-teardown--war-room-grid.html",
+    "tags": [
+      "report"
+    ],
+    "source": "html-anything",
+    "bucket": "templates",
+    "featured": false,
+    "preview": "previews/examples-html-anything-competitive-teardown-war-room-grid-html.png"
+  },
+  {
+    "id": "examples-html-anything-dashboard-html",
+    "name": "dashboard",
+    "path": "examples/html-anything/dashboard.html",
+    "tags": [
+      "dashboard",
+      "chart"
+    ],
+    "source": "html-anything",
+    "bucket": "templates",
+    "featured": false,
+    "preview": "previews/examples-html-anything-dashboard-html.png"
+  },
+  {
+    "id": "examples-html-anything-data-report-html",
+    "name": "data-report",
+    "path": "examples/html-anything/data-report.html",
+    "tags": [
+      "report",
+      "chart"
+    ],
+    "source": "html-anything",
+    "bucket": "templates",
+    "featured": false,
+    "preview": "previews/examples-html-anything-data-report-html.png"
+  },
+  {
+    "id": "examples-html-anything-dating-web-html",
+    "name": "dating-web",
+    "path": "examples/html-anything/dating-web.html",
+    "tags": [
+      "app",
+      "prototype"
+    ],
+    "source": "html-anything",
+    "bucket": "templates",
+    "featured": false,
+    "preview": "previews/examples-html-anything-dating-web-html.png"
+  },
+  {
+    "id": "examples-html-anything-deck-blueprint-html",
+    "name": "deck-blueprint",
+    "path": "examples/html-anything/deck-blueprint.html",
+    "tags": [
+      "deck",
+      "presentation"
+    ],
+    "source": "html-anything",
+    "bucket": "templates",
+    "featured": false,
+    "preview": "previews/examples-html-anything-deck-blueprint-html.png"
+  },
+  {
+    "id": "examples-html-anything-deck-course-module-html",
+    "name": "deck-course-module",
+    "path": "examples/html-anything/deck-course-module.html",
+    "tags": [
+      "deck",
+      "presentation"
+    ],
+    "source": "html-anything",
+    "bucket": "templates",
+    "featured": false,
+    "preview": "previews/examples-html-anything-deck-course-module-html.png"
+  },
+  {
+    "id": "examples-html-anything-deck-dir-key-nav-html",
+    "name": "deck-dir-key-nav",
+    "path": "examples/html-anything/deck-dir-key-nav.html",
+    "tags": [
+      "deck",
+      "presentation"
+    ],
+    "source": "html-anything",
+    "bucket": "templates",
+    "featured": false,
+    "preview": "previews/examples-html-anything-deck-dir-key-nav-html.png"
+  },
+  {
+    "id": "examples-html-anything-deck-graphify-dark-html",
+    "name": "deck-graphify-dark",
+    "path": "examples/html-anything/deck-graphify-dark.html",
+    "tags": [
+      "deck",
+      "chart"
+    ],
+    "source": "html-anything",
+    "bucket": "templates",
+    "featured": false,
+    "preview": "previews/examples-html-anything-deck-graphify-dark-html.png"
+  },
+  {
+    "id": "examples-html-anything-deck-guizang-editorial-html",
+    "name": "deck-guizang-editorial",
+    "path": "examples/html-anything/deck-guizang-editorial.html",
+    "tags": [
+      "deck",
+      "presentation"
+    ],
+    "source": "html-anything",
+    "bucket": "templates",
+    "featured": false,
+    "preview": "previews/examples-html-anything-deck-guizang-editorial-html.png"
+  },
+  {
+    "id": "examples-html-anything-deck-hermes-cyber-html",
+    "name": "deck-hermes-cyber",
+    "path": "examples/html-anything/deck-hermes-cyber.html",
+    "tags": [
+      "deck",
+      "presentation"
+    ],
+    "source": "html-anything",
+    "bucket": "templates",
+    "featured": false,
+    "preview": "previews/examples-html-anything-deck-hermes-cyber-html.png"
+  },
+  {
+    "id": "examples-html-anything-deck-magazine-web-html",
+    "name": "deck-magazine-web",
+    "path": "examples/html-anything/deck-magazine-web.html",
+    "tags": [
+      "deck",
+      "magazine"
+    ],
+    "source": "html-anything",
+    "bucket": "templates",
+    "featured": false,
+    "preview": "previews/examples-html-anything-deck-magazine-web-html.png"
+  },
+  {
+    "id": "examples-html-anything-deck-obsidian-claude-html",
+    "name": "deck-obsidian-claude",
+    "path": "examples/html-anything/deck-obsidian-claude.html",
+    "tags": [
+      "deck",
+      "presentation"
+    ],
+    "source": "html-anything",
+    "bucket": "templates",
+    "featured": false,
+    "preview": "previews/examples-html-anything-deck-obsidian-claude-html.png"
+  },
+  {
+    "id": "examples-html-anything-deck-open-slide-canvas-html",
+    "name": "deck-open-slide-canvas",
+    "path": "examples/html-anything/deck-open-slide-canvas.html",
+    "tags": [
+      "deck",
+      "presentation"
+    ],
+    "source": "html-anything",
+    "bucket": "templates",
+    "featured": false,
+    "preview": "previews/examples-html-anything-deck-open-slide-canvas-html.png"
+  },
+  {
+    "id": "examples-html-anything-deck-pitch-html",
+    "name": "deck-pitch",
+    "path": "examples/html-anything/deck-pitch.html",
+    "tags": [
+      "deck",
+      "presentation"
+    ],
+    "source": "html-anything",
+    "bucket": "templates",
+    "featured": false,
+    "preview": "previews/examples-html-anything-deck-pitch-html.png"
+  },
+  {
+    "id": "examples-html-anything-deck-presenter-mode-html",
+    "name": "deck-presenter-mode",
+    "path": "examples/html-anything/deck-presenter-mode.html",
+    "tags": [
+      "deck",
+      "presentation"
+    ],
+    "source": "html-anything",
+    "bucket": "templates",
+    "featured": false,
+    "preview": "previews/examples-html-anything-deck-presenter-mode-html.png"
+  },
+  {
+    "id": "examples-html-anything-deck-product-launch-html",
+    "name": "deck-product-launch",
+    "path": "examples/html-anything/deck-product-launch.html",
+    "tags": [
+      "deck",
+      "presentation"
+    ],
+    "source": "html-anything",
+    "bucket": "templates",
+    "featured": false,
+    "preview": "previews/examples-html-anything-deck-product-launch-html.png"
+  },
+  {
+    "id": "examples-html-anything-deck-replit-html",
+    "name": "deck-replit",
+    "path": "examples/html-anything/deck-replit.html",
+    "tags": [
+      "deck",
+      "presentation"
+    ],
+    "source": "html-anything",
+    "bucket": "templates",
+    "featured": false,
+    "preview": "previews/examples-html-anything-deck-replit-html.png"
+  },
+  {
+    "id": "examples-html-anything-deck-safety-alert-html",
+    "name": "deck-safety-alert",
+    "path": "examples/html-anything/deck-safety-alert.html",
+    "tags": [
+      "deck",
+      "presentation"
+    ],
+    "source": "html-anything",
+    "bucket": "templates",
+    "featured": false,
+    "preview": "previews/examples-html-anything-deck-safety-alert-html.png"
+  },
+  {
+    "id": "examples-html-anything-deck-simple-html",
+    "name": "deck-simple",
+    "path": "examples/html-anything/deck-simple.html",
+    "tags": [
+      "deck",
+      "presentation"
+    ],
+    "source": "html-anything",
+    "bucket": "templates",
+    "featured": false,
+    "preview": "previews/examples-html-anything-deck-simple-html.png"
+  },
+  {
+    "id": "examples-html-anything-deck-swiss-international-html",
+    "name": "deck-swiss-international",
+    "path": "examples/html-anything/deck-swiss-international.html",
+    "tags": [
+      "deck",
+      "presentation"
+    ],
+    "source": "html-anything",
+    "bucket": "templates",
+    "featured": false,
+    "preview": "previews/examples-html-anything-deck-swiss-international-html.png"
+  },
+  {
+    "id": "examples-html-anything-deck-tech-sharing-html",
+    "name": "deck-tech-sharing",
+    "path": "examples/html-anything/deck-tech-sharing.html",
+    "tags": [
+      "deck",
+      "presentation"
+    ],
+    "source": "html-anything",
+    "bucket": "templates",
+    "featured": false,
+    "preview": "previews/examples-html-anything-deck-tech-sharing-html.png"
+  },
+  {
+    "id": "examples-html-anything-deck-xhs-pastel-html",
+    "name": "deck-xhs-pastel",
+    "path": "examples/html-anything/deck-xhs-pastel.html",
+    "tags": [
+      "deck",
+      "social"
+    ],
+    "source": "html-anything",
+    "bucket": "templates",
+    "featured": false,
+    "preview": "previews/examples-html-anything-deck-xhs-pastel-html.png"
+  },
+  {
+    "id": "examples-html-anything-deck-xhs-post-html",
+    "name": "deck-xhs-post",
+    "path": "examples/html-anything/deck-xhs-post.html",
+    "tags": [
+      "deck",
+      "social"
+    ],
+    "source": "html-anything",
+    "bucket": "templates",
+    "featured": false,
+    "preview": "previews/examples-html-anything-deck-xhs-post-html.png"
+  },
+  {
+    "id": "examples-html-anything-deck-xhs-white-html",
+    "name": "deck-xhs-white",
+    "path": "examples/html-anything/deck-xhs-white.html",
+    "tags": [
+      "deck",
+      "social"
+    ],
+    "source": "html-anything",
+    "bucket": "templates",
+    "featured": false,
+    "preview": "previews/examples-html-anything-deck-xhs-white-html.png"
+  },
+  {
+    "id": "examples-html-anything-digital-eguide-html",
+    "name": "digital-eguide",
+    "path": "examples/html-anything/digital-eguide.html",
+    "tags": [
+      "article",
+      "document"
+    ],
+    "source": "html-anything",
+    "bucket": "templates",
+    "featured": false,
+    "preview": "previews/examples-html-anything-digital-eguide-html.png"
+  },
+  {
+    "id": "examples-html-anything-doc-kami-parchment-html",
+    "name": "doc-kami-parchment",
+    "path": "examples/html-anything/doc-kami-parchment.html",
+    "tags": [
+      "document",
+      "article"
+    ],
+    "source": "html-anything",
+    "bucket": "templates",
+    "featured": false,
+    "preview": "previews/examples-html-anything-doc-kami-parchment-html.png"
+  },
+  {
+    "id": "examples-html-anything-docs-page-html",
+    "name": "docs-page",
+    "path": "examples/html-anything/docs-page.html",
+    "tags": [
+      "document",
+      "article"
+    ],
+    "source": "html-anything",
+    "bucket": "templates",
+    "featured": false,
+    "preview": "previews/examples-html-anything-docs-page-html.png"
+  },
+  {
+    "id": "examples-html-anything-email-marketing-html",
+    "name": "email-marketing",
+    "path": "examples/html-anything/email-marketing.html",
+    "tags": [
+      "email",
+      "card"
+    ],
+    "source": "html-anything",
+    "bucket": "templates",
+    "featured": false,
+    "preview": "previews/examples-html-anything-email-marketing-html.png"
+  },
+  {
+    "id": "examples-html-anything-eng-runbook-html",
+    "name": "eng-runbook",
+    "path": "examples/html-anything/eng-runbook.html",
+    "tags": [
+      "document",
+      "report"
+    ],
+    "source": "html-anything",
+    "bucket": "templates",
+    "featured": false,
+    "preview": "previews/examples-html-anything-eng-runbook-html.png"
+  },
+  {
+    "id": "examples-html-anything-exec-briefing-memo-html",
+    "name": "exec-briefing-memo",
+    "path": "examples/html-anything/exec-briefing-memo.html",
+    "tags": [
+      "report",
+      "document"
+    ],
+    "source": "html-anything",
+    "bucket": "templates",
+    "featured": false,
+    "preview": "previews/examples-html-anything-exec-briefing-memo-html.png"
+  },
+  {
+    "id": "examples-html-anything-exec-briefing-memo-board-memo-html",
+    "name": "exec-briefing-memo--board-memo",
+    "path": "examples/html-anything/exec-briefing-memo--board-memo.html",
+    "tags": [
+      "report",
+      "document"
+    ],
+    "source": "html-anything",
+    "bucket": "templates",
+    "featured": false,
+    "preview": "previews/examples-html-anything-exec-briefing-memo-board-memo-html.png"
+  },
+  {
+    "id": "examples-html-anything-exec-briefing-memo-board-paper-html",
+    "name": "exec-briefing-memo--board-paper",
+    "path": "examples/html-anything/exec-briefing-memo--board-paper.html",
+    "tags": [
+      "report",
+      "document"
+    ],
+    "source": "html-anything",
+    "bucket": "templates",
+    "featured": false,
+    "preview": "previews/examples-html-anything-exec-briefing-memo-board-paper-html.png"
+  },
+  {
+    "id": "examples-html-anything-exec-briefing-memo-decision-command-html",
+    "name": "exec-briefing-memo--decision-command",
+    "path": "examples/html-anything/exec-briefing-memo--decision-command.html",
+    "tags": [
+      "report",
+      "document"
+    ],
+    "source": "html-anything",
+    "bucket": "templates",
+    "featured": false,
+    "preview": "previews/examples-html-anything-exec-briefing-memo-decision-command-html.png"
+  },
+  {
+    "id": "examples-html-anything-experiment-readout-html",
+    "name": "experiment-readout",
+    "path": "examples/html-anything/experiment-readout.html",
+    "tags": [
+      "report",
+      "chart"
+    ],
+    "source": "html-anything",
+    "bucket": "templates",
+    "featured": false,
+    "preview": "previews/examples-html-anything-experiment-readout-html.png"
+  },
+  {
+    "id": "examples-html-anything-experiment-readout-growth-console-html",
+    "name": "experiment-readout--growth-console",
+    "path": "examples/html-anything/experiment-readout--growth-console.html",
+    "tags": [
+      "dashboard",
+      "chart"
+    ],
+    "source": "html-anything",
+    "bucket": "templates",
+    "featured": false,
+    "preview": "previews/examples-html-anything-experiment-readout-growth-console-html.png"
+  },
+  {
+    "id": "examples-html-anything-experiment-readout-lab-notebook-html",
+    "name": "experiment-readout--lab-notebook",
+    "path": "examples/html-anything/experiment-readout--lab-notebook.html",
+    "tags": [
+      "document",
+      "report"
+    ],
+    "source": "html-anything",
+    "bucket": "templates",
+    "featured": false,
+    "preview": "previews/examples-html-anything-experiment-readout-lab-notebook-html.png"
+  },
+  {
+    "id": "examples-html-anything-experiment-readout-product-readout-html",
+    "name": "experiment-readout--product-readout",
+    "path": "examples/html-anything/experiment-readout--product-readout.html",
+    "tags": [
+      "report",
+      "chart"
+    ],
+    "source": "html-anything",
+    "bucket": "templates",
+    "featured": false,
+    "preview": "previews/examples-html-anything-experiment-readout-product-readout-html.png"
+  },
+  {
+    "id": "examples-html-anything-finance-report-html",
+    "name": "finance-report",
+    "path": "examples/html-anything/finance-report.html",
+    "tags": [
+      "report",
+      "chart"
+    ],
+    "source": "html-anything",
+    "bucket": "templates",
+    "featured": false,
+    "preview": "previews/examples-html-anything-finance-report-html.png"
+  },
+  {
+    "id": "examples-html-anything-flowai-team-dashboard-html",
+    "name": "flowai-team-dashboard",
+    "path": "examples/html-anything/flowai-team-dashboard.html",
+    "tags": [
+      "dashboard"
+    ],
+    "source": "html-anything",
+    "bucket": "templates",
+    "featured": false,
+    "preview": "previews/examples-html-anything-flowai-team-dashboard-html.png"
+  },
+  {
+    "id": "examples-html-anything-frame-data-chart-nyt-html",
+    "name": "frame-data-chart-nyt",
+    "path": "examples/html-anything/frame-data-chart-nyt.html",
+    "tags": [
+      "chart",
+      "frame"
+    ],
+    "source": "html-anything",
+    "bucket": "templates",
+    "featured": false,
+    "preview": "previews/examples-html-anything-frame-data-chart-nyt-html.png"
+  },
+  {
+    "id": "examples-html-anything-frame-flowchart-sticky-html",
+    "name": "frame-flowchart-sticky",
+    "path": "examples/html-anything/frame-flowchart-sticky.html",
+    "tags": [
+      "diagram",
+      "frame"
+    ],
+    "source": "html-anything",
+    "bucket": "templates",
+    "featured": false,
+    "preview": "previews/examples-html-anything-frame-flowchart-sticky-html.png"
+  },
+  {
+    "id": "examples-html-anything-frame-glitch-title-html",
+    "name": "frame-glitch-title",
+    "path": "examples/html-anything/frame-glitch-title.html",
+    "tags": [
+      "frame",
+      "animation"
+    ],
+    "source": "html-anything",
+    "bucket": "templates",
+    "featured": false,
+    "preview": "previews/examples-html-anything-frame-glitch-title-html.png"
+  },
+  {
+    "id": "examples-html-anything-frame-light-leak-cinema-html",
+    "name": "frame-light-leak-cinema",
+    "path": "examples/html-anything/frame-light-leak-cinema.html",
+    "tags": [
+      "frame",
+      "animation"
+    ],
+    "source": "html-anything",
+    "bucket": "templates",
+    "featured": false,
+    "preview": "previews/examples-html-anything-frame-light-leak-cinema-html.png"
+  },
+  {
+    "id": "examples-html-anything-frame-liquid-bg-hero-html",
+    "name": "frame-liquid-bg-hero",
+    "path": "examples/html-anything/frame-liquid-bg-hero.html",
+    "tags": [
+      "frame",
+      "animation"
+    ],
+    "source": "html-anything",
+    "bucket": "templates",
+    "featured": false,
+    "preview": "previews/examples-html-anything-frame-liquid-bg-hero-html.png"
+  },
+  {
+    "id": "examples-html-anything-frame-logo-outro-html",
+    "name": "frame-logo-outro",
+    "path": "examples/html-anything/frame-logo-outro.html",
+    "tags": [
+      "frame",
+      "animation"
+    ],
+    "source": "html-anything",
+    "bucket": "templates",
+    "featured": false,
+    "preview": "previews/examples-html-anything-frame-logo-outro-html.png"
+  },
+  {
+    "id": "examples-html-anything-frame-macos-notification-html",
+    "name": "frame-macos-notification",
+    "path": "examples/html-anything/frame-macos-notification.html",
+    "tags": [
+      "frame",
+      "card"
+    ],
+    "source": "html-anything",
+    "bucket": "templates",
+    "featured": false,
+    "preview": "previews/examples-html-anything-frame-macos-notification-html.png"
+  },
+  {
+    "id": "examples-html-anything-gamified-app-html",
+    "name": "gamified-app",
+    "path": "examples/html-anything/gamified-app.html",
+    "tags": [
+      "app",
+      "game"
+    ],
+    "source": "html-anything",
+    "bucket": "templates",
+    "featured": false,
+    "preview": "previews/examples-html-anything-gamified-app-html.png"
+  },
+  {
+    "id": "examples-html-anything-hr-onboarding-html",
+    "name": "hr-onboarding",
+    "path": "examples/html-anything/hr-onboarding.html",
+    "tags": [
+      "document",
+      "app"
+    ],
+    "source": "html-anything",
+    "bucket": "templates",
+    "featured": false,
+    "preview": "previews/examples-html-anything-hr-onboarding-html.png"
+  },
+  {
+    "id": "examples-html-anything-invoice-html",
+    "name": "invoice",
+    "path": "examples/html-anything/invoice.html",
+    "tags": [
+      "document",
+      "tool"
+    ],
+    "source": "html-anything",
+    "bucket": "templates",
+    "featured": false,
+    "preview": "previews/examples-html-anything-invoice-html.png"
+  },
+  {
+    "id": "examples-html-anything-kanban-board-html",
+    "name": "kanban-board",
+    "path": "examples/html-anything/kanban-board.html",
+    "tags": [
+      "app",
+      "dashboard"
+    ],
+    "source": "html-anything",
+    "bucket": "templates",
+    "featured": false,
+    "preview": "previews/examples-html-anything-kanban-board-html.png"
+  },
+  {
+    "id": "examples-html-anything-live-dashboard-html",
+    "name": "live-dashboard",
+    "path": "examples/html-anything/live-dashboard.html",
+    "tags": [
+      "dashboard",
+      "chart"
+    ],
+    "source": "html-anything",
+    "bucket": "templates",
+    "featured": false,
+    "preview": "previews/examples-html-anything-live-dashboard-html.png"
+  },
+  {
+    "id": "examples-html-anything-magazine-poster-html",
+    "name": "magazine-poster",
+    "path": "examples/html-anything/magazine-poster.html",
+    "tags": [
+      "magazine",
+      "poster"
+    ],
+    "source": "html-anything",
+    "bucket": "templates",
+    "featured": false,
+    "preview": "previews/examples-html-anything-magazine-poster-html.png"
+  },
+  {
+    "id": "examples-html-anything-meeting-notes-html",
+    "name": "meeting-notes",
+    "path": "examples/html-anything/meeting-notes.html",
+    "tags": [
+      "document",
+      "tool"
+    ],
+    "source": "html-anything",
+    "bucket": "templates",
+    "featured": false,
+    "preview": "previews/examples-html-anything-meeting-notes-html.png"
+  },
+  {
+    "id": "examples-html-anything-mobile-app-html",
+    "name": "mobile-app",
+    "path": "examples/html-anything/mobile-app.html",
+    "tags": [
+      "app",
+      "prototype"
+    ],
+    "source": "html-anything",
+    "bucket": "templates",
+    "featured": false,
+    "preview": "previews/examples-html-anything-mobile-app-html.png"
+  },
+  {
+    "id": "examples-html-anything-mobile-onboarding-html",
+    "name": "mobile-onboarding",
+    "path": "examples/html-anything/mobile-onboarding.html",
+    "tags": [
+      "app",
+      "prototype"
+    ],
+    "source": "html-anything",
+    "bucket": "templates",
+    "featured": false,
+    "preview": "previews/examples-html-anything-mobile-onboarding-html.png"
+  },
+  {
+    "id": "examples-html-anything-mockup-device-3d-html",
+    "name": "mockup-device-3d",
+    "path": "examples/html-anything/mockup-device-3d.html",
+    "tags": [
+      "prototype",
+      "animation"
+    ],
+    "source": "html-anything",
+    "bucket": "templates",
+    "featured": false,
+    "preview": "previews/examples-html-anything-mockup-device-3d-html.png"
+  },
+  {
+    "id": "examples-html-anything-motion-frames-html",
+    "name": "motion-frames",
+    "path": "examples/html-anything/motion-frames.html",
+    "tags": [
+      "animation",
+      "frame"
+    ],
+    "source": "html-anything",
+    "bucket": "templates",
+    "featured": false,
+    "preview": "previews/examples-html-anything-motion-frames-html.png"
+  },
+  {
+    "id": "examples-html-anything-pm-spec-html",
+    "name": "pm-spec",
+    "path": "examples/html-anything/pm-spec.html",
+    "tags": [
+      "document",
+      "report"
+    ],
+    "source": "html-anything",
+    "bucket": "templates",
+    "featured": false,
+    "preview": "previews/examples-html-anything-pm-spec-html.png"
+  },
+  {
+    "id": "examples-html-anything-poster-hero-html",
+    "name": "poster-hero",
+    "path": "examples/html-anything/poster-hero.html",
+    "tags": [
+      "poster",
+      "magazine"
+    ],
+    "source": "html-anything",
+    "bucket": "templates",
+    "featured": false,
+    "preview": "previews/examples-html-anything-poster-hero-html.png"
+  },
+  {
+    "id": "examples-html-anything-ppt-keynote-html",
+    "name": "ppt-keynote",
+    "path": "examples/html-anything/ppt-keynote.html",
+    "tags": [
+      "deck",
+      "presentation"
+    ],
+    "source": "html-anything",
+    "bucket": "templates",
+    "featured": false,
+    "preview": "previews/examples-html-anything-ppt-keynote-html.png"
+  },
+  {
+    "id": "examples-html-anything-pricing-page-html",
+    "name": "pricing-page",
+    "path": "examples/html-anything/pricing-page.html",
+    "tags": [
+      "app",
+      "prototype"
+    ],
+    "source": "html-anything",
+    "bucket": "templates",
+    "featured": false,
+    "preview": "previews/examples-html-anything-pricing-page-html.png"
+  },
+  {
+    "id": "examples-html-anything-prototype-web-html",
+    "name": "prototype-web",
+    "path": "examples/html-anything/prototype-web.html",
+    "tags": [
+      "prototype",
+      "app"
+    ],
+    "source": "html-anything",
+    "bucket": "templates",
+    "featured": false,
+    "preview": "previews/examples-html-anything-prototype-web-html.png"
+  },
+  {
+    "id": "examples-html-anything-resume-modern-html",
+    "name": "resume-modern",
+    "path": "examples/html-anything/resume-modern.html",
+    "tags": [
+      "document",
+      "resume"
+    ],
+    "source": "html-anything",
+    "bucket": "templates",
+    "featured": false,
+    "preview": "previews/examples-html-anything-resume-modern-html.png"
+  },
+  {
+    "id": "examples-html-anything-saas-landing-html",
+    "name": "saas-landing",
+    "path": "examples/html-anything/saas-landing.html",
+    "tags": [
+      "app",
+      "prototype"
+    ],
+    "source": "html-anything",
+    "bucket": "templates",
+    "featured": false,
+    "preview": "previews/examples-html-anything-saas-landing-html.png"
+  },
+  {
+    "id": "examples-html-anything-social-carousel-html",
+    "name": "social-carousel",
+    "path": "examples/html-anything/social-carousel.html",
+    "tags": [
+      "social",
+      "card"
+    ],
+    "source": "html-anything",
+    "bucket": "templates",
+    "featured": false,
+    "preview": "previews/examples-html-anything-social-carousel-html.png"
+  },
+  {
+    "id": "examples-html-anything-social-media-dashboard-html",
+    "name": "social-media-dashboard",
+    "path": "examples/html-anything/social-media-dashboard.html",
+    "tags": [
+      "dashboard",
+      "social"
+    ],
+    "source": "html-anything",
+    "bucket": "templates",
+    "featured": false,
+    "preview": "previews/examples-html-anything-social-media-dashboard-html.png"
+  },
+  {
+    "id": "examples-html-anything-social-media-matrix-html",
+    "name": "social-media-matrix",
+    "path": "examples/html-anything/social-media-matrix.html",
+    "tags": [
+      "social",
+      "dashboard"
+    ],
+    "source": "html-anything",
+    "bucket": "templates",
+    "featured": false,
+    "preview": "previews/examples-html-anything-social-media-matrix-html.png"
+  },
+  {
+    "id": "examples-html-anything-social-reddit-card-html",
+    "name": "social-reddit-card",
+    "path": "examples/html-anything/social-reddit-card.html",
+    "tags": [
+      "social",
+      "card"
+    ],
+    "source": "html-anything",
+    "bucket": "templates",
+    "featured": false,
+    "preview": "previews/examples-html-anything-social-reddit-card-html.png"
+  },
+  {
+    "id": "examples-html-anything-social-spotify-card-html",
+    "name": "social-spotify-card",
+    "path": "examples/html-anything/social-spotify-card.html",
+    "tags": [
+      "social",
+      "card"
+    ],
+    "source": "html-anything",
+    "bucket": "templates",
+    "featured": false,
+    "preview": "previews/examples-html-anything-social-spotify-card-html.png"
+  },
+  {
+    "id": "examples-html-anything-social-x-post-card-html",
+    "name": "social-x-post-card",
+    "path": "examples/html-anything/social-x-post-card.html",
+    "tags": [
+      "social",
+      "card"
+    ],
+    "source": "html-anything",
+    "bucket": "templates",
+    "featured": false,
+    "preview": "previews/examples-html-anything-social-x-post-card-html.png"
+  },
+  {
+    "id": "examples-html-anything-sprite-animation-html",
+    "name": "sprite-animation",
+    "path": "examples/html-anything/sprite-animation.html",
+    "tags": [
+      "animation",
+      "game"
+    ],
+    "source": "html-anything",
+    "bucket": "templates",
+    "featured": false,
+    "preview": "previews/examples-html-anything-sprite-animation-html.png"
+  },
+  {
+    "id": "examples-html-anything-team-okrs-html",
+    "name": "team-okrs",
+    "path": "examples/html-anything/team-okrs.html",
+    "tags": [
+      "dashboard",
+      "document"
+    ],
+    "source": "html-anything",
+    "bucket": "templates",
+    "featured": false,
+    "preview": "previews/examples-html-anything-team-okrs-html.png"
+  },
+  {
+    "id": "examples-html-anything-vfx-text-cursor-html",
+    "name": "vfx-text-cursor",
+    "path": "examples/html-anything/vfx-text-cursor.html",
+    "tags": [
+      "animation",
+      "frame"
+    ],
+    "source": "html-anything",
+    "bucket": "templates",
+    "featured": false,
+    "preview": "previews/examples-html-anything-vfx-text-cursor-html.png"
+  },
+  {
+    "id": "examples-html-anything-video-hyperframes-html",
+    "name": "video-hyperframes",
+    "path": "examples/html-anything/video-hyperframes.html",
+    "tags": [
+      "animation",
+      "frame"
+    ],
+    "source": "html-anything",
+    "bucket": "templates",
+    "featured": false,
+    "preview": "previews/examples-html-anything-video-hyperframes-html.png"
+  },
+  {
+    "id": "examples-html-anything-waitlist-page-html",
+    "name": "waitlist-page",
+    "path": "examples/html-anything/waitlist-page.html",
+    "tags": [
+      "app",
+      "prototype"
+    ],
+    "source": "html-anything",
+    "bucket": "templates",
+    "featured": false,
+    "preview": "previews/examples-html-anything-waitlist-page-html.png"
+  },
+  {
+    "id": "examples-html-anything-web-proto-brutalist-html",
+    "name": "web-proto-brutalist",
+    "path": "examples/html-anything/web-proto-brutalist.html",
+    "tags": [
+      "prototype",
+      "app"
+    ],
+    "source": "html-anything",
+    "bucket": "templates",
+    "featured": false,
+    "preview": "previews/examples-html-anything-web-proto-brutalist-html.png"
+  },
+  {
+    "id": "examples-html-anything-web-proto-editorial-html",
+    "name": "web-proto-editorial",
+    "path": "examples/html-anything/web-proto-editorial.html",
+    "tags": [
+      "prototype",
+      "magazine"
+    ],
+    "source": "html-anything",
+    "bucket": "templates",
+    "featured": false,
+    "preview": "previews/examples-html-anything-web-proto-editorial-html.png"
+  },
+  {
+    "id": "examples-html-anything-web-proto-soft-html",
+    "name": "web-proto-soft",
+    "path": "examples/html-anything/web-proto-soft.html",
+    "tags": [
+      "prototype",
+      "app"
+    ],
+    "source": "html-anything",
+    "bucket": "templates",
+    "featured": false,
+    "preview": "previews/examples-html-anything-web-proto-soft-html.png"
+  },
+  {
+    "id": "examples-html-anything-weekly-update-html",
+    "name": "weekly-update",
+    "path": "examples/html-anything/weekly-update.html",
+    "tags": [
+      "document",
+      "report"
+    ],
+    "source": "html-anything",
+    "bucket": "templates",
+    "featured": false,
+    "preview": "previews/examples-html-anything-weekly-update-html.png"
+  },
+  {
+    "id": "examples-html-anything-wireframe-sketch-html",
+    "name": "wireframe-sketch",
+    "path": "examples/html-anything/wireframe-sketch.html",
+    "tags": [
+      "prototype",
+      "diagram"
+    ],
+    "source": "html-anything",
+    "bucket": "templates",
+    "featured": false,
+    "preview": "previews/examples-html-anything-wireframe-sketch-html.png"
+  },
+  {
+    "id": "examples-open-artifacts-html",
+    "name": "open-artifacts (platform)",
+    "path": "examples/open-artifacts.html",
+    "tags": [
+      "platform",
+      "app"
+    ],
+    "source": "open-artifacts",
+    "bucket": "collected",
+    "featured": false,
+    "preview": "previews/examples-open-artifacts-html.png"
+  },
+  {
+    "id": "starters-react-18-tsx-esm-html",
+    "name": "react-18-tsx-esm",
+    "path": "starters/react-18-tsx-esm.html",
+    "tags": [
+      "starter",
+      "app",
+      "react"
+    ],
+    "source": "starters",
+    "loading": "esm",
+    "bucket": "mine",
+    "featured": true,
+    "preview": "previews/starters-react-18-tsx-esm-html.png"
+  },
+  {
+    "id": "starters-react-19-tsx-esm-html",
+    "name": "react-19-tsx-esm",
+    "path": "starters/react-19-tsx-esm.html",
+    "tags": [
+      "starter",
+      "app",
+      "react"
+    ],
+    "source": "starters",
+    "loading": "esm",
+    "bucket": "mine",
+    "featured": true,
+    "preview": "previews/starters-react-19-tsx-esm-html.png"
+  },
+  {
+    "id": "starters-chartjs-html",
+    "name": "chartjs",
+    "path": "starters/chartjs.html",
+    "tags": [
+      "starter",
+      "chart",
+      "viz"
+    ],
+    "source": "starters",
+    "loading": "script",
+    "bucket": "mine",
+    "featured": true,
+    "preview": "previews/starters-chartjs-html.png"
+  },
+  {
+    "id": "starters-vega-lite-html",
+    "name": "vega-lite",
+    "path": "starters/vega-lite.html",
+    "tags": [
+      "starter",
+      "chart",
+      "viz"
+    ],
+    "source": "starters",
+    "loading": "script",
+    "bucket": "mine",
+    "featured": true,
+    "preview": "previews/starters-vega-lite-html.png"
+  },
+  {
+    "id": "starters-plotly-html",
+    "name": "plotly",
+    "path": "starters/plotly.html",
+    "tags": [
+      "starter",
+      "chart",
+      "viz"
+    ],
+    "source": "starters",
+    "loading": "script",
+    "bucket": "mine",
+    "featured": true,
+    "preview": "previews/starters-plotly-html.png"
+  },
+  {
+    "id": "starters-mermaid-esm-html",
+    "name": "mermaid-esm",
+    "path": "starters/mermaid-esm.html",
+    "tags": [
+      "starter",
+      "diagram",
+      "interactive"
+    ],
+    "source": "starters",
+    "loading": "esm",
+    "bucket": "mine",
+    "featured": true,
+    "preview": "previews/starters-mermaid-esm-html.png"
+  },
+  {
+    "id": "starters-d3-force-esm-html",
+    "name": "d3-force-esm",
+    "path": "starters/d3-force-esm.html",
+    "tags": [
+      "starter",
+      "diagram",
+      "interactive",
+      "viz"
+    ],
+    "source": "starters",
+    "loading": "esm",
+    "bucket": "mine",
+    "featured": true,
+    "preview": "previews/starters-d3-force-esm-html.png"
+  },
+  {
+    "id": "starters-canvas-life-html",
+    "name": "canvas-life",
+    "path": "starters/canvas-life.html",
+    "tags": [
+      "starter",
+      "game",
+      "simulation",
+      "interactive"
+    ],
+    "source": "starters",
+    "loading": "script",
+    "bucket": "mine",
+    "featured": true,
+    "preview": "previews/starters-canvas-life-html.png"
+  },
+  {
+    "id": "starters-markdown-editor-html",
+    "name": "markdown-editor",
+    "path": "starters/markdown-editor.html",
+    "tags": [
+      "starter",
+      "tool",
+      "interactive"
+    ],
+    "source": "starters",
+    "loading": "script",
+    "bucket": "mine",
+    "featured": true,
+    "preview": "previews/starters-markdown-editor-html.png"
+  },
+  {
+    "id": "starters-three-esm-html",
+    "name": "three-esm",
+    "path": "starters/three-esm.html",
+    "tags": [
+      "starter",
+      "3d",
+      "animation"
+    ],
+    "source": "starters",
+    "loading": "esm",
+    "bucket": "mine",
+    "featured": true,
+    "preview": "previews/starters-three-esm-html.png"
+  },
+  {
+    "id": "starters-petite-vue-html",
+    "name": "petite-vue",
+    "path": "starters/petite-vue.html",
+    "tags": [
+      "starter",
+      "app",
+      "reactive"
+    ],
+    "source": "starters",
+    "loading": "esm",
+    "bucket": "mine",
+    "featured": true,
+    "preview": "previews/starters-petite-vue-html.png"
+  },
+  {
+    "id": "starters-react-18-babel-html",
+    "name": "react-18-babel",
+    "path": "starters/react-18-babel.html",
+    "tags": [
+      "starter",
+      "app",
+      "react"
+    ],
+    "source": "starters",
+    "loading": "script",
+    "bucket": "mine",
+    "featured": true,
+    "preview": "previews/starters-react-18-babel-html.png"
+  },
+  {
+    "id": "starters-react-htm-html",
+    "name": "react-htm",
+    "path": "starters/react-htm.html",
+    "tags": [
+      "starter",
+      "app",
+      "react"
+    ],
+    "source": "starters",
+    "loading": "script",
+    "bucket": "mine",
+    "featured": true,
+    "preview": "previews/starters-react-htm-html.png"
+  },
+  {
+    "id": "starters-react-fireproof-esm-html",
+    "name": "react-fireproof-esm",
+    "path": "starters/react-fireproof-esm.html",
+    "tags": [
+      "starter",
+      "app",
+      "react",
+      "persistent"
+    ],
+    "source": "starters",
+    "loading": "esm",
+    "bucket": "mine",
+    "featured": true,
+    "preview": "previews/starters-react-fireproof-esm-html.png"
+  },
+  {
+    "id": "starters-alpine-html",
+    "name": "alpine",
+    "path": "starters/alpine.html",
+    "tags": [
+      "starter",
+      "app",
+      "reactive"
+    ],
+    "source": "starters",
+    "loading": "script",
+    "bucket": "mine",
+    "featured": true,
+    "preview": "previews/starters-alpine-html.png"
+  },
+  {
+    "id": "starters-preact-htm-esm-html",
+    "name": "preact-htm-esm",
+    "path": "starters/preact-htm-esm.html",
+    "tags": [
+      "starter",
+      "app",
+      "reactive",
+      "react"
+    ],
+    "source": "starters",
+    "loading": "esm",
+    "bucket": "mine",
+    "featured": true,
+    "preview": "previews/starters-preact-htm-esm-html.png"
+  },
+  {
+    "id": "starters-solid-html-esm-html",
+    "name": "solid-html-esm",
+    "path": "starters/solid-html-esm.html",
+    "tags": [
+      "starter",
+      "app",
+      "reactive"
+    ],
+    "source": "starters",
+    "loading": "esm",
+    "bucket": "mine",
+    "featured": true,
+    "preview": "previews/starters-solid-html-esm-html.png"
+  },
+  {
+    "id": "starters-vue3-html",
+    "name": "vue3",
+    "path": "starters/vue3.html",
+    "tags": [
+      "starter",
+      "app",
+      "reactive"
+    ],
+    "source": "starters",
+    "loading": "script",
+    "bucket": "mine",
+    "featured": true,
+    "preview": "previews/starters-vue3-html.png"
+  },
+  {
+    "id": "starters-lit-esm-html",
+    "name": "lit-esm",
+    "path": "starters/lit-esm.html",
+    "tags": [
+      "starter",
+      "app",
+      "reactive",
+      "web-components"
+    ],
+    "source": "starters",
+    "loading": "esm",
+    "bucket": "mine",
+    "featured": true,
+    "preview": "previews/starters-lit-esm-html.png"
+  },
+  {
+    "id": "starters-react-three-fiber-esm-html",
+    "name": "react-three-fiber-esm",
+    "path": "starters/react-three-fiber-esm.html",
+    "tags": [
+      "starter",
+      "app",
+      "react",
+      "3d"
+    ],
+    "source": "starters",
+    "loading": "esm",
+    "bucket": "mine",
+    "featured": true,
+    "preview": "previews/starters-react-three-fiber-esm-html.png"
+  },
+  {
+    "id": "starters-remotion-player-esm-html",
+    "name": "remotion-player-esm",
+    "path": "starters/remotion-player-esm.html",
+    "tags": [
+      "starter",
+      "react",
+      "animation",
+      "video"
+    ],
+    "source": "starters",
+    "loading": "esm",
+    "bucket": "mine",
+    "featured": true,
+    "preview": "previews/starters-remotion-player-esm-html.png"
+  },
+  {
+    "id": "starters-sqljs-html",
+    "name": "sqljs",
+    "path": "starters/sqljs.html",
+    "tags": [
+      "starter",
+      "data",
+      "tool"
+    ],
+    "source": "starters",
+    "loading": "script",
+    "bucket": "mine",
+    "featured": true,
+    "preview": "previews/starters-sqljs-html.png"
+  },
+  {
+    "id": "starters-pglite-esm-html",
+    "name": "pglite (Postgres WASM)",
+    "path": "starters/pglite-esm.html",
+    "tags": [
+      "starter",
+      "data",
+      "wasm"
+    ],
+    "source": "starters",
+    "loading": "esm",
+    "bucket": "mine",
+    "featured": true,
+    "preview": "previews/starters-pglite-esm-html.png"
+  },
+  {
+    "id": "starters-codemirror-esm-html",
+    "name": "codemirror-esm (no-build recipe)",
+    "path": "starters/codemirror-esm.html",
+    "tags": [
+      "starter",
+      "editor",
+      "tool"
+    ],
+    "source": "starters",
+    "loading": "esm",
+    "bucket": "mine",
+    "featured": true,
+    "preview": "previews/starters-codemirror-esm-html.png"
+  },
+  {
+    "id": "starters-milkdown-dual-view-esm-html",
+    "name": "milkdown-dual-view",
+    "path": "starters/milkdown-dual-view-esm.html",
+    "tags": [
+      "starter",
+      "app",
+      "editor"
+    ],
+    "source": "starters",
+    "loading": "esm",
+    "bucket": "mine",
+    "featured": true,
+    "preview": "previews/starters-milkdown-dual-view-esm-html.png"
+  },
+  {
+    "id": "starters-leaflet-map-html",
+    "name": "leaflet-map",
+    "path": "starters/leaflet-map.html",
+    "tags": [
+      "starter",
+      "map",
+      "viz"
+    ],
+    "source": "starters",
+    "loading": "script",
+    "bucket": "mine",
+    "featured": true,
+    "preview": "previews/starters-leaflet-map-html.png"
+  },
+  {
+    "id": "starters-json-viewer-html",
+    "name": "json-viewer",
+    "path": "starters/json-viewer.html",
+    "tags": [
+      "starter",
+      "tool",
+      "interactive"
+    ],
+    "source": "starters",
+    "loading": "script",
+    "bucket": "mine",
+    "featured": true,
+    "preview": "previews/starters-json-viewer-html.png"
+  },
+  {
+    "id": "starters-regex-tester-html",
+    "name": "regex-tester",
+    "path": "starters/regex-tester.html",
+    "tags": [
+      "starter",
+      "tool",
+      "interactive"
+    ],
+    "source": "starters",
+    "loading": "script",
+    "bucket": "mine",
+    "featured": true,
+    "preview": "previews/starters-regex-tester-html.png"
+  },
+  {
+    "id": "starters-reveal-deck-html",
+    "name": "reveal-deck",
+    "path": "starters/reveal-deck.html",
+    "tags": [
+      "starter",
+      "deck",
+      "presentation"
+    ],
+    "source": "starters",
+    "loading": "esm",
+    "bucket": "mine",
+    "featured": true,
+    "preview": "previews/starters-reveal-deck-html.png"
+  },
+  {
+    "id": "starters-impress-deck-html",
+    "name": "impress-deck",
+    "path": "starters/impress-deck.html",
+    "tags": [
+      "starter",
+      "deck",
+      "presentation",
+      "3d"
+    ],
+    "source": "starters",
+    "loading": "script",
+    "bucket": "mine",
+    "featured": true,
+    "preview": "previews/starters-impress-deck-html.png"
+  },
+  {
+    "id": "starters-gsap-motion-html",
+    "name": "gsap-motion",
+    "path": "starters/gsap-motion.html",
+    "tags": [
+      "starter",
+      "animation",
+      "motion"
+    ],
+    "source": "starters",
+    "loading": "script",
+    "bucket": "mine",
+    "featured": true,
+    "preview": "previews/starters-gsap-motion-html.png"
+  },
+  {
+    "id": "starters-anime-html",
+    "name": "anime",
+    "path": "starters/anime.html",
+    "tags": [
+      "starter",
+      "animation",
+      "motion"
+    ],
+    "source": "starters",
+    "loading": "esm",
+    "bucket": "mine",
+    "featured": true,
+    "preview": "previews/starters-anime-html.png"
+  },
+  {
+    "id": "starters-motion-esm-html",
+    "name": "motion-esm",
+    "path": "starters/motion-esm.html",
+    "tags": [
+      "starter",
+      "animation",
+      "motion"
+    ],
+    "source": "starters",
+    "loading": "esm",
+    "bucket": "mine",
+    "featured": true,
+    "preview": "previews/starters-motion-esm-html.png"
+  },
+  {
+    "id": "starters-lottie-html",
+    "name": "lottie",
+    "path": "starters/lottie.html",
+    "tags": [
+      "starter",
+      "animation",
+      "motion"
+    ],
+    "source": "starters",
+    "loading": "script",
+    "bucket": "mine",
+    "featured": true,
+    "preview": "previews/starters-lottie-html.png"
+  },
+  {
+    "id": "examples-matchina-standalone-esmsh-html",
+    "name": "matchina + vanilla",
+    "path": "examples/matchina/standalone-esmsh.html",
+    "tags": [
+      "matchina",
+      "reactive",
+      "app"
+    ],
+    "source": "matchina",
+    "loading": "esm",
+    "bucket": "mine",
+    "featured": true,
+    "preview": "previews/examples-matchina-standalone-esmsh-html.png"
+  },
+  {
+    "id": "examples-matchina-standalone-stimulus-html",
+    "name": "matchina + Stimulus",
+    "path": "examples/matchina/standalone-stimulus.html",
+    "tags": [
+      "matchina",
+      "reactive",
+      "app"
+    ],
+    "source": "matchina",
+    "loading": "esm",
+    "bucket": "mine",
+    "featured": true,
+    "preview": "previews/examples-matchina-standalone-stimulus-html.png"
+  },
+  {
+    "id": "examples-matchina-standalone-alpine-html",
+    "name": "matchina + Alpine",
+    "path": "examples/matchina/standalone-alpine.html",
+    "tags": [
+      "matchina",
+      "reactive",
+      "app"
+    ],
+    "source": "matchina",
+    "loading": "esm",
+    "bucket": "mine",
+    "featured": true,
+    "preview": "previews/examples-matchina-standalone-alpine-html.png"
+  },
+  {
+    "id": "examples-matchina-standalone-react-html",
+    "name": "matchina + React",
+    "path": "examples/matchina/standalone-react.html",
+    "tags": [
+      "matchina",
+      "reactive",
+      "app",
+      "react"
+    ],
+    "source": "matchina",
+    "loading": "esm",
+    "bucket": "mine",
+    "featured": true,
+    "preview": "previews/examples-matchina-standalone-react-html.png"
+  },
+  {
+    "id": "examples-matchina-standalone-petite-vue-html",
+    "name": "matchina + petite-vue",
+    "path": "examples/matchina/standalone-petite-vue.html",
+    "tags": [
+      "matchina",
+      "reactive",
+      "app"
+    ],
+    "source": "matchina",
+    "loading": "esm",
+    "bucket": "mine",
+    "featured": true,
+    "preview": "previews/examples-matchina-standalone-petite-vue-html.png"
+  },
+  {
+    "id": "examples-matchina-standalone-vue-html",
+    "name": "matchina + Vue 3",
+    "path": "examples/matchina/standalone-vue.html",
+    "tags": [
+      "matchina",
+      "reactive",
+      "app"
+    ],
+    "source": "matchina",
+    "loading": "esm",
+    "bucket": "mine",
+    "featured": true,
+    "preview": "previews/examples-matchina-standalone-vue-html.png"
+  },
+  {
+    "id": "examples-matchina-standalone-van-html",
+    "name": "matchina + VanJS",
+    "path": "examples/matchina/standalone-van.html",
+    "tags": [
+      "matchina",
+      "reactive",
+      "app"
+    ],
+    "source": "matchina",
+    "loading": "esm",
+    "bucket": "mine",
+    "featured": true,
+    "preview": "previews/examples-matchina-standalone-van-html.png"
+  },
+  {
+    "id": "examples-matchina-standalone-solid-html",
+    "name": "matchina + Solid",
+    "path": "examples/matchina/standalone-solid.html",
+    "tags": [
+      "matchina",
+      "reactive",
+      "app"
+    ],
+    "source": "matchina",
+    "loading": "esm",
+    "bucket": "mine",
+    "featured": true,
+    "preview": "previews/examples-matchina-standalone-solid-html.png"
+  },
+  {
+    "id": "examples-matchina-standalone-preact-html",
+    "name": "matchina + Preact",
+    "path": "examples/matchina/standalone-preact.html",
+    "tags": [
+      "matchina",
+      "reactive",
+      "app"
+    ],
+    "source": "matchina",
+    "loading": "esm",
+    "bucket": "mine",
+    "featured": true,
+    "preview": "previews/examples-matchina-standalone-preact-html.png"
+  },
+  {
+    "id": "examples-matchina-standalone-arrow-html",
+    "name": "matchina + ArrowJS",
+    "path": "examples/matchina/standalone-arrow.html",
+    "tags": [
+      "matchina",
+      "reactive",
+      "app"
+    ],
+    "source": "matchina",
+    "loading": "esm",
+    "bucket": "mine",
+    "featured": true,
+    "preview": "previews/examples-matchina-standalone-arrow-html.png"
+  },
+  {
+    "id": "examples-interactive-mermaid-viewer-bonomani-html",
+    "name": "mermaid-viewer (bonomani)",
+    "path": "examples/interactive/mermaid-viewer-bonomani.html",
+    "tags": [
+      "diagram",
+      "interactive",
+      "app"
+    ],
+    "source": "github",
+    "loading": "esm",
+    "bucket": "collected",
+    "featured": false,
+    "preview": "previews/examples-interactive-mermaid-viewer-bonomani-html.png"
+  },
+  {
+    "id": "examples-interactive-mermaid-viewer-kevinobytes-html",
+    "name": "mermaid-viewer (KevinOBytes)",
+    "path": "examples/interactive/mermaid-viewer-kevinobytes.html",
+    "tags": [
+      "diagram",
+      "interactive"
+    ],
+    "source": "github",
+    "loading": "esm",
+    "bucket": "collected",
+    "featured": false,
+    "preview": "previews/examples-interactive-mermaid-viewer-kevinobytes-html.png"
+  },
+  {
+    "id": "examples-interactive-d3-graphviz-basic-html",
+    "name": "d3-graphviz-basic",
+    "path": "examples/interactive/d3-graphviz-basic.html",
+    "tags": [
+      "diagram",
+      "viz"
+    ],
+    "source": "github",
+    "loading": "script",
+    "bucket": "collected",
+    "featured": false,
+    "preview": "previews/examples-interactive-d3-graphviz-basic-html.png"
+  },
+  {
+    "id": "examples-simonw-tools-ocr-html",
+    "name": "ocr",
+    "path": "examples/simonw-tools/ocr.html",
+    "tags": [
+      "tool",
+      "image"
+    ],
+    "source": "simonw",
+    "loading": "esm",
+    "bucket": "collected",
+    "featured": false,
+    "preview": "previews/examples-simonw-tools-ocr-html.png"
+  },
+  {
+    "id": "examples-simonw-tools-qr-html",
+    "name": "qr",
+    "path": "examples/simonw-tools/qr.html",
+    "tags": [
+      "tool"
+    ],
+    "source": "simonw",
+    "loading": "script",
+    "bucket": "collected",
+    "featured": false,
+    "preview": "previews/examples-simonw-tools-qr-html.png"
+  },
+  {
+    "id": "examples-simonw-tools-qr-code-generator-html",
+    "name": "qr-code-generator",
+    "path": "examples/simonw-tools/qr-code-generator.html",
+    "tags": [
+      "tool"
+    ],
+    "source": "simonw",
+    "loading": "script",
+    "bucket": "collected",
+    "featured": false,
+    "preview": "previews/examples-simonw-tools-qr-code-generator-html.png"
+  },
+  {
+    "id": "examples-simonw-tools-haiku-html",
+    "name": "haiku (LLM-powered)",
+    "path": "examples/simonw-tools/haiku.html",
+    "tags": [
+      "tool",
+      "ai",
+      "llm"
+    ],
+    "source": "simonw",
+    "loading": "esm",
+    "bucket": "collected",
+    "featured": false,
+    "preview": "previews/examples-simonw-tools-haiku-html.png"
+  },
+  {
+    "id": "examples-simonw-tools-omit-needless-words-html",
+    "name": "omit-needless-words (LLM)",
+    "path": "examples/simonw-tools/omit-needless-words.html",
+    "tags": [
+      "tool",
+      "ai",
+      "llm"
+    ],
+    "source": "simonw",
+    "loading": "esm",
+    "bucket": "collected",
+    "featured": false,
+    "preview": "previews/examples-simonw-tools-omit-needless-words-html.png"
+  },
+  {
+    "id": "examples-simonw-tools-gemini-chat-html",
+    "name": "gemini-chat (LLM)",
+    "path": "examples/simonw-tools/gemini-chat.html",
+    "tags": [
+      "tool",
+      "ai",
+      "llm"
+    ],
+    "source": "simonw",
+    "loading": "esm",
+    "bucket": "collected",
+    "featured": false,
+    "preview": "previews/examples-simonw-tools-gemini-chat-html.png"
+  },
+  {
+    "id": "examples-simonw-tools-openai-webrtc-html",
+    "name": "openai-webrtc (LLM voice)",
+    "path": "examples/simonw-tools/openai-webrtc.html",
+    "tags": [
+      "tool",
+      "ai",
+      "llm",
+      "audio"
+    ],
+    "source": "simonw",
+    "loading": "esm",
+    "bucket": "collected",
+    "featured": false,
+    "preview": "previews/examples-simonw-tools-openai-webrtc-html.png"
+  },
+  {
+    "id": "examples-simonw-tools-image-to-svg-html",
+    "name": "image-to-svg",
+    "path": "examples/simonw-tools/image-to-svg.html",
+    "tags": [
+      "tool",
+      "image"
+    ],
+    "source": "simonw",
+    "loading": "script",
+    "bucket": "collected",
+    "featured": false,
+    "preview": "previews/examples-simonw-tools-image-to-svg-html.png"
+  },
+  {
+    "id": "examples-simonw-tools-json-to-yaml-html",
+    "name": "json-to-yaml",
+    "path": "examples/simonw-tools/json-to-yaml.html",
+    "tags": [
+      "tool"
+    ],
+    "source": "simonw",
+    "loading": "script",
+    "bucket": "collected",
+    "featured": false,
+    "preview": "previews/examples-simonw-tools-json-to-yaml-html.png"
+  },
+  {
+    "id": "examples-simonw-tools-json-diff-html",
+    "name": "json-diff",
+    "path": "examples/simonw-tools/json-diff.html",
+    "tags": [
+      "tool"
+    ],
+    "source": "simonw",
+    "loading": "script",
+    "bucket": "collected",
+    "featured": false,
+    "preview": "previews/examples-simonw-tools-json-diff-html.png"
+  },
+  {
+    "id": "examples-simonw-tools-text-diff-html",
+    "name": "text-diff",
+    "path": "examples/simonw-tools/text-diff.html",
+    "tags": [
+      "tool"
+    ],
+    "source": "simonw",
+    "loading": "script",
+    "bucket": "collected",
+    "featured": false,
+    "preview": "previews/examples-simonw-tools-text-diff-html.png"
+  },
+  {
+    "id": "examples-simonw-tools-markdown-math-html",
+    "name": "markdown-math",
+    "path": "examples/simonw-tools/markdown-math.html",
+    "tags": [
+      "tool"
+    ],
+    "source": "simonw",
+    "loading": "script",
+    "bucket": "collected",
+    "featured": false,
+    "preview": "previews/examples-simonw-tools-markdown-math-html.png"
+  },
+  {
+    "id": "examples-simonw-tools-word-counter-html",
+    "name": "word-counter",
+    "path": "examples/simonw-tools/word-counter.html",
+    "tags": [
+      "tool"
+    ],
+    "source": "simonw",
+    "loading": "script",
+    "bucket": "collected",
+    "featured": false,
+    "preview": "previews/examples-simonw-tools-word-counter-html.png"
+  },
+  {
+    "id": "examples-simonw-tools-encrypt-html",
+    "name": "encrypt",
+    "path": "examples/simonw-tools/encrypt.html",
+    "tags": [
+      "tool"
+    ],
+    "source": "simonw",
+    "loading": "script",
+    "bucket": "collected",
+    "featured": false,
+    "preview": "previews/examples-simonw-tools-encrypt-html.png"
+  },
+  {
+    "id": "examples-simonw-tools-audio-spectrum-html",
+    "name": "audio-spectrum",
+    "path": "examples/simonw-tools/audio-spectrum.html",
+    "tags": [
+      "tool",
+      "audio",
+      "interactive"
+    ],
+    "source": "simonw",
+    "loading": "esm",
+    "bucket": "collected",
+    "featured": false,
+    "preview": "previews/examples-simonw-tools-audio-spectrum-html.png"
+  },
+  {
+    "id": "examples-simonw-tools-speech-synthesis-html",
+    "name": "speech-synthesis",
+    "path": "examples/simonw-tools/speech-synthesis.html",
+    "tags": [
+      "tool",
+      "audio"
+    ],
+    "source": "simonw",
+    "loading": "esm",
+    "bucket": "collected",
+    "featured": false,
+    "preview": "previews/examples-simonw-tools-speech-synthesis-html.png"
+  },
+  {
+    "id": "examples-simonw-tools-minesweeper-html",
+    "name": "minesweeper",
+    "path": "examples/simonw-tools/minesweeper.html",
+    "tags": [
+      "game",
+      "interactive"
+    ],
+    "source": "simonw",
+    "loading": "script",
+    "bucket": "collected",
+    "featured": false,
+    "preview": "previews/examples-simonw-tools-minesweeper-html.png"
+  },
+  {
+    "id": "examples-simonw-tools-pomodoro-html",
+    "name": "pomodoro",
+    "path": "examples/simonw-tools/pomodoro.html",
+    "tags": [
+      "tool",
+      "interactive"
+    ],
+    "source": "simonw",
+    "loading": "script",
+    "bucket": "collected",
+    "featured": false,
+    "preview": "previews/examples-simonw-tools-pomodoro-html.png"
+  },
+  {
+    "id": "examples-simonw-tools-gradient-card-html",
+    "name": "gradient-card",
+    "path": "examples/simonw-tools/gradient-card.html",
+    "tags": [
+      "tool",
+      "design"
+    ],
+    "source": "simonw",
+    "loading": "script",
+    "bucket": "collected",
+    "featured": false,
+    "preview": "previews/examples-simonw-tools-gradient-card-html.png"
+  },
+  {
+    "id": "examples-simonw-tools-animated-word-cloud-html",
+    "name": "animated-word-cloud",
+    "path": "examples/simonw-tools/animated-word-cloud.html",
+    "tags": [
+      "viz",
+      "animation"
+    ],
+    "source": "simonw",
+    "loading": "script",
+    "bucket": "collected",
+    "featured": false,
+    "preview": "previews/examples-simonw-tools-animated-word-cloud-html.png"
+  },
+  {
+    "id": "examples-simonw-tools-svg-render-html",
+    "name": "svg-render",
+    "path": "examples/simonw-tools/svg-render.html",
+    "tags": [
+      "tool"
+    ],
+    "source": "simonw",
+    "loading": "script",
+    "bucket": "collected",
+    "featured": false,
+    "preview": "previews/examples-simonw-tools-svg-render-html.png"
+  },
+  {
+    "id": "examples-simonw-tools-flexbox-playground-html",
+    "name": "flexbox-playground",
+    "path": "examples/simonw-tools/flexbox-playground.html",
+    "tags": [
+      "tool",
+      "interactive"
+    ],
+    "source": "simonw",
+    "loading": "script",
+    "bucket": "collected",
+    "featured": false,
+    "preview": "previews/examples-simonw-tools-flexbox-playground-html.png"
+  },
+  {
+    "id": "examples-simonw-tools-box-shadow-html",
+    "name": "box-shadow",
+    "path": "examples/simonw-tools/box-shadow.html",
+    "tags": [
+      "tool",
+      "design"
+    ],
+    "source": "simonw",
+    "loading": "script",
+    "bucket": "collected",
+    "featured": false,
+    "preview": "previews/examples-simonw-tools-box-shadow-html.png"
+  },
+  {
+    "id": "examples-simonw-tools-sqlite-wasm-html",
+    "name": "sqlite-wasm",
+    "path": "examples/simonw-tools/sqlite-wasm.html",
+    "tags": [
+      "data",
+      "tool"
+    ],
+    "source": "simonw",
+    "loading": "esm",
+    "bucket": "collected",
+    "featured": false,
+    "preview": "previews/examples-simonw-tools-sqlite-wasm-html.png"
+  },
+  {
+    "id": "examples-simonw-tools-pyodide-repl-html",
+    "name": "pyodide-repl (Python)",
+    "path": "examples/simonw-tools/pyodide-repl.html",
+    "tags": [
+      "tool",
+      "python"
+    ],
+    "source": "simonw",
+    "loading": "esm",
+    "bucket": "collected",
+    "featured": false,
+    "preview": "previews/examples-simonw-tools-pyodide-repl-html.png"
+  },
+  {
+    "id": "examples-simonw-tools-numpy-pyodide-lab-html",
+    "name": "numpy-pyodide-lab (Python)",
+    "path": "examples/simonw-tools/numpy-pyodide-lab.html",
+    "tags": [
+      "tool",
+      "python",
+      "data"
+    ],
+    "source": "simonw",
+    "loading": "script",
+    "bucket": "collected",
+    "featured": false,
+    "preview": "previews/examples-simonw-tools-numpy-pyodide-lab-html.png"
+  },
+  {
+    "id": "examples-simonw-tools-micropython-html",
+    "name": "micropython",
+    "path": "examples/simonw-tools/micropython.html",
+    "tags": [
+      "tool",
+      "python"
+    ],
+    "source": "simonw",
+    "loading": "esm",
+    "bucket": "collected",
+    "featured": false,
+    "preview": "previews/examples-simonw-tools-micropython-html.png"
+  },
+  {
+    "id": "examples-simonw-tools-quickjs-html",
+    "name": "quickjs",
+    "path": "examples/simonw-tools/quickjs.html",
+    "tags": [
+      "tool"
+    ],
+    "source": "simonw",
+    "loading": "esm",
+    "bucket": "collected",
+    "featured": false,
+    "preview": "previews/examples-simonw-tools-quickjs-html.png"
+  },
+  {
+    "id": "examples-simonw-tools-v86-html",
+    "name": "v86 (x86 emulator!)",
+    "path": "examples/simonw-tools/v86.html",
+    "tags": [
+      "interactive",
+      "wasm"
+    ],
+    "source": "simonw",
+    "loading": "esm",
+    "bucket": "collected",
+    "featured": false,
+    "preview": "previews/examples-simonw-tools-v86-html.png"
+  }
+]
