@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OpenRouter chat + streamdown</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- streamdown animation styles -->
+  <link rel="stylesheet" href="https://esm.sh/streamdown@2.5.0/styles.css">
+
+  <style>
+    /* shadcn/ui CSS vars streamdown depends on — dark mode */
+    :root {
+      --background: oklch(0.145 0 0);
+      --foreground: oklch(0.985 0 0);
+      --muted: oklch(0.269 0 0);
+      --muted-foreground: oklch(0.708 0 0);
+      --border: oklch(0.269 0 0);
+      --input: oklch(0.269 0 0);
+      --primary: oklch(0.985 0 0);
+      --primary-foreground: oklch(0.205 0 0);
+      --sidebar: oklch(0.205 0 0);
+      --radius: 0.625rem;
+    }
+
+    /* Map shadcn semantic tokens to Tailwind bg-*/
+    .bg-background  { background-color: var(--background) !important; }
+    .bg-muted       { background-color: var(--muted) !important; }
+    .bg-sidebar     { background-color: var(--sidebar) !important; }
+    .bg-primary     { background-color: var(--primary) !important; }
+    .text-foreground      { color: var(--foreground) !important; }
+    .text-muted-foreground { color: var(--muted-foreground) !important; }
+    .text-primary-foreground { color: var(--primary-foreground) !important; }
+    .border-border  { border-color: var(--border) !important; }
+    .divide-border > * + * { border-color: var(--border) !important; }
+
+    /* app chrome */
+    html, body { margin: 0; height: 100%; background: var(--background); color: var(--foreground); }
+    #root { display: flex; flex-direction: column; min-height: 100vh; }
+
+    /* custom input/button theming not achievable with pure Tailwind tokens */
+    .chat-input {
+      background: var(--input);
+      border-color: var(--border);
+      color: var(--foreground);
+    }
+    .chat-input:focus { outline: none; box-shadow: 0 0 0 2px var(--muted-foreground); }
+    .chat-btn-primary {
+      background: var(--primary);
+      color: var(--primary-foreground);
+    }
+    .chat-btn-secondary {
+      color: var(--muted-foreground);
+    }
+    .chat-btn-secondary:hover { color: var(--foreground); }
+
+    /* streamdown prose — override for dark bg */
+    .sd-prose pre  { background: var(--muted); border-radius: 6px; padding: 0.75em 1em; overflow-x: auto; }
+    .sd-prose code { background: var(--muted); border-radius: 3px; padding: 0.1em 0.35em; font-size: 0.85em; }
+    .sd-prose pre code { background: none; padding: 0; }
+    .sd-prose blockquote { border-left: 3px solid var(--border); padding-left: 0.75em; margin-left: 0; color: var(--muted-foreground); }
+    .sd-prose p { margin: 0 0 0.5em; }
+    .sd-prose p:last-child { margin-bottom: 0; }
+    .sd-prose ul, .sd-prose ol { margin: 0.25em 0 0.5em 1.25em; }
+    .sd-prose table { border-collapse: collapse; width: 100%; }
+    .sd-prose th, .sd-prose td { border: 1px solid var(--border); padding: 0.3em 0.6em; }
+  </style>
+
+  <script type="importmap">
+  {
+    "imports": {
+      "react":             "https://esm.sh/react@18",
+      "react/":            "https://esm.sh/react@18/",
+      "react/jsx-runtime": "https://esm.sh/react@18/jsx-runtime",
+      "react-dom":         "https://esm.sh/react-dom@18",
+      "react-dom/client":  "https://esm.sh/react-dom@18/client",
+      "ai":                "https://esm.sh/ai@4.3.16?external=react",
+      "ai/":               "https://esm.sh/ai@4.3.16/",
+      "@ai-sdk/openai":    "https://esm.sh/@ai-sdk/openai@1.3.22?external=react",
+      "streamdown":        "https://esm.sh/streamdown@2.5.0?external=react,react-dom"
+    }
+  }
+  </script>
+  <script type="module" src="https://esm.sh/tsx"></script>
+</head>
+<body>
+<div id="root"></div>
+
+<script type="text/tsx">
+import { useState, useRef, useEffect } from 'react'
+import { createRoot } from 'react-dom/client'
+import { streamText } from 'ai'
+import { createOpenAI } from '@ai-sdk/openai'
+import { Streamdown } from 'streamdown'
+
+type ORModel = { id: string; name: string; pricePer1M: number }
+type Msg = { role: 'user' | 'assistant'; content: string }
+
+function fmtPrice(p: number) {
+  if (p === 0) return 'free'
+  if (p < 0.1) return `$${p.toFixed(3)}/1M`
+  return `$${p.toFixed(2)}/1M`
+}
+
+async function fetchModels(apiKey: string): Promise<ORModel[]> {
+  const res = await fetch('https://openrouter.ai/api/v1/models', {
+    headers: { Authorization: `Bearer ${apiKey}` },
+  })
+  const json = await res.json()
+  return (json.data as any[])
+    .filter(m => m.architecture?.modality?.includes('text'))
+    .map(m => {
+      const prompt = parseFloat(m.pricing?.prompt ?? '0')
+      const completion = parseFloat(m.pricing?.completion ?? '0')
+      const pricePer1M = Math.max(0, prompt + completion) * 1_000_000
+      return { id: m.id, name: m.name, pricePer1M }
+    })
+    .sort((a, b) => a.pricePer1M - b.pricePer1M)
+}
+
+function KeyGate({ onKey }: { onKey: (k: string) => void }) {
+  const [val, setVal] = useState('')
+  return (
+    <div className="flex flex-col items-center justify-center flex-1 gap-4 p-8">
+      <div className="max-w-md w-full space-y-3">
+        <h1 className="text-xl font-semibold text-foreground">OpenRouter chat + streamdown</h1>
+        <p className="text-sm text-muted-foreground">
+          Paste your <a href="https://openrouter.ai/keys" target="_blank" className="underline">OpenRouter API key</a>.
+          Stored in localStorage only.
+        </p>
+        <input
+          type="password"
+          className="w-full chat-input rounded-lg px-3 py-2 text-sm border"
+          placeholder="sk-or-v1-..."
+          value={val}
+          onInput={(e: any) => setVal(e.target.value)}
+          onKeyDown={(e: any) => e.key === 'Enter' && val.trim() && onKey(val.trim())}
+        />
+        <button
+          className="w-full chat-btn-primary rounded-lg px-3 py-2 text-sm font-medium disabled:opacity-40"
+          disabled={!val.trim()}
+          onClick={() => onKey(val.trim())}
+        >
+          Save key &amp; start chatting
+        </button>
+      </div>
+    </div>
+  )
+}
+
+const FREE_ROUTER = 'openrouter/free'
+
+function Chat({ apiKey, onClearKey }: { apiKey: string; onClearKey: () => void }) {
+  const [models, setModels] = useState<ORModel[]>([])
+  const [modelsLoading, setModelsLoading] = useState(true)
+  const [modelsError, setModelsError] = useState('')
+  const [model, setModel] = useState(FREE_ROUTER)
+  const [messages, setMessages] = useState<Msg[]>([])
+  const [input, setInput] = useState('')
+  const [streaming, setStreaming] = useState(false)
+  const bottomRef = useRef<HTMLDivElement>(null)
+  const abortRef = useRef<AbortController | null>(null)
+
+  useEffect(() => {
+    fetchModels(apiKey)
+      .then(ms => {
+        setModels(ms)
+        const hasFreeRouter = ms.find(m => m.id === FREE_ROUTER)
+        setModel(hasFreeRouter ? FREE_ROUTER : (ms[0]?.id ?? ''))
+      })
+      .catch(e => setModelsError(e.message))
+      .finally(() => setModelsLoading(false))
+  }, [apiKey])
+
+  useEffect(() => {
+    bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
+  }, [messages])
+
+  async function send() {
+    const text = input.trim()
+    if (!text || streaming) return
+    setInput('')
+
+    const next: Msg[] = [...messages, { role: 'user', content: text }]
+    setMessages(next)
+    setStreaming(true)
+
+    const assistant: Msg = { role: 'assistant', content: '' }
+    setMessages([...next, assistant])
+
+    const abort = new AbortController()
+    abortRef.current = abort
+
+    try {
+      const openrouter = createOpenAI({
+        baseURL: 'https://openrouter.ai/api/v1',
+        apiKey,
+        headers: { 'HTTP-Referer': location.href, 'X-Title': 'byo-chat-streamdown' },
+      })
+
+      const result = streamText({
+        model: openrouter(model),
+        messages: next,
+        abortSignal: abort.signal,
+      })
+
+      for await (const delta of result.textStream) {
+        assistant.content += delta
+        setMessages(m => {
+          const updated = [...m]
+          updated[updated.length - 1] = { ...assistant }
+          return updated
+        })
+      }
+    } catch (e: any) {
+      if (e?.name !== 'AbortError') {
+        assistant.content = `Error: ${e?.message ?? e}`
+        setMessages(m => {
+          const updated = [...m]
+          updated[updated.length - 1] = { ...assistant }
+          return updated
+        })
+      }
+    } finally {
+      setStreaming(false)
+      abortRef.current = null
+    }
+  }
+
+  function stop() {
+    abortRef.current?.abort()
+  }
+
+  return (
+    <div className="flex flex-col flex-1 max-w-3xl w-full mx-auto">
+      {/* header */}
+      <div className="flex items-center gap-3 p-3 border-b border-border">
+        <select
+          className="flex-1 chat-input rounded-md px-2 py-1.5 text-sm border disabled:opacity-50"
+          value={model}
+          disabled={modelsLoading}
+          onChange={(e: any) => setModel(e.target.value)}
+        >
+          {modelsLoading && <option>Loading models…</option>}
+          {modelsError && <option>Error: {modelsError}</option>}
+          {models.map(m => (
+            <option key={m.id} value={m.id}>
+              {m.name} — {fmtPrice(m.pricePer1M)}
+            </option>
+          ))}
+        </select>
+        <button
+          className="text-xs chat-btn-secondary"
+          onClick={() => { setMessages([]); setInput('') }}
+        >
+          clear
+        </button>
+        <button className="text-xs chat-btn-secondary" onClick={onClearKey}>
+          key
+        </button>
+      </div>
+
+      {/* messages */}
+      <div className="flex-1 overflow-y-auto p-4 space-y-4">
+        {messages.length === 0 && (
+          <p className="text-muted-foreground text-sm text-center mt-8">Send a message to start.</p>
+        )}
+        {messages.map((m, i) => (
+          <div key={i} className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+            <div
+              className={`max-w-4xl rounded-2xl px-4 py-2 text-sm text-foreground ${
+                m.role === 'user' ? 'bg-muted rounded-br-sm' : 'rounded-bl-sm'
+              }`}
+            >
+              {m.role === 'assistant' ? (
+                <div className="sd-prose">
+                  <Streamdown isAnimating={streaming && i === messages.length - 1} animated>
+                    {m.content || ' '}
+                  </Streamdown>
+                </div>
+              ) : (
+                <span className="whitespace-pre-wrap">{m.content}</span>
+              )}
+            </div>
+          </div>
+        ))}
+        <div ref={bottomRef} />
+      </div>
+
+      {/* input */}
+      <div className="p-3 flex gap-2 border-t border-border">
+        <textarea
+          className="flex-1 chat-input rounded-xl px-3 py-2 text-sm resize-none border"
+          rows={2}
+          placeholder="Message…"
+          value={input}
+          onInput={(e: any) => setInput(e.target.value)}
+          onKeyDown={(e: any) => {
+            if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); send() }
+          }}
+        />
+        <button
+          className="px-4 py-2 rounded-xl text-sm font-medium chat-btn-primary disabled:opacity-40 self-end"
+          onClick={streaming ? stop : send}
+          disabled={!streaming && !input.trim()}
+        >
+          {streaming ? 'stop' : 'send'}
+        </button>
+      </div>
+    </div>
+  )
+}
+
+function App() {
+  const [apiKey, setApiKey] = useState<string | null>(() => localStorage.getItem('or_key'))
+
+  function saveKey(k: string) {
+    localStorage.setItem('or_key', k)
+    setApiKey(k)
+  }
+
+  function clearKey() {
+    localStorage.removeItem('or_key')
+    setApiKey(null)
+  }
+
+  return (
+    <div className="flex flex-col flex-1 min-h-screen">
+      {apiKey ? <Chat apiKey={apiKey} onClearKey={clearKey} /> : <KeyGate onKey={saveKey} />}
+    </div>
+  )
+}
+
+createRoot(document.getElementById('root')!).render(<App />)
+</script>
+</body>
+</html>

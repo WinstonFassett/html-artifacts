@@ -2418,5 +2418,123 @@
     "featured": false,
     "size": 21775,
     "preview": "previews/examples-simonw-tools-v86-html.png"
+  },
+  {
+    "id": "starters-assistant-ui-chat-esm-html",
+    "name": "assistant-ui-chat-esm",
+    "path": "starters/assistant-ui-chat-esm.html",
+    "tags": [
+      "chat",
+      "ai",
+      "react",
+      "assistant-ui"
+    ],
+    "source": "starters",
+    "bucket": "starters",
+    "featured": false,
+    "size": 11012,
+    "preview": "previews/starters-assistant-ui-chat-esm-html.png"
+  },
+  {
+    "id": "starters-collab-milkdown-yjs-esm-html",
+    "name": "collab-milkdown-yjs-esm",
+    "path": "starters/collab-milkdown-yjs-esm.html",
+    "tags": [
+      "editor",
+      "collaboration",
+      "yjs",
+      "milkdown"
+    ],
+    "source": "starters",
+    "bucket": "starters",
+    "featured": false,
+    "size": 5838,
+    "preview": "previews/starters-collab-milkdown-yjs-esm-html.png"
+  },
+  {
+    "id": "starters-openrouter-chat-esm-html",
+    "name": "openrouter-chat-esm",
+    "path": "starters/openrouter-chat-esm.html",
+    "tags": [
+      "chat",
+      "ai",
+      "react",
+      "openrouter",
+      "streaming"
+    ],
+    "source": "starters",
+    "bucket": "starters",
+    "featured": false,
+    "size": 9738,
+    "preview": "previews/starters-openrouter-chat-esm-html.png"
+  },
+  {
+    "id": "starters-openrouter-chat-streamdown-html",
+    "name": "openrouter-chat-streamdown",
+    "path": "starters/openrouter-chat-streamdown.html",
+    "tags": [
+      "chat",
+      "ai",
+      "react",
+      "openrouter",
+      "streaming",
+      "markdown"
+    ],
+    "source": "starters",
+    "bucket": "starters",
+    "featured": false,
+    "size": 12080,
+    "preview": "previews/starters-openrouter-chat-streamdown-html.png"
+  },
+  {
+    "id": "starters-webawesome-chat-streamdown-html",
+    "name": "webawesome-chat-streamdown",
+    "path": "starters/webawesome-chat-streamdown.html",
+    "tags": [
+      "chat",
+      "ai",
+      "webawesome",
+      "streaming",
+      "markdown"
+    ],
+    "source": "starters",
+    "bucket": "starters",
+    "featured": false,
+    "size": 15496,
+    "preview": "previews/starters-webawesome-chat-streamdown-html.png"
+  },
+  {
+    "id": "starters-webawesome-chat-html",
+    "name": "webawesome-chat",
+    "path": "starters/webawesome-chat.html",
+    "tags": [
+      "chat",
+      "ai",
+      "webawesome",
+      "streaming"
+    ],
+    "source": "starters",
+    "bucket": "starters",
+    "featured": false,
+    "size": 13900,
+    "preview": "previews/starters-webawesome-chat-html.png"
+  },
+  {
+    "id": "starters-webawesome-chat-markstream-html",
+    "name": "webawesome-chat-markstream",
+    "path": "starters/webawesome-chat-markstream.html",
+    "tags": [
+      "chat",
+      "ai",
+      "webawesome",
+      "streaming",
+      "markdown",
+      "markstream"
+    ],
+    "source": "starters",
+    "bucket": "starters",
+    "featured": false,
+    "size": 15800,
+    "preview": "previews/starters-webawesome-chat-markstream-html.png"
   }
 ]

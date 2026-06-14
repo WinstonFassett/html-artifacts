@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>WebAwesome chat</title>
+  <title>WebAwesome chat + marked</title>
 
   <link rel="stylesheet" href="https://ka-f.webawesome.com/webawesome@3.8.0/styles/webawesome.css" />
   <script type="module" src="https://ka-f.webawesome.com/webawesome@3.8.0/webawesome.loader.js"></script>
@@ -13,7 +13,8 @@
   {
     "imports": {
       "ai":             "https://esm.sh/ai@4.3.16",
-      "@ai-sdk/openai": "https://esm.sh/@ai-sdk/openai@1.3.22"
+      "@ai-sdk/openai": "https://esm.sh/@ai-sdk/openai@1.3.22",
+      "marked":         "https://esm.sh/marked@17"
     }
   }
   </script>
@@ -104,9 +105,50 @@
       border-radius: 1.125rem;
       font-size: 0.875rem;
       line-height: 1.5;
-      white-space: pre-wrap;
       word-break: break-word;
+      overflow-x: auto;
     }
+
+    /* prose styles for assistant markdown */
+    .bubble.assistant p { margin: 0 0 0.5em; }
+    .bubble.assistant p:last-child { margin-bottom: 0; }
+    .bubble.assistant ul, .bubble.assistant ol { margin: 0.25em 0 0.5em 1.25em; padding: 0; }
+    .bubble.assistant li { margin-bottom: 0.15em; }
+    .bubble.assistant code {
+      background: var(--wa-color-surface-default, #f0f0f0);
+      border-radius: 3px;
+      padding: 0.1em 0.3em;
+      font-family: monospace;
+      font-size: 0.85em;
+    }
+    .bubble.assistant pre {
+      background: var(--wa-color-surface-default, #f0f0f0);
+      border-radius: 6px;
+      padding: 0.75em 1em;
+      overflow-x: auto;
+      margin: 0.5em 0;
+    }
+    .bubble.assistant pre code { background: none; padding: 0; }
+    .bubble.assistant blockquote {
+      border-left: 3px solid var(--wa-color-border-default, #ddd);
+      margin: 0.5em 0;
+      padding-left: 0.75em;
+      color: var(--wa-color-text-quiet, #666);
+    }
+    .bubble.assistant h1, .bubble.assistant h2, .bubble.assistant h3 {
+      margin: 0.5em 0 0.25em;
+      font-weight: 600;
+    }
+    .bubble.assistant table {
+      border-collapse: collapse;
+      width: 100%;
+      margin: 0.5em 0;
+    }
+    .bubble.assistant th, .bubble.assistant td {
+      border: 1px solid var(--wa-color-border-default, #ddd);
+      padding: 0.3em 0.6em;
+    }
+    .bubble.user { white-space: pre-wrap; }
 
     .bubble.user {
       background: var(--wa-color-brand-fill, #2563eb);
@@ -194,6 +236,9 @@
 <script type="module">
 import { streamText } from 'ai'
 import { createOpenAI } from '@ai-sdk/openai'
+import { marked } from 'marked'
+
+marked.setOptions({ breaks: true, gfm: true })
 
 // ── State ────────────────────────────────────────────────
 let apiKey = localStorage.getItem('or_key') || ''
@@ -313,12 +358,15 @@ function renderMessages() {
 
     const bubble = document.createElement('div')
     bubble.className = `bubble ${msg.role}`
-    bubble.textContent = msg.content
-
-    if (msg.role === 'assistant' && streaming && i === messages.length - 1) {
-      const cur = document.createElement('span')
-      cur.className = 'cursor'
-      bubble.appendChild(cur)
+    if (msg.role === 'assistant') {
+      bubble.innerHTML = marked.parse(msg.content || '')
+      if (streaming && i === messages.length - 1) {
+        const cur = document.createElement('span')
+        cur.className = 'cursor'
+        bubble.appendChild(cur)
+      }
+    } else {
+      bubble.textContent = msg.content
     }
 
     row.appendChild(bubble)
@@ -344,11 +392,13 @@ function updateLastBubble(content) {
   const rows = messagesEl.querySelectorAll('.msg-row')
   const last = rows[rows.length - 1]
   if (!last) return
-  const bubble = last.querySelector('.bubble')
+  const bubble = last.querySelector('.bubble.assistant')
   if (!bubble) return
-  // clear and re-set text (keep cursor span)
-  bubble.childNodes.forEach(n => { if (n.nodeType === Node.TEXT_NODE) n.remove() })
-  bubble.insertBefore(document.createTextNode(content), bubble.querySelector('.cursor') || null)
+  bubble.innerHTML = marked.parse(content || '')
+  // re-append cursor while streaming
+  const cur = document.createElement('span')
+  cur.className = 'cursor'
+  bubble.appendChild(cur)
 }
 
 // ── Send ─────────────────────────────────────────────────

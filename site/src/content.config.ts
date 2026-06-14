@@ -14,7 +14,7 @@ const artifacts = defineCollection({
     tags: z.array(z.string()),
     source: z.string(),
     loading: z.enum(['esm', 'script']).optional(),
-    bucket: z.enum(['mine', 'collected', 'templates']),
+    bucket: z.enum(['mine', 'collected', 'templates', 'starters']),
     featured: z.boolean().default(false), // publisher highlight (not per-viewer faves)
     size: z.number().default(0), // bytes of the source .html
     preview: z.string(),
