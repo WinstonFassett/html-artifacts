@@ -37,15 +37,31 @@ import { createRoot } from 'react-dom/client'
 import { streamText } from 'ai'
 import { createOpenAI } from '@ai-sdk/openai'
 
-const MODELS = [
-  { id: 'anthropic/claude-sonnet-4-5',        label: 'Claude Sonnet 4.5' },
-  { id: 'openai/gpt-4o',                      label: 'GPT-4o' },
-  { id: 'google/gemini-2.0-flash-001',        label: 'Gemini 2.0 Flash' },
-  { id: 'meta-llama/llama-3.3-70b-instruct',  label: 'Llama 3.3 70B' },
-  { id: 'mistralai/mistral-small-3.2-24b-instruct', label: 'Mistral Small 3.2' },
-]
-
+type ORModel = { id: string; name: string; pricePer1M: number }
 type Msg = { role: 'user' | 'assistant'; content: string }
+
+function fmtPrice(p: number) {
+  if (p === 0) return 'free'
+  if (p < 0.1) return `$${p.toFixed(3)}/1M`
+  return `$${p.toFixed(2)}/1M`
+}
+
+async function fetchModels(apiKey: string): Promise<ORModel[]> {
+  const res = await fetch('https://openrouter.ai/api/v1/models', {
+    headers: { Authorization: `Bearer ${apiKey}` },
+  })
+  const json = await res.json()
+  return (json.data as any[])
+    .filter(m => m.architecture?.modality?.includes('text'))
+    .map(m => {
+      const prompt = parseFloat(m.pricing?.prompt ?? '0')
+      const completion = parseFloat(m.pricing?.completion ?? '0')
+      // negative = rebate/router models; treat as 0 for display
+      const pricePer1M = Math.max(0, prompt + completion) * 1_000_000
+      return { id: m.id, name: m.name, pricePer1M }
+    })
+    .sort((a, b) => a.pricePer1M - b.pricePer1M)
+}
 
 function KeyGate({ onKey }: { onKey: (k: string) => void }) {
   const [val, setVal] = useState('')
@@ -77,13 +93,30 @@ function KeyGate({ onKey }: { onKey: (k: string) => void }) {
   )
 }
 
+const FREE_ROUTER = 'openrouter/free'
+
 function Chat({ apiKey, onClearKey }: { apiKey: string; onClearKey: () => void }) {
-  const [model, setModel] = useState(MODELS[0].id)
+  const [models, setModels] = useState<ORModel[]>([])
+  const [modelsLoading, setModelsLoading] = useState(true)
+  const [modelsError, setModelsError] = useState('')
+  const [model, setModel] = useState(FREE_ROUTER)
   const [messages, setMessages] = useState<Msg[]>([])
   const [input, setInput] = useState('')
   const [streaming, setStreaming] = useState(false)
   const bottomRef = useRef<HTMLDivElement>(null)
   const abortRef = useRef<AbortController | null>(null)
+
+  useEffect(() => {
+    fetchModels(apiKey)
+      .then(ms => {
+        setModels(ms)
+        // prefer Free Models Router; fall back to first in list
+        const hasFreeRouter = ms.find(m => m.id === FREE_ROUTER)
+        setModel(hasFreeRouter ? FREE_ROUTER : (ms[0]?.id ?? ''))
+      })
+      .catch(e => setModelsError(e.message))
+      .finally(() => setModelsLoading(false))
+  }, [apiKey])
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
@@ -149,11 +182,18 @@ function Chat({ apiKey, onClearKey }: { apiKey: string; onClearKey: () => void }
       {/* header */}
       <div class="flex items-center gap-3 p-3 border-b border-zinc-800">
         <select
-          class="flex-1 bg-zinc-900 border border-zinc-700 rounded-md px-2 py-1.5 text-sm focus:outline-none"
+          class="flex-1 bg-zinc-900 border border-zinc-700 rounded-md px-2 py-1.5 text-sm focus:outline-none disabled:opacity-50"
           value={model}
+          disabled={modelsLoading}
           onChange={(e: any) => setModel(e.target.value)}
         >
-          {MODELS.map(m => <option key={m.id} value={m.id}>{m.label}</option>)}
+          {modelsLoading && <option>Loading models…</option>}
+          {modelsError && <option>Error: {modelsError}</option>}
+          {models.map(m => (
+            <option key={m.id} value={m.id}>
+              {m.name} — {fmtPrice(m.pricePer1M)}
+            </option>
+          ))}
         </select>
         <button
           class="text-xs text-zinc-500 hover:text-zinc-300"
