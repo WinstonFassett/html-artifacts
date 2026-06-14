@@ -2,7 +2,8 @@
 
 > Round 1: 106-agent workflow, 23 sources, 111 claims, 25 verified (13 confirmed / 12 killed). Import maps, CDNs, browser support.
 > Round 2: 100-agent workflow, 18 sources, 83 claims, 25 verified (16 confirmed / 9 killed). Agentic artifact ecosystem, platforms, skills, prior art.
-> Date: 2026-06-12
+> Rounds 9–11 (2026-06-14): agentic single-file artifacts — CORS wall fell (LLM artifacts need no backend, live-probed), Claude-Artifacts-calls-Claude + artifact-as-agent genre, keeper-criteria + URL-as-state for curation.
+> Date: 2026-06-12 (rounds 1–8), 2026-06-14 (rounds 9–11)
 
 ---
 
@@ -428,6 +429,146 @@ Captured as `starters/milkdown-dual-view-esm.html` (WYSIWYG ↔ raw markdown, lo
 ### The honest Yjs-collab gap
 
 Single-file **Yjs collab with a rich editor (Crepe) does NOT work cleanly** — Yjs gets duplicated across 6 transitive packages (crepe, plugin-collab, y-prosemirror, y-trystero, y-indexeddb, y-protocols), and esm.sh `?external` dedup is whack-a-mole. `starters/collab-milkdown-yjs-esm.html` is shelved (WIP, not in gallery). Winston confirmed he's never done single-page Yjs+rich-editor collab either — it likely needs a bundler or an exhaustively-tuned import map. CodeMirror+Yjs collab (fewer transitive deps) is probably tractable; rich-editor collab is the real wall.
+
+---
+
+## Round 9 — The CORS wall has (mostly) fallen: LLM artifacts need NO backend
+
+> Live-probed 2026-06-14 (curl preflight + cross-origin POST). The headline: for
+> most major LLM APIs, the browser-direct blocker is gone — the only real barrier
+> left is **key exposure**, not CORS. This unlocks the whole "agentic artifact"
+> genre with zero server.
+
+| Provider | Browser-direct? | Header/trick | Needs proxy? |
+|----------|:--:|--------------|:--:|
+| **Anthropic** `/v1/messages` | yes | **Required:** `anthropic-dangerous-direct-browser-access: true` (SDK: `dangerouslyAllowBrowser: true`) | No |
+| **OpenAI** `/v1/chat/completions` | yes | none | No |
+| **Google Gemini** `generativelanguage` | yes | none | No* |
+| **OpenRouter** `/api/v1` | yes | none (`HTTP-Referer`/`X-Title` optional) | No |
+| **Groq** `/openai/v1` | yes | none | No |
+| **Mistral / Cohere / Together** | yes | none | No |
+
+- **Anthropic is the one true gate**: without the `anthropic-dangerous-direct-browser-access`
+  header the POST response carries no `Access-Control-Allow-Origin`; with it you get
+  `ACAO: *`. Introduced ~2024-08; **undocumented** on the current Messages API ref —
+  authoritative source is the live API + the TS SDK flag.
+- **OpenAI & Gemini now work direct** — contradicts widely-cited 2024–25 "they block
+  browsers" claims (those conflated CORS with key-leak, or used the OpenAI-compat
+  endpoint).
+- ***Gemini caveat (date-sensitive):** Google starts rejecting unrestricted standard
+  API keys ~2026-06-19; browser use needs an HTTP-referrer-restricted key.*
+
+**The three tiers of "LLM artifact," most-single-file first:**
+1. **BYO-key, no backend** (the right default for this archive) — user pastes their own
+   key → `localStorage` → direct `fetch()`. Key only exposed to themselves; fine for
+   personal/local tools. OpenRouter is the friendliest single target (one key, all
+   models, clean CORS). Anthropic needs the dangerous-direct header.
+2. **Zero-key demo** (one file, fragile) — call **Pollinations** (`text.pollinations.ai`,
+   anonymous, no signup, CORS-enabled) for a no-setup public demo. Heavily throttled
+   (~1 req/15s), drifting toward keys in 2026 — wrap in graceful failure.
+3. **Your-key-hidden** (one file + one function) — when shipping *your* key publicly,
+   add a **Val.town** HTTP val (only thin-proxy that's paste-to-URL with auto-CORS,
+   <1 min, secret hidden even in public vals). Use **Cloudflare Workers + AI Gateway**
+   instead when the public endpoint needs abuse protection (rate-limit/cache).
+
+**MCP from the browser:** technically possible (lib: `use-mcp`, official, React hook +
+in-browser OAuth) but only against remote **Streamable-HTTP** servers that opt into CORS
+(most don't; `stdio` is impossible in a browser). Practically: MCP stays server-side;
+"connect to any MCP server" from an artifact is infeasible without a proxy.
+
+## Round 10 — Claude Artifacts can call Claude (no key), + the "artifact-as-agent" genre
+
+> The "artifact that is an agent" is now a real, first-party genre. Claude.ai
+> Artifacts can call the Claude API from inside a running artifact — **no API key**,
+> billed to the *viewer's* subscription.
+
+**In-artifact Claude API (current 2026 form):**
+```js
+const res = await fetch("https://api.anthropic.com/v1/messages", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({
+    model: "claude-sonnet-4-20250514",   // pinned: "Always use Sonnet 4"
+    max_tokens: 1000,
+    messages: [{ role: "user", content: "..." }],
+  }),
+});
+```
+- **No key** — runtime injects auth. Uses the **viewer's** Claude subscription, not the
+  builder's. Viewers must be signed in.
+- Superseded the June-2025 `window.claude.complete()` wrapper. No memory between calls
+  (resend history). 2026 additions: `mcp_servers` (wired to viewer's Claude.ai
+  connectors), `web_search` tool, PDF/image inputs, and `window.storage.{get,set,…}`
+  with personal **or shared** scope (→ multiplayer leaderboards). `localStorage` still
+  banned in artifacts; no `<form>` tags.
+- Default artifact stack unchanged: React + Tailwind + shadcn/ui + lucide + Recharts;
+  2026 whitelist also bundles d3, three (r128), plotly, chart.js, tone, papaparse,
+  xlsx, mathjs, mammoth, tensorflow. Libraries pre-bundled (not esm.sh).
+- *Source caveat: the fetch/whitelist details come from extracted system prompts
+  (`asgeirtj/system_prompts_leaks`); the auth/billing/sharing model is corroborated by
+  Anthropic's first-party tutorial. No official changelog for the wrapper→fetch move.*
+
+**Agent-builders — who emits runnable single-file HTML that can call an LLM:**
+Almost none of the "real project" builders (v0, bolt.new, Lovable, Cursor, Replit Agent,
+AI Studio Build) emit a double-clickable `index.html` — all multi-file repos.
+**Gemini Canvas is Claude Artifacts' only credible single-file peer** (single self-
+contained HTML *and* the running app can call Gemini), but no one-click download.
+ChatGPT Canvas is single-file + downloadable but the artifact **can't** call the model.
+
+**New (2026) artifact-as-agent skills/repos to know:**
+- **elder-plinius/G0DM0D3** (~7.8k★) — canonical reference: single `index.html`, vanilla
+  JS, multi-model arena, OpenRouter BYO-key in localStorage, never hits a server.
+- **hellomypastor/AgentHTML** — 5 `data-*` attrs + inline runtime so artifact buttons
+  call the agent back (purest expression of the pattern).
+- **adaminspaceship/html-explainer** — "highlight-to-explain" streaming via browser-direct
+  OpenAI. **dogum/kernel** — Pyodide notebook + human-in-loop "KERNEL Agent" as one file.
+- Convert/host micro-ecosystem: **ericboehs/claude-jsx-to-html** (JSX artifact → single
+  HTML, React18+Tailwind-Play+Babel+esm.sh), OneClickLive (paste HTML → live URL, no
+  signup), Anthropic native Publish-to-`claude.site` + **Live Artifacts** (~Apr 2026).
+
+## Round 11 — Keeper criteria + URL-as-state (feeds curation)
+
+> Simon Willison is the canonical practitioner: **150+→~216 single-file HTML tools,
+> almost all LLM-written**, flat static GitHub Pages repo. Methodology doc:
+> ["Useful patterns for building HTML tools" (2025-12-10)](https://simonwillison.net/2025/Dec/10/html-tools/).
+
+**His conventions (quoted):** single file (inline JS+CSS); *"avoid React, or anything
+with a build step"* ("no react" is a literal recurring prompt string); *"the fewer
+dependencies the better"* (CDN-only); *"a few hundred lines means maintainability
+doesn't matter too much"* (small = LLM can re-read/modify whole file = the low-stakes
+posture); **state in URL** (bookmark/share) **or localStorage** (bulk state + secrets,
+*"which I really don't want anywhere near my server"*). Provenance: every tool footer
+links to the GitHub commit, which contains the **prompt or transcript link** (the
+colophon). Auto-descriptions via a Claude script (~$1 for 78 tools).
+
+**KEEPER vs JUNK — the sharpest line:** *takes fresh input → produces fresh output
+(parameterized/generative), NOT a frozen static render.* Curator rule of thumb: **"if you
+can only screenshot it, it's junk; if you'd bookmark the URL and paste new input next
+week, it's a keeper."** The four disqualifying junk modes (any one kills it): fake/
+hardcoded data · no real interactivity · one-shot demo not a tool · decorative look-alike.
+This is exactly why the 87 html-anything templates are junk — static mockups that fail
+the FUNCTION gate.
+
+**Durable genres** (star/traffic-backed): data/format converters (JSON↔YAML↔CSV), JSON
+formatter/viewer, encoders/decoders (base64/url/hex), JWT decoders, regex testers,
+time/date (epoch, cron), color tools (picker/contrast — uniquely strong), diff tools,
+hash/crypto, JSON visualizers (JSON Crack ~44k★). **Oversaturated junk:** landing/hero
+pages, pricing-card templates (no billing logic), fake-data dashboards, static tables
+(no sort/filter), slide decks, glassmorphic SaaS clones (purple-gradient slop).
+
+**URL-as-state pattern** (a static file + a URL = a shareable app, no backend):
+- spectrum: plain `?`/`#` params → JSON→base64 in hash → **compress→base64url** (the
+  workhorse: mermaid.live, PlantUML, Excalidraw, TS Playground) → whole-app-in-URL
+  (itty.bitty LZMA-packs the entire page into the fragment).
+- **Use the hash, not query string** → data never hits a server (privacy). Update live
+  with `history.replaceState(null,"",'#'+encoded)` (no reload/history flooding).
+- **Modern no-dep approach:** `JSON.stringify → TextEncoder → CompressionStream('deflate-raw')
+  → base64url → location.hash` (reverse with `DecompressionStream`). Native, all modern
+  browsers. Tradeoff: async — keystroke-loop tools often still use **lz-string**
+  (`compressToEncodedURIComponent`, synchronous, URL-safe; TS Playground uses it).
+- Excalidraw goes further: compress + AES-GCM, **decryption key after the `#`** so the
+  server can't read it. URL length: Chrome ~32KB, Firefox >64KB, mobile ~2–8KB
+  ("~2000 chars universally safe" = old IE limit).
 
 ---
 
