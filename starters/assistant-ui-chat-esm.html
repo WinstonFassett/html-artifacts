@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OpenRouter chat — assistant-ui</title>
+
+  <link rel="stylesheet" href="https://unpkg.com/@assistant-ui/styles@0.3.7/dist/styles/index.css" />
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+
+  <script type="importmap">
+  {
+    "imports": {
+      "react":               "https://esm.sh/react@19.2.7",
+      "react/":              "https://esm.sh/react@19.2.7/",
+      "react/jsx-runtime":   "https://esm.sh/react@19.2.7/jsx-runtime",
+      "react-dom":           "https://esm.sh/react-dom@19.2.7",
+      "react-dom/client":    "https://esm.sh/react-dom@19.2.7/client",
+      "@assistant-ui/react": "https://esm.sh/@assistant-ui/react@0.9.6?deps=react@19.2.7,react-dom@19.2.7",
+      "ai":                  "https://esm.sh/ai@4.3.16?deps=react@19.2.7",
+      "@ai-sdk/openai":      "https://esm.sh/@ai-sdk/openai@1.3.22"
+    }
+  }
+  </script>
+  <script type="module" src="https://esm.sh/tsx"></script>
+
+  <style>
+    body { margin: 0; background: #09090b; color: #fafafa; font-family: system-ui, sans-serif; }
+    #root { display: flex; flex-direction: column; height: 100dvh; }
+
+    /* seat aui-root inside our dark shell */
+    .aui-root {
+      --aui-background: #09090b;
+      --aui-foreground: #fafafa;
+      --aui-primary: #3f3f46;
+      --aui-primary-foreground: #fafafa;
+      --aui-secondary: #18181b;
+      --aui-secondary-foreground: #a1a1aa;
+      --aui-muted: #18181b;
+      --aui-muted-foreground: #71717a;
+      --aui-border: #27272a;
+      --aui-ring: #52525b;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+  </style>
+</head>
+<body>
+<div id="root"></div>
+
+<script type="text/tsx">
+import { useState, useEffect, useRef, useMemo } from 'react'
+import { createRoot } from 'react-dom/client'
+import { createOpenAI } from '@ai-sdk/openai'
+import { streamText } from 'ai'
+import {
+  AssistantRuntimeProvider,
+  useLocalRuntime,
+  ThreadPrimitive,
+  ComposerPrimitive,
+  MessagePrimitive,
+} from '@assistant-ui/react'
+
+// ── types ────────────────────────────────────────────────────────────────────
+
+type ORModel = { id: string; name: string; pricePer1M: number }
+
+function fmtPrice(p: number) {
+  if (p === 0) return 'free'
+  if (p < 0.1) return `$${p.toFixed(3)}/1M`
+  return `$${p.toFixed(2)}/1M`
+}
+
+async function fetchModels(apiKey: string): Promise<ORModel[]> {
+  const res = await fetch('https://openrouter.ai/api/v1/models', {
+    headers: { Authorization: `Bearer ${apiKey}` },
+  })
+  const json = await res.json()
+  return (json.data as any[])
+    .filter(m => m.architecture?.modality?.includes('text'))
+    .map(m => {
+      const prompt = parseFloat(m.pricing?.prompt ?? '0')
+      const completion = parseFloat(m.pricing?.completion ?? '0')
+      const pricePer1M = Math.max(0, prompt + completion) * 1_000_000
+      return { id: m.id, name: m.name, pricePer1M }
+    })
+    .sort((a, b) => a.pricePer1M - b.pricePer1M)
+}
+
+// ── KeyGate ──────────────────────────────────────────────────────────────────
+
+function KeyGate({ onKey }: { onKey: (k: string) => void }) {
+  const [val, setVal] = useState('')
+  return (
+    <div class="flex flex-col items-center justify-center flex-1 gap-4 p-8">
+      <div class="max-w-md w-full space-y-3">
+        <h1 class="text-xl font-semibold">OpenRouter chat</h1>
+        <p class="text-sm text-zinc-400">
+          Paste your{' '}
+          <a href="https://openrouter.ai/keys" target="_blank" class="underline text-zinc-300">
+            OpenRouter API key
+          </a>
+          . Stored in localStorage only.
+        </p>
+        <input
+          type="password"
+          class="w-full bg-zinc-900 border border-zinc-700 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-zinc-500"
+          placeholder="sk-or-v1-..."
+          value={val}
+          onInput={(e: any) => setVal(e.target.value)}
+          onKeyDown={(e: any) => e.key === 'Enter' && val.trim() && onKey(val.trim())}
+        />
+        <button
+          class="w-full bg-zinc-700 hover:bg-zinc-600 rounded-lg px-3 py-2 text-sm font-medium disabled:opacity-40"
+          disabled={!val.trim()}
+          onClick={() => onKey(val.trim())}
+        >
+          Save key &amp; start chatting
+        </button>
+      </div>
+    </div>
+  )
+}
+
+// ── Chat (assistant-ui primitives) ───────────────────────────────────────────
+
+function Chat({ apiKey, onClearKey }: { apiKey: string; onClearKey: () => void }) {
+  const [models, setModels] = useState<ORModel[]>([])
+  const [modelsLoading, setModelsLoading] = useState(true)
+  const [modelsError, setModelsError] = useState('')
+  const [model, setModel] = useState('openrouter/free')
+
+  useEffect(() => {
+    fetchModels(apiKey)
+      .then(ms => {
+        setModels(ms)
+        const hasFreeRouter = ms.find(m => m.id === 'openrouter/free')
+        setModel(hasFreeRouter ? 'openrouter/free' : (ms[0]?.id ?? ''))
+      })
+      .catch(e => setModelsError(e.message))
+      .finally(() => setModelsLoading(false))
+  }, [apiKey])
+
+  // Stable refs so adapter doesn't recreate on every render
+  const apiKeyRef = useRef(apiKey)
+  const modelRef = useRef(model)
+  useEffect(() => { apiKeyRef.current = apiKey }, [apiKey])
+  useEffect(() => { modelRef.current = model }, [model])
+
+  const adapter = useMemo(() => ({
+    async run({ messages, abortSignal }: any) {
+      const openrouter = createOpenAI({
+        baseURL: 'https://openrouter.ai/api/v1',
+        apiKey: apiKeyRef.current,
+        headers: { 'HTTP-Referer': location.href, 'X-Title': 'aui-chat-artifact' },
+      })
+
+      const msgs = messages.map((m: any) => ({
+        role: m.role as 'user' | 'assistant',
+        content: Array.isArray(m.content)
+          ? m.content.filter((p: any) => p.type === 'text').map((p: any) => p.text).join('')
+          : String(m.content ?? ''),
+      }))
+
+      const result = streamText({
+        model: openrouter(modelRef.current),
+        messages: msgs,
+        abortSignal,
+      })
+
+      let text = ''
+      const parts: any[] = []
+      for await (const delta of result.textStream) {
+        text += delta
+        parts[0] = { type: 'text' as const, text }
+      }
+      return { content: parts }
+    },
+  }), [])
+
+  const runtime = useLocalRuntime(adapter)
+
+  return (
+    <AssistantRuntimeProvider runtime={runtime}>
+      <div class="flex flex-col flex-1 max-w-3xl w-full mx-auto overflow-hidden">
+        {/* header */}
+        <div class="flex items-center gap-3 px-3 py-2 border-b border-zinc-800 shrink-0">
+          <select
+            class="flex-1 bg-zinc-900 border border-zinc-700 rounded-md px-2 py-1.5 text-sm focus:outline-none disabled:opacity-50"
+            value={model}
+            disabled={modelsLoading}
+            onChange={(e: any) => setModel(e.target.value)}
+          >
+            {modelsLoading && <option>Loading models…</option>}
+            {modelsError && <option>Error: {modelsError}</option>}
+            {models.map(m => (
+              <option key={m.id} value={m.id}>
+                {m.name} — {fmtPrice(m.pricePer1M)}
+              </option>
+            ))}
+          </select>
+          <button class="text-xs text-zinc-500 hover:text-zinc-300" onClick={onClearKey}>
+            key
+          </button>
+        </div>
+
+        {/* thread */}
+        <div class="aui-root flex flex-col flex-1 overflow-hidden">
+          <ThreadPrimitive.Root className="aui-thread-root flex flex-col flex-1 overflow-hidden">
+            <ThreadPrimitive.Viewport className="aui-thread-viewport flex-1 overflow-y-auto px-4 py-4">
+              <ThreadPrimitive.Messages
+                components={{
+                  UserMessage: () => (
+                    <MessagePrimitive.Root className="aui-user-message-root flex justify-end mb-4">
+                      <div className="aui-user-message-content max-w-[80%]">
+                        <MessagePrimitive.Content />
+                      </div>
+                    </MessagePrimitive.Root>
+                  ),
+                  AssistantMessage: () => (
+                    <MessagePrimitive.Root className="aui-assistant-message-root flex justify-start mb-4">
+                      <div className="aui-assistant-message-content max-w-[80%]">
+                        <MessagePrimitive.Content />
+                        <MessagePrimitive.InProgress>
+                          <span class="inline-block w-1.5 h-3.5 bg-zinc-400 ml-0.5 animate-pulse align-middle" />
+                        </MessagePrimitive.InProgress>
+                      </div>
+                    </MessagePrimitive.Root>
+                  ),
+                }}
+              />
+              <ThreadPrimitive.ScrollToBottom className="aui-thread-scroll-to-bottom" />
+            </ThreadPrimitive.Viewport>
+
+            <div className="aui-thread-viewport-footer shrink-0 border-t border-zinc-800 px-3 py-2">
+              <ComposerPrimitive.Root className="aui-composer-root flex gap-2 items-end">
+                <ComposerPrimitive.Input
+                  className="aui-composer-input flex-1 bg-zinc-900 border border-zinc-700 rounded-xl px-3 py-2 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-zinc-500"
+                  rows={2}
+                  placeholder="Message…"
+                />
+                <ComposerPrimitive.Send className="aui-composer-send px-4 py-2 rounded-xl text-sm font-medium bg-zinc-700 hover:bg-zinc-600 self-end" />
+                <ComposerPrimitive.Cancel className="aui-composer-cancel px-4 py-2 rounded-xl text-sm font-medium bg-zinc-700 hover:bg-zinc-600 self-end" />
+              </ComposerPrimitive.Root>
+            </div>
+          </ThreadPrimitive.Root>
+        </div>
+      </div>
+    </AssistantRuntimeProvider>
+  )
+}
+
+// ── App ───────────────────────────────────────────────────────────────────────
+
+function App() {
+  const [apiKey, setApiKey] = useState<string | null>(() => localStorage.getItem('or_key'))
+
+  function saveKey(k: string) {
+    localStorage.setItem('or_key', k)
+    setApiKey(k)
+  }
+
+  function clearKey() {
+    localStorage.removeItem('or_key')
+    setApiKey(null)
+  }
+
+  return (
+    <div class="flex flex-col flex-1 min-h-screen">
+      {apiKey ? <Chat apiKey={apiKey} onClearKey={clearKey} /> : <KeyGate onKey={saveKey} />}
+    </div>
+  )
+}
+
+createRoot(document.getElementById('root')!).render(<App />)
+</script>
+</body>
+</html>
