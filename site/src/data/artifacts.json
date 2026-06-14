@@ -2487,9 +2487,9 @@
     "preview": "previews/starters-react-chat-streamdown-html.png"
   },
   {
-    "id": "starters-webawesome-chat-streamdown-html",
-    "name": "webawesome-chat-streamdown",
-    "path": "starters/webawesome-chat-streamdown.html",
+    "id": "starters-webawesome-chat-marked-html",
+    "name": "webawesome-chat-marked",
+    "path": "starters/webawesome-chat-marked.html",
     "tags": [
       "chat",
       "ai",
@@ -2501,7 +2501,7 @@
     "bucket": "starters",
     "featured": false,
     "size": 15496,
-    "preview": "previews/starters-webawesome-chat-streamdown-html.png"
+    "preview": "previews/starters-webawesome-chat-marked-html.png"
   },
   {
     "id": "starters-webawesome-chat-html",
