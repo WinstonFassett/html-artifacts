@@ -526,6 +526,31 @@ ChatGPT Canvas is single-file + downloadable but the artifact **can't** call the
   HTML, React18+Tailwind-Play+Babel+esm.sh), OneClickLive (paste HTML → live URL, no
   signup), Anthropic native Publish-to-`claude.site` + **Live Artifacts** (~Apr 2026).
 
+### Walled Claude.ai Artifacts vs BYO-key artifacts — the streaming distinction
+
+Two different runtimes, often conflated. The capabilities differ sharply:
+
+| | **Claude.ai Artifacts (walled)** | **BYO-key single-file artifact** |
+|---|---|---|
+| Auth | No key — runtime injects, viewer-billed | User pastes own key → localStorage |
+| Runs outside claude.ai? | **No** — exported HTML 401s (no-key magic is sandbox-only) | **Yes** — runs from any static host / file:// |
+| **Streaming (`stream:true` SSE)** | **No** — undocumented, unobserved-working; org proxy buffers/mutates (strips `mcp_servers`); iframe+CSP hostile to long ReadableStream. Use a **client-side typewriter** over the complete response. | **Yes** — `response.body.getReader()` + `TextDecoder`, append deltas. Standard. |
+| Model choice | Pinned `claude-sonnet-4-20250514`, `max_tokens` ~1000 | Any (provider's full range) |
+| localStorage | **Banned** — use `window.storage` (`get/set/list`, personal or `shared:true` for multiplayer) | Normal localStorage |
+| Markdown lib | **None whitelisted** (no react-markdown/marked); HTML artifacts can CDN `marked` | Any via CDN |
+| `<form>` tags | Banned in React artifacts | Fine |
+
+**Streaming-markdown chat verdict:** NOT buildable on walled Claude.ai (no SSE) — but
+**fully buildable as a BYO-key single-file artifact** (the assumption for this archive).
+Pattern: paste key → localStorage → `fetch` with `stream:true` → read SSE → re-render the
+accumulating buffer with CDN `marked`/streamdown, **buffering to block boundaries** so
+half-open `**bold`/list markup isn't parsed mid-stream. CORS is a non-issue (Round 9;
+Anthropic needs the dangerous-direct header). **If/when built, target OpenRouter** (one
+key, all models, cleanest CORS — Winston's pick). *Walled-runtime wire details are
+leaked-system-prompt-derived (asgeirtj); the auth/billing model is Anthropic-confirmed.*
+Real walled-artifact builds: AI-NPC games, CSV-analysis apps, tutors, shared-storage
+leaderboards (Anthropic showcase + Willison).
+
 ## Round 11 — Keeper criteria + URL-as-state (feeds curation)
 
 > Simon Willison is the canonical practitioner: **150+→~216 single-file HTML tools,
