@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OpenRouter BYO-key chat</title>
+
+  <!-- React 19 + Vercel AI SDK via esm.sh.
+       ai/react's useChat expects a /api/chat route — we don't have one, so we
+       use streamText() directly from 'ai' + createOpenAI() pointed at OpenRouter.
+       The SDK is a runtime lib with no Node built-in deps, so esm.sh serves it clean. -->
+  <script type="importmap">
+  {
+    "imports": {
+      "react":               "https://esm.sh/react@19",
+      "react/":              "https://esm.sh/react@19/",
+      "react/jsx-runtime":   "https://esm.sh/react@19/jsx-runtime",
+      "react-dom":           "https://esm.sh/react-dom@19",
+      "react-dom/client":    "https://esm.sh/react-dom@19/client",
+      "ai":                  "https://esm.sh/ai@4.3.16?external=react",
+      "ai/":                 "https://esm.sh/ai@4.3.16/",
+      "@ai-sdk/openai":      "https://esm.sh/@ai-sdk/openai@1.3.22?external=react",
+      "@ai-sdk/openai/":     "https://esm.sh/@ai-sdk/openai@1.3.22/"
+    }
+  }
+  </script>
+  <script type="module" src="https://esm.sh/tsx"></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+</head>
+<body class="bg-zinc-950 text-zinc-100 min-h-screen flex flex-col">
+<div id="root" class="flex flex-col flex-1"></div>
+
+<script type="text/tsx">
+import { useState, useRef, useEffect } from 'react'
+import { createRoot } from 'react-dom/client'
+import { streamText } from 'ai'
+import { createOpenAI } from '@ai-sdk/openai'
+
+const MODELS = [
+  { id: 'anthropic/claude-sonnet-4-5',        label: 'Claude Sonnet 4.5' },
+  { id: 'openai/gpt-4o',                      label: 'GPT-4o' },
+  { id: 'google/gemini-2.0-flash-001',        label: 'Gemini 2.0 Flash' },
+  { id: 'meta-llama/llama-3.3-70b-instruct',  label: 'Llama 3.3 70B' },
+  { id: 'mistralai/mistral-small-3.2-24b-instruct', label: 'Mistral Small 3.2' },
+]
+
+type Msg = { role: 'user' | 'assistant'; content: string }
+
+function KeyGate({ onKey }: { onKey: (k: string) => void }) {
+  const [val, setVal] = useState('')
+  return (
+    <div class="flex flex-col items-center justify-center flex-1 gap-4 p-8">
+      <div class="max-w-md w-full space-y-3">
+        <h1 class="text-xl font-semibold">OpenRouter BYO-key chat</h1>
+        <p class="text-sm text-zinc-400">
+          Paste your <a href="https://openrouter.ai/keys" target="_blank" class="underline text-zinc-300">OpenRouter API key</a>.
+          Stored in localStorage, never sent anywhere except openrouter.ai.
+        </p>
+        <input
+          type="password"
+          class="w-full bg-zinc-900 border border-zinc-700 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-zinc-500"
+          placeholder="sk-or-v1-..."
+          value={val}
+          onInput={(e: any) => setVal(e.target.value)}
+          onKeyDown={(e: any) => e.key === 'Enter' && val.trim() && onKey(val.trim())}
+        />
+        <button
+          class="w-full bg-zinc-700 hover:bg-zinc-600 rounded-lg px-3 py-2 text-sm font-medium disabled:opacity-40"
+          disabled={!val.trim()}
+          onClick={() => onKey(val.trim())}
+        >
+          Save key &amp; start chatting
+        </button>
+      </div>
+    </div>
+  )
+}
+
+function Chat({ apiKey, onClearKey }: { apiKey: string; onClearKey: () => void }) {
+  const [model, setModel] = useState(MODELS[0].id)
+  const [messages, setMessages] = useState<Msg[]>([])
+  const [input, setInput] = useState('')
+  const [streaming, setStreaming] = useState(false)
+  const bottomRef = useRef<HTMLDivElement>(null)
+  const abortRef = useRef<AbortController | null>(null)
+
+  useEffect(() => {
+    bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
+  }, [messages])
+
+  async function send() {
+    const text = input.trim()
+    if (!text || streaming) return
+    setInput('')
+
+    const next: Msg[] = [...messages, { role: 'user', content: text }]
+    setMessages(next)
+    setStreaming(true)
+
+    const assistant: Msg = { role: 'assistant', content: '' }
+    setMessages([...next, assistant])
+
+    const abort = new AbortController()
+    abortRef.current = abort
+
+    try {
+      const openrouter = createOpenAI({
+        baseURL: 'https://openrouter.ai/api/v1',
+        apiKey,
+        headers: { 'HTTP-Referer': location.href, 'X-Title': 'byo-chat-artifact' },
+      })
+
+      const result = streamText({
+        model: openrouter(model),
+        messages: next,
+        abortSignal: abort.signal,
+      })
+
+      for await (const delta of result.textStream) {
+        assistant.content += delta
+        setMessages(m => {
+          const updated = [...m]
+          updated[updated.length - 1] = { ...assistant }
+          return updated
+        })
+      }
+    } catch (e: any) {
+      if (e?.name !== 'AbortError') {
+        assistant.content = `Error: ${e?.message ?? e}`
+        setMessages(m => {
+          const updated = [...m]
+          updated[updated.length - 1] = { ...assistant }
+          return updated
+        })
+      }
+    } finally {
+      setStreaming(false)
+      abortRef.current = null
+    }
+  }
+
+  function stop() {
+    abortRef.current?.abort()
+  }
+
+  return (
+    <div class="flex flex-col flex-1 max-w-3xl w-full mx-auto">
+      {/* header */}
+      <div class="flex items-center gap-3 p-3 border-b border-zinc-800">
+        <select
+          class="flex-1 bg-zinc-900 border border-zinc-700 rounded-md px-2 py-1.5 text-sm focus:outline-none"
+          value={model}
+          onChange={(e: any) => setModel(e.target.value)}
+        >
+          {MODELS.map(m => <option key={m.id} value={m.id}>{m.label}</option>)}
+        </select>
+        <button
+          class="text-xs text-zinc-500 hover:text-zinc-300"
+          onClick={() => { setMessages([]); setInput('') }}
+        >
+          clear
+        </button>
+        <button class="text-xs text-zinc-500 hover:text-zinc-300" onClick={onClearKey}>
+          key
+        </button>
+      </div>
+
+      {/* messages */}
+      <div class="flex-1 overflow-y-auto p-4 space-y-4">
+        {messages.length === 0 && (
+          <p class="text-zinc-600 text-sm text-center mt-8">Send a message to start.</p>
+        )}
+        {messages.map((m, i) => (
+          <div key={i} class={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+            <div
+              class={`max-w-[80%] rounded-2xl px-4 py-2 text-sm whitespace-pre-wrap ${
+                m.role === 'user'
+                  ? 'bg-zinc-700 text-zinc-100'
+                  : 'bg-zinc-900 text-zinc-200'
+              }`}
+            >
+              {m.content}
+              {m.role === 'assistant' && streaming && i === messages.length - 1 && (
+                <span class="inline-block w-1.5 h-3.5 bg-zinc-400 ml-0.5 animate-pulse align-middle" />
+              )}
+            </div>
+          </div>
+        ))}
+        <div ref={bottomRef} />
+      </div>
+
+      {/* input */}
+      <div class="p-3 border-t border-zinc-800 flex gap-2">
+        <textarea
+          class="flex-1 bg-zinc-900 border border-zinc-700 rounded-xl px-3 py-2 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-zinc-500"
+          rows={2}
+          placeholder="Message…"
+          value={input}
+          onInput={(e: any) => setInput(e.target.value)}
+          onKeyDown={(e: any) => {
+            if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); send() }
+          }}
+        />
+        <button
+          class="px-4 py-2 rounded-xl text-sm font-medium bg-zinc-700 hover:bg-zinc-600 disabled:opacity-40 self-end"
+          onClick={streaming ? stop : send}
+          disabled={!streaming && !input.trim()}
+        >
+          {streaming ? 'stop' : 'send'}
+        </button>
+      </div>
+    </div>
+  )
+}
+
+function App() {
+  const [apiKey, setApiKey] = useState<string | null>(() => localStorage.getItem('or_key'))
+
+  function saveKey(k: string) {
+    localStorage.setItem('or_key', k)
+    setApiKey(k)
+  }
+
+  function clearKey() {
+    localStorage.removeItem('or_key')
+    setApiKey(null)
+  }
+
+  return (
+    <div class="flex flex-col flex-1 min-h-screen">
+      {apiKey ? <Chat apiKey={apiKey} onClearKey={clearKey} /> : <KeyGate onKey={saveKey} />}
+    </div>
+  )
+}
+
+createRoot(document.getElementById('root')!).render(<App />)
+</script>
+</body>
+</html>
