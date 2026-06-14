@@ -74,9 +74,8 @@
   }
 
   document.addEventListener('click', (e) => {
-    const trigger = (e.target as HTMLElement).closest('.preview-trigger');
-    if (!trigger) return;
-    const card = trigger.closest('.card') as HTMLElement | null;
+    if ((e.target as HTMLElement).closest('#lightbox')) return;
+    const card = (e.target as HTMLElement).closest('.card') as HTMLElement | null;
     if (card) openFromCard(card);
   });
   prevBtn.addEventListener('click', () => show(idx - 1));

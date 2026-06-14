@@ -9,7 +9,7 @@ const filename = a.path.split('/').pop() ?? `${a.id}.html`;
 const sizeLabel = formatSize(a.size);
 ---
 <article
-  class="card group relative flex flex-col overflow-hidden rounded-lg border border-border bg-card transition-colors hover:border-accent"
+  class="card group relative flex flex-col overflow-hidden rounded-lg border border-border bg-card transition-colors hover:border-accent cursor-pointer"
   data-name={a.name.toLowerCase()}
   data-tags={a.tags.join(',')}
   data-source={a.source}
@@ -24,6 +24,7 @@ const sizeLabel = formatSize(a.size);
     type="button"
     class="preview-trigger relative block h-[200px] w-full overflow-hidden bg-muted text-left"
     aria-label={`Run ${a.name}`}
+    tabindex="-1"
   >
     <img
       class="preview h-full w-full object-cover object-top"
@@ -49,9 +50,7 @@ const sizeLabel = formatSize(a.size);
   </button>
 
   <div class="flex flex-col gap-1 p-3">
-    <h3 class="card-name text-sm font-semibold leading-tight">
-      <a href={runUrl} target="_blank" rel="noopener" class="hover:text-accent">{a.name}</a>
-    </h3>
+    <h3 class="card-name text-sm font-semibold leading-tight">{a.name}</h3>
     <p class="card-tags text-xs text-muted-foreground">{a.tags.join(' · ')}</p>
     <p class="card-source flex items-center justify-between text-[0.7rem] uppercase tracking-wide text-muted-foreground/70">
       <span>{a.source}</span>

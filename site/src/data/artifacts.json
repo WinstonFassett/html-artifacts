@@ -1990,22 +1990,6 @@
     "preview": "previews/winstonfassett-d3-graphviz-basic-html.png"
   },
   {
-    "id": "winstonfassett-collab-milkdown-yjs-esm-html",
-    "name": "collab-milkdown-yjs-esm",
-    "path": "winstonfassett/collab-milkdown-yjs-esm.html",
-    "tags": [
-      "editor",
-      "collaboration",
-      "yjs",
-      "milkdown"
-    ],
-    "source": "starters",
-    "bucket": "mine",
-    "featured": false,
-    "size": 5838,
-    "preview": "previews/winstonfassett-collab-milkdown-yjs-esm-html.png"
-  },
-  {
     "id": "winstonfassett-react-chat-html",
     "name": "react-chat",
     "path": "winstonfassett/react-chat.html",
