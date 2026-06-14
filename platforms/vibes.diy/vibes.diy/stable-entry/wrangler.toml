@@ -1,9 +1,0 @@
-name = "stable-entry"
-main = "./worker.ts"
-compatibility_date = "2025-02-24"
-
-[assets]
-directory = "dist/spa"
-binding = "ASSETS"
-run_worker_first = true
-

@@ -1,8 +1,24 @@
 [
   {
-    "id": "examples-html-anything-article-magazine-html",
+    "id": "winstonfassett-solid-html-esm-html",
+    "name": "solid-html-esm",
+    "path": "winstonfassett/solid-html-esm.html",
+    "tags": [
+      "starter",
+      "app",
+      "solid"
+    ],
+    "source": "starters",
+    "loading": "esm",
+    "bucket": "mine",
+    "featured": true,
+    "size": 2468,
+    "preview": "previews/winstonfassett-solid-html-esm-html.png"
+  },
+  {
+    "id": "html-anything-article-magazine-html",
     "name": "article-magazine",
-    "path": "examples/html-anything/article-magazine.html",
+    "path": "html-anything/article-magazine.html",
     "tags": [
       "article",
       "magazine"
@@ -11,12 +27,12 @@
     "bucket": "templates",
     "featured": false,
     "size": 7130,
-    "preview": "previews/examples-html-anything-article-magazine-html.png"
+    "preview": "previews/html-anything-article-magazine-html.png"
   },
   {
-    "id": "examples-html-anything-blog-post-html",
+    "id": "html-anything-blog-post-html",
     "name": "blog-post",
-    "path": "examples/html-anything/blog-post.html",
+    "path": "html-anything/blog-post.html",
     "tags": [
       "article",
       "blog"
@@ -25,12 +41,12 @@
     "bucket": "templates",
     "featured": false,
     "size": 6738,
-    "preview": "previews/examples-html-anything-blog-post-html.png"
+    "preview": "previews/html-anything-blog-post-html.png"
   },
   {
-    "id": "examples-html-anything-card-twitter-html",
+    "id": "html-anything-card-twitter-html",
     "name": "card-twitter",
-    "path": "examples/html-anything/card-twitter.html",
+    "path": "html-anything/card-twitter.html",
     "tags": [
       "card",
       "social"
@@ -39,12 +55,12 @@
     "bucket": "templates",
     "featured": false,
     "size": 3648,
-    "preview": "previews/examples-html-anything-card-twitter-html.png"
+    "preview": "previews/html-anything-card-twitter-html.png"
   },
   {
-    "id": "examples-html-anything-card-xiaohongshu-html",
+    "id": "html-anything-card-xiaohongshu-html",
     "name": "card-xiaohongshu",
-    "path": "examples/html-anything/card-xiaohongshu.html",
+    "path": "html-anything/card-xiaohongshu.html",
     "tags": [
       "card",
       "social"
@@ -53,12 +69,12 @@
     "bucket": "templates",
     "featured": false,
     "size": 5669,
-    "preview": "previews/examples-html-anything-card-xiaohongshu-html.png"
+    "preview": "previews/html-anything-card-xiaohongshu-html.png"
   },
   {
-    "id": "examples-html-anything-competitive-teardown-html",
+    "id": "html-anything-competitive-teardown-html",
     "name": "competitive-teardown",
-    "path": "examples/html-anything/competitive-teardown.html",
+    "path": "html-anything/competitive-teardown.html",
     "tags": [
       "report",
       "dashboard"
@@ -67,12 +83,12 @@
     "bucket": "templates",
     "featured": false,
     "size": 7227,
-    "preview": "previews/examples-html-anything-competitive-teardown-html.png"
+    "preview": "previews/html-anything-competitive-teardown-html.png"
   },
   {
-    "id": "examples-html-anything-competitive-teardown-analyst-dossier-html",
+    "id": "html-anything-competitive-teardown-analyst-dossier-html",
     "name": "competitive-teardown--analyst-dossier",
-    "path": "examples/html-anything/competitive-teardown--analyst-dossier.html",
+    "path": "html-anything/competitive-teardown--analyst-dossier.html",
     "tags": [
       "report"
     ],
@@ -80,12 +96,12 @@
     "bucket": "templates",
     "featured": false,
     "size": 3795,
-    "preview": "previews/examples-html-anything-competitive-teardown-analyst-dossier-html.png"
+    "preview": "previews/html-anything-competitive-teardown-analyst-dossier-html.png"
   },
   {
-    "id": "examples-html-anything-competitive-teardown-radar-map-html",
+    "id": "html-anything-competitive-teardown-radar-map-html",
     "name": "competitive-teardown--radar-map",
-    "path": "examples/html-anything/competitive-teardown--radar-map.html",
+    "path": "html-anything/competitive-teardown--radar-map.html",
     "tags": [
       "report",
       "chart"
@@ -94,12 +110,12 @@
     "bucket": "templates",
     "featured": false,
     "size": 5133,
-    "preview": "previews/examples-html-anything-competitive-teardown-radar-map-html.png"
+    "preview": "previews/html-anything-competitive-teardown-radar-map-html.png"
   },
   {
-    "id": "examples-html-anything-competitive-teardown-war-room-grid-html",
+    "id": "html-anything-competitive-teardown-war-room-grid-html",
     "name": "competitive-teardown--war-room-grid",
-    "path": "examples/html-anything/competitive-teardown--war-room-grid.html",
+    "path": "html-anything/competitive-teardown--war-room-grid.html",
     "tags": [
       "report"
     ],
@@ -107,12 +123,12 @@
     "bucket": "templates",
     "featured": false,
     "size": 7227,
-    "preview": "previews/examples-html-anything-competitive-teardown-war-room-grid-html.png"
+    "preview": "previews/html-anything-competitive-teardown-war-room-grid-html.png"
   },
   {
-    "id": "examples-html-anything-dashboard-html",
+    "id": "html-anything-dashboard-html",
     "name": "dashboard",
-    "path": "examples/html-anything/dashboard.html",
+    "path": "html-anything/dashboard.html",
     "tags": [
       "dashboard",
       "chart"
@@ -121,12 +137,12 @@
     "bucket": "templates",
     "featured": false,
     "size": 6652,
-    "preview": "previews/examples-html-anything-dashboard-html.png"
+    "preview": "previews/html-anything-dashboard-html.png"
   },
   {
-    "id": "examples-html-anything-data-report-html",
+    "id": "html-anything-data-report-html",
     "name": "data-report",
-    "path": "examples/html-anything/data-report.html",
+    "path": "html-anything/data-report.html",
     "tags": [
       "report",
       "chart"
@@ -135,12 +151,12 @@
     "bucket": "templates",
     "featured": false,
     "size": 10528,
-    "preview": "previews/examples-html-anything-data-report-html.png"
+    "preview": "previews/html-anything-data-report-html.png"
   },
   {
-    "id": "examples-html-anything-dating-web-html",
+    "id": "html-anything-dating-web-html",
     "name": "dating-web",
-    "path": "examples/html-anything/dating-web.html",
+    "path": "html-anything/dating-web.html",
     "tags": [
       "app",
       "prototype"
@@ -149,12 +165,12 @@
     "bucket": "templates",
     "featured": false,
     "size": 12405,
-    "preview": "previews/examples-html-anything-dating-web-html.png"
+    "preview": "previews/html-anything-dating-web-html.png"
   },
   {
-    "id": "examples-html-anything-deck-blueprint-html",
+    "id": "html-anything-deck-blueprint-html",
     "name": "deck-blueprint",
-    "path": "examples/html-anything/deck-blueprint.html",
+    "path": "html-anything/deck-blueprint.html",
     "tags": [
       "deck",
       "presentation"
@@ -163,12 +179,12 @@
     "bucket": "templates",
     "featured": false,
     "size": 26146,
-    "preview": "previews/examples-html-anything-deck-blueprint-html.png"
+    "preview": "previews/html-anything-deck-blueprint-html.png"
   },
   {
-    "id": "examples-html-anything-deck-course-module-html",
+    "id": "html-anything-deck-course-module-html",
     "name": "deck-course-module",
-    "path": "examples/html-anything/deck-course-module.html",
+    "path": "html-anything/deck-course-module.html",
     "tags": [
       "deck",
       "presentation"
@@ -177,12 +193,12 @@
     "bucket": "templates",
     "featured": false,
     "size": 31788,
-    "preview": "previews/examples-html-anything-deck-course-module-html.png"
+    "preview": "previews/html-anything-deck-course-module-html.png"
   },
   {
-    "id": "examples-html-anything-deck-dir-key-nav-html",
+    "id": "html-anything-deck-dir-key-nav-html",
     "name": "deck-dir-key-nav",
-    "path": "examples/html-anything/deck-dir-key-nav.html",
+    "path": "html-anything/deck-dir-key-nav.html",
     "tags": [
       "deck",
       "presentation"
@@ -191,12 +207,12 @@
     "bucket": "templates",
     "featured": false,
     "size": 20321,
-    "preview": "previews/examples-html-anything-deck-dir-key-nav-html.png"
+    "preview": "previews/html-anything-deck-dir-key-nav-html.png"
   },
   {
-    "id": "examples-html-anything-deck-graphify-dark-html",
+    "id": "html-anything-deck-graphify-dark-html",
     "name": "deck-graphify-dark",
-    "path": "examples/html-anything/deck-graphify-dark.html",
+    "path": "html-anything/deck-graphify-dark.html",
     "tags": [
       "deck",
       "chart"
@@ -205,12 +221,12 @@
     "bucket": "templates",
     "featured": false,
     "size": 25588,
-    "preview": "previews/examples-html-anything-deck-graphify-dark-html.png"
+    "preview": "previews/html-anything-deck-graphify-dark-html.png"
   },
   {
-    "id": "examples-html-anything-deck-guizang-editorial-html",
+    "id": "html-anything-deck-guizang-editorial-html",
     "name": "deck-guizang-editorial",
-    "path": "examples/html-anything/deck-guizang-editorial.html",
+    "path": "html-anything/deck-guizang-editorial.html",
     "tags": [
       "deck",
       "presentation"
@@ -219,12 +235,12 @@
     "bucket": "templates",
     "featured": false,
     "size": 4942,
-    "preview": "previews/examples-html-anything-deck-guizang-editorial-html.png"
+    "preview": "previews/html-anything-deck-guizang-editorial-html.png"
   },
   {
-    "id": "examples-html-anything-deck-hermes-cyber-html",
+    "id": "html-anything-deck-hermes-cyber-html",
     "name": "deck-hermes-cyber",
-    "path": "examples/html-anything/deck-hermes-cyber.html",
+    "path": "html-anything/deck-hermes-cyber.html",
     "tags": [
       "deck",
       "presentation"
@@ -233,12 +249,12 @@
     "bucket": "templates",
     "featured": false,
     "size": 26898,
-    "preview": "previews/examples-html-anything-deck-hermes-cyber-html.png"
+    "preview": "previews/html-anything-deck-hermes-cyber-html.png"
   },
   {
-    "id": "examples-html-anything-deck-magazine-web-html",
+    "id": "html-anything-deck-magazine-web-html",
     "name": "deck-magazine-web",
-    "path": "examples/html-anything/deck-magazine-web.html",
+    "path": "html-anything/deck-magazine-web.html",
     "tags": [
       "deck",
       "magazine"
@@ -247,12 +263,12 @@
     "bucket": "templates",
     "featured": false,
     "size": 33037,
-    "preview": "previews/examples-html-anything-deck-magazine-web-html.png"
+    "preview": "previews/html-anything-deck-magazine-web-html.png"
   },
   {
-    "id": "examples-html-anything-deck-obsidian-claude-html",
+    "id": "html-anything-deck-obsidian-claude-html",
     "name": "deck-obsidian-claude",
-    "path": "examples/html-anything/deck-obsidian-claude.html",
+    "path": "html-anything/deck-obsidian-claude.html",
     "tags": [
       "deck",
       "presentation"
@@ -261,12 +277,12 @@
     "bucket": "templates",
     "featured": false,
     "size": 23224,
-    "preview": "previews/examples-html-anything-deck-obsidian-claude-html.png"
+    "preview": "previews/html-anything-deck-obsidian-claude-html.png"
   },
   {
-    "id": "examples-html-anything-deck-open-slide-canvas-html",
+    "id": "html-anything-deck-open-slide-canvas-html",
     "name": "deck-open-slide-canvas",
-    "path": "examples/html-anything/deck-open-slide-canvas.html",
+    "path": "html-anything/deck-open-slide-canvas.html",
     "tags": [
       "deck",
       "presentation"
@@ -275,12 +291,12 @@
     "bucket": "templates",
     "featured": false,
     "size": 2317,
-    "preview": "previews/examples-html-anything-deck-open-slide-canvas-html.png"
+    "preview": "previews/html-anything-deck-open-slide-canvas-html.png"
   },
   {
-    "id": "examples-html-anything-deck-pitch-html",
+    "id": "html-anything-deck-pitch-html",
     "name": "deck-pitch",
-    "path": "examples/html-anything/deck-pitch.html",
+    "path": "html-anything/deck-pitch.html",
     "tags": [
       "deck",
       "presentation"
@@ -289,12 +305,12 @@
     "bucket": "templates",
     "featured": false,
     "size": 28988,
-    "preview": "previews/examples-html-anything-deck-pitch-html.png"
+    "preview": "previews/html-anything-deck-pitch-html.png"
   },
   {
-    "id": "examples-html-anything-deck-presenter-mode-html",
+    "id": "html-anything-deck-presenter-mode-html",
     "name": "deck-presenter-mode",
-    "path": "examples/html-anything/deck-presenter-mode.html",
+    "path": "html-anything/deck-presenter-mode.html",
     "tags": [
       "deck",
       "presentation"
@@ -303,12 +319,12 @@
     "bucket": "templates",
     "featured": false,
     "size": 37604,
-    "preview": "previews/examples-html-anything-deck-presenter-mode-html.png"
+    "preview": "previews/html-anything-deck-presenter-mode-html.png"
   },
   {
-    "id": "examples-html-anything-deck-product-launch-html",
+    "id": "html-anything-deck-product-launch-html",
     "name": "deck-product-launch",
-    "path": "examples/html-anything/deck-product-launch.html",
+    "path": "html-anything/deck-product-launch.html",
     "tags": [
       "deck",
       "presentation"
@@ -317,12 +333,12 @@
     "bucket": "templates",
     "featured": false,
     "size": 27910,
-    "preview": "previews/examples-html-anything-deck-product-launch-html.png"
+    "preview": "previews/html-anything-deck-product-launch-html.png"
   },
   {
-    "id": "examples-html-anything-deck-replit-html",
+    "id": "html-anything-deck-replit-html",
     "name": "deck-replit",
-    "path": "examples/html-anything/deck-replit.html",
+    "path": "html-anything/deck-replit.html",
     "tags": [
       "deck",
       "presentation"
@@ -331,12 +347,12 @@
     "bucket": "templates",
     "featured": false,
     "size": 5051,
-    "preview": "previews/examples-html-anything-deck-replit-html.png"
+    "preview": "previews/html-anything-deck-replit-html.png"
   },
   {
-    "id": "examples-html-anything-deck-safety-alert-html",
+    "id": "html-anything-deck-safety-alert-html",
     "name": "deck-safety-alert",
-    "path": "examples/html-anything/deck-safety-alert.html",
+    "path": "html-anything/deck-safety-alert.html",
     "tags": [
       "deck",
       "presentation"
@@ -345,12 +361,12 @@
     "bucket": "templates",
     "featured": false,
     "size": 27352,
-    "preview": "previews/examples-html-anything-deck-safety-alert-html.png"
+    "preview": "previews/html-anything-deck-safety-alert-html.png"
   },
   {
-    "id": "examples-html-anything-deck-simple-html",
+    "id": "html-anything-deck-simple-html",
     "name": "deck-simple",
-    "path": "examples/html-anything/deck-simple.html",
+    "path": "html-anything/deck-simple.html",
     "tags": [
       "deck",
       "presentation"
@@ -359,12 +375,12 @@
     "bucket": "templates",
     "featured": false,
     "size": 7489,
-    "preview": "previews/examples-html-anything-deck-simple-html.png"
+    "preview": "previews/html-anything-deck-simple-html.png"
   },
   {
-    "id": "examples-html-anything-deck-swiss-international-html",
+    "id": "html-anything-deck-swiss-international-html",
     "name": "deck-swiss-international",
-    "path": "examples/html-anything/deck-swiss-international.html",
+    "path": "html-anything/deck-swiss-international.html",
     "tags": [
       "deck",
       "presentation"
@@ -373,12 +389,12 @@
     "bucket": "templates",
     "featured": false,
     "size": 6131,
-    "preview": "previews/examples-html-anything-deck-swiss-international-html.png"
+    "preview": "previews/html-anything-deck-swiss-international-html.png"
   },
   {
-    "id": "examples-html-anything-deck-tech-sharing-html",
+    "id": "html-anything-deck-tech-sharing-html",
     "name": "deck-tech-sharing",
-    "path": "examples/html-anything/deck-tech-sharing.html",
+    "path": "html-anything/deck-tech-sharing.html",
     "tags": [
       "deck",
       "presentation"
@@ -387,12 +403,12 @@
     "bucket": "templates",
     "featured": false,
     "size": 30407,
-    "preview": "previews/examples-html-anything-deck-tech-sharing-html.png"
+    "preview": "previews/html-anything-deck-tech-sharing-html.png"
   },
   {
-    "id": "examples-html-anything-deck-xhs-pastel-html",
+    "id": "html-anything-deck-xhs-pastel-html",
     "name": "deck-xhs-pastel",
-    "path": "examples/html-anything/deck-xhs-pastel.html",
+    "path": "html-anything/deck-xhs-pastel.html",
     "tags": [
       "deck",
       "social"
@@ -401,12 +417,12 @@
     "bucket": "templates",
     "featured": false,
     "size": 24370,
-    "preview": "previews/examples-html-anything-deck-xhs-pastel-html.png"
+    "preview": "previews/html-anything-deck-xhs-pastel-html.png"
   },
   {
-    "id": "examples-html-anything-deck-xhs-post-html",
+    "id": "html-anything-deck-xhs-post-html",
     "name": "deck-xhs-post",
-    "path": "examples/html-anything/deck-xhs-post.html",
+    "path": "html-anything/deck-xhs-post.html",
     "tags": [
       "deck",
       "social"
@@ -415,12 +431,12 @@
     "bucket": "templates",
     "featured": false,
     "size": 29255,
-    "preview": "previews/examples-html-anything-deck-xhs-post-html.png"
+    "preview": "previews/html-anything-deck-xhs-post-html.png"
   },
   {
-    "id": "examples-html-anything-deck-xhs-white-html",
+    "id": "html-anything-deck-xhs-white-html",
     "name": "deck-xhs-white",
-    "path": "examples/html-anything/deck-xhs-white.html",
+    "path": "html-anything/deck-xhs-white.html",
     "tags": [
       "deck",
       "social"
@@ -429,12 +445,12 @@
     "bucket": "templates",
     "featured": false,
     "size": 25980,
-    "preview": "previews/examples-html-anything-deck-xhs-white-html.png"
+    "preview": "previews/html-anything-deck-xhs-white-html.png"
   },
   {
-    "id": "examples-html-anything-digital-eguide-html",
+    "id": "html-anything-digital-eguide-html",
     "name": "digital-eguide",
-    "path": "examples/html-anything/digital-eguide.html",
+    "path": "html-anything/digital-eguide.html",
     "tags": [
       "article",
       "document"
@@ -443,12 +459,12 @@
     "bucket": "templates",
     "featured": false,
     "size": 11651,
-    "preview": "previews/examples-html-anything-digital-eguide-html.png"
+    "preview": "previews/html-anything-digital-eguide-html.png"
   },
   {
-    "id": "examples-html-anything-doc-kami-parchment-html",
+    "id": "html-anything-doc-kami-parchment-html",
     "name": "doc-kami-parchment",
-    "path": "examples/html-anything/doc-kami-parchment.html",
+    "path": "html-anything/doc-kami-parchment.html",
     "tags": [
       "document",
       "article"
@@ -457,12 +473,12 @@
     "bucket": "templates",
     "featured": false,
     "size": 4279,
-    "preview": "previews/examples-html-anything-doc-kami-parchment-html.png"
+    "preview": "previews/html-anything-doc-kami-parchment-html.png"
   },
   {
-    "id": "examples-html-anything-docs-page-html",
+    "id": "html-anything-docs-page-html",
     "name": "docs-page",
-    "path": "examples/html-anything/docs-page.html",
+    "path": "html-anything/docs-page.html",
     "tags": [
       "document",
       "article"
@@ -471,12 +487,12 @@
     "bucket": "templates",
     "featured": false,
     "size": 6861,
-    "preview": "previews/examples-html-anything-docs-page-html.png"
+    "preview": "previews/html-anything-docs-page-html.png"
   },
   {
-    "id": "examples-html-anything-email-marketing-html",
+    "id": "html-anything-email-marketing-html",
     "name": "email-marketing",
-    "path": "examples/html-anything/email-marketing.html",
+    "path": "html-anything/email-marketing.html",
     "tags": [
       "email",
       "card"
@@ -485,12 +501,12 @@
     "bucket": "templates",
     "featured": false,
     "size": 9879,
-    "preview": "previews/examples-html-anything-email-marketing-html.png"
+    "preview": "previews/html-anything-email-marketing-html.png"
   },
   {
-    "id": "examples-html-anything-eng-runbook-html",
+    "id": "html-anything-eng-runbook-html",
     "name": "eng-runbook",
-    "path": "examples/html-anything/eng-runbook.html",
+    "path": "html-anything/eng-runbook.html",
     "tags": [
       "document",
       "report"
@@ -499,12 +515,12 @@
     "bucket": "templates",
     "featured": false,
     "size": 13852,
-    "preview": "previews/examples-html-anything-eng-runbook-html.png"
+    "preview": "previews/html-anything-eng-runbook-html.png"
   },
   {
-    "id": "examples-html-anything-exec-briefing-memo-html",
+    "id": "html-anything-exec-briefing-memo-html",
     "name": "exec-briefing-memo",
-    "path": "examples/html-anything/exec-briefing-memo.html",
+    "path": "html-anything/exec-briefing-memo.html",
     "tags": [
       "report",
       "document"
@@ -513,12 +529,12 @@
     "bucket": "templates",
     "featured": false,
     "size": 6107,
-    "preview": "previews/examples-html-anything-exec-briefing-memo-html.png"
+    "preview": "previews/html-anything-exec-briefing-memo-html.png"
   },
   {
-    "id": "examples-html-anything-exec-briefing-memo-board-memo-html",
+    "id": "html-anything-exec-briefing-memo-board-memo-html",
     "name": "exec-briefing-memo--board-memo",
-    "path": "examples/html-anything/exec-briefing-memo--board-memo.html",
+    "path": "html-anything/exec-briefing-memo--board-memo.html",
     "tags": [
       "report",
       "document"
@@ -527,12 +543,12 @@
     "bucket": "templates",
     "featured": false,
     "size": 6107,
-    "preview": "previews/examples-html-anything-exec-briefing-memo-board-memo-html.png"
+    "preview": "previews/html-anything-exec-briefing-memo-board-memo-html.png"
   },
   {
-    "id": "examples-html-anything-exec-briefing-memo-board-paper-html",
+    "id": "html-anything-exec-briefing-memo-board-paper-html",
     "name": "exec-briefing-memo--board-paper",
-    "path": "examples/html-anything/exec-briefing-memo--board-paper.html",
+    "path": "html-anything/exec-briefing-memo--board-paper.html",
     "tags": [
       "report",
       "document"
@@ -541,12 +557,12 @@
     "bucket": "templates",
     "featured": false,
     "size": 3568,
-    "preview": "previews/examples-html-anything-exec-briefing-memo-board-paper-html.png"
+    "preview": "previews/html-anything-exec-briefing-memo-board-paper-html.png"
   },
   {
-    "id": "examples-html-anything-exec-briefing-memo-decision-command-html",
+    "id": "html-anything-exec-briefing-memo-decision-command-html",
     "name": "exec-briefing-memo--decision-command",
-    "path": "examples/html-anything/exec-briefing-memo--decision-command.html",
+    "path": "html-anything/exec-briefing-memo--decision-command.html",
     "tags": [
       "report",
       "document"
@@ -555,12 +571,12 @@
     "bucket": "templates",
     "featured": false,
     "size": 3797,
-    "preview": "previews/examples-html-anything-exec-briefing-memo-decision-command-html.png"
+    "preview": "previews/html-anything-exec-briefing-memo-decision-command-html.png"
   },
   {
-    "id": "examples-html-anything-experiment-readout-html",
+    "id": "html-anything-experiment-readout-html",
     "name": "experiment-readout",
-    "path": "examples/html-anything/experiment-readout.html",
+    "path": "html-anything/experiment-readout.html",
     "tags": [
       "report",
       "chart"
@@ -569,12 +585,12 @@
     "bucket": "templates",
     "featured": false,
     "size": 6386,
-    "preview": "previews/examples-html-anything-experiment-readout-html.png"
+    "preview": "previews/html-anything-experiment-readout-html.png"
   },
   {
-    "id": "examples-html-anything-experiment-readout-growth-console-html",
+    "id": "html-anything-experiment-readout-growth-console-html",
     "name": "experiment-readout--growth-console",
-    "path": "examples/html-anything/experiment-readout--growth-console.html",
+    "path": "html-anything/experiment-readout--growth-console.html",
     "tags": [
       "dashboard",
       "chart"
@@ -583,12 +599,12 @@
     "bucket": "templates",
     "featured": false,
     "size": 3804,
-    "preview": "previews/examples-html-anything-experiment-readout-growth-console-html.png"
+    "preview": "previews/html-anything-experiment-readout-growth-console-html.png"
   },
   {
-    "id": "examples-html-anything-experiment-readout-lab-notebook-html",
+    "id": "html-anything-experiment-readout-lab-notebook-html",
     "name": "experiment-readout--lab-notebook",
-    "path": "examples/html-anything/experiment-readout--lab-notebook.html",
+    "path": "html-anything/experiment-readout--lab-notebook.html",
     "tags": [
       "document",
       "report"
@@ -597,12 +613,12 @@
     "bucket": "templates",
     "featured": false,
     "size": 3510,
-    "preview": "previews/examples-html-anything-experiment-readout-lab-notebook-html.png"
+    "preview": "previews/html-anything-experiment-readout-lab-notebook-html.png"
   },
   {
-    "id": "examples-html-anything-experiment-readout-product-readout-html",
+    "id": "html-anything-experiment-readout-product-readout-html",
     "name": "experiment-readout--product-readout",
-    "path": "examples/html-anything/experiment-readout--product-readout.html",
+    "path": "html-anything/experiment-readout--product-readout.html",
     "tags": [
       "report",
       "chart"
@@ -611,12 +627,12 @@
     "bucket": "templates",
     "featured": false,
     "size": 6386,
-    "preview": "previews/examples-html-anything-experiment-readout-product-readout-html.png"
+    "preview": "previews/html-anything-experiment-readout-product-readout-html.png"
   },
   {
-    "id": "examples-html-anything-finance-report-html",
+    "id": "html-anything-finance-report-html",
     "name": "finance-report",
-    "path": "examples/html-anything/finance-report.html",
+    "path": "html-anything/finance-report.html",
     "tags": [
       "report",
       "chart"
@@ -625,12 +641,12 @@
     "bucket": "templates",
     "featured": false,
     "size": 13166,
-    "preview": "previews/examples-html-anything-finance-report-html.png"
+    "preview": "previews/html-anything-finance-report-html.png"
   },
   {
-    "id": "examples-html-anything-flowai-team-dashboard-html",
+    "id": "html-anything-flowai-team-dashboard-html",
     "name": "flowai-team-dashboard",
-    "path": "examples/html-anything/flowai-team-dashboard.html",
+    "path": "html-anything/flowai-team-dashboard.html",
     "tags": [
       "dashboard"
     ],
@@ -638,12 +654,12 @@
     "bucket": "templates",
     "featured": false,
     "size": 454,
-    "preview": "previews/examples-html-anything-flowai-team-dashboard-html.png"
+    "preview": "previews/html-anything-flowai-team-dashboard-html.png"
   },
   {
-    "id": "examples-html-anything-frame-data-chart-nyt-html",
+    "id": "html-anything-frame-data-chart-nyt-html",
     "name": "frame-data-chart-nyt",
-    "path": "examples/html-anything/frame-data-chart-nyt.html",
+    "path": "html-anything/frame-data-chart-nyt.html",
     "tags": [
       "chart",
       "frame"
@@ -652,12 +668,12 @@
     "bucket": "templates",
     "featured": false,
     "size": 5203,
-    "preview": "previews/examples-html-anything-frame-data-chart-nyt-html.png"
+    "preview": "previews/html-anything-frame-data-chart-nyt-html.png"
   },
   {
-    "id": "examples-html-anything-frame-flowchart-sticky-html",
+    "id": "html-anything-frame-flowchart-sticky-html",
     "name": "frame-flowchart-sticky",
-    "path": "examples/html-anything/frame-flowchart-sticky.html",
+    "path": "html-anything/frame-flowchart-sticky.html",
     "tags": [
       "diagram",
       "frame"
@@ -666,12 +682,12 @@
     "bucket": "templates",
     "featured": false,
     "size": 5913,
-    "preview": "previews/examples-html-anything-frame-flowchart-sticky-html.png"
+    "preview": "previews/html-anything-frame-flowchart-sticky-html.png"
   },
   {
-    "id": "examples-html-anything-frame-glitch-title-html",
+    "id": "html-anything-frame-glitch-title-html",
     "name": "frame-glitch-title",
-    "path": "examples/html-anything/frame-glitch-title.html",
+    "path": "html-anything/frame-glitch-title.html",
     "tags": [
       "frame",
       "animation"
@@ -680,12 +696,12 @@
     "bucket": "templates",
     "featured": false,
     "size": 4939,
-    "preview": "previews/examples-html-anything-frame-glitch-title-html.png"
+    "preview": "previews/html-anything-frame-glitch-title-html.png"
   },
   {
-    "id": "examples-html-anything-frame-light-leak-cinema-html",
+    "id": "html-anything-frame-light-leak-cinema-html",
     "name": "frame-light-leak-cinema",
-    "path": "examples/html-anything/frame-light-leak-cinema.html",
+    "path": "html-anything/frame-light-leak-cinema.html",
     "tags": [
       "frame",
       "animation"
@@ -694,12 +710,12 @@
     "bucket": "templates",
     "featured": false,
     "size": 3803,
-    "preview": "previews/examples-html-anything-frame-light-leak-cinema-html.png"
+    "preview": "previews/html-anything-frame-light-leak-cinema-html.png"
   },
   {
-    "id": "examples-html-anything-frame-liquid-bg-hero-html",
+    "id": "html-anything-frame-liquid-bg-hero-html",
     "name": "frame-liquid-bg-hero",
-    "path": "examples/html-anything/frame-liquid-bg-hero.html",
+    "path": "html-anything/frame-liquid-bg-hero.html",
     "tags": [
       "frame",
       "animation"
@@ -708,12 +724,12 @@
     "bucket": "templates",
     "featured": false,
     "size": 3644,
-    "preview": "previews/examples-html-anything-frame-liquid-bg-hero-html.png"
+    "preview": "previews/html-anything-frame-liquid-bg-hero-html.png"
   },
   {
-    "id": "examples-html-anything-frame-logo-outro-html",
+    "id": "html-anything-frame-logo-outro-html",
     "name": "frame-logo-outro",
-    "path": "examples/html-anything/frame-logo-outro.html",
+    "path": "html-anything/frame-logo-outro.html",
     "tags": [
       "frame",
       "animation"
@@ -722,12 +738,12 @@
     "bucket": "templates",
     "featured": false,
     "size": 3729,
-    "preview": "previews/examples-html-anything-frame-logo-outro-html.png"
+    "preview": "previews/html-anything-frame-logo-outro-html.png"
   },
   {
-    "id": "examples-html-anything-frame-macos-notification-html",
+    "id": "html-anything-frame-macos-notification-html",
     "name": "frame-macos-notification",
-    "path": "examples/html-anything/frame-macos-notification.html",
+    "path": "html-anything/frame-macos-notification.html",
     "tags": [
       "frame",
       "card"
@@ -736,12 +752,12 @@
     "bucket": "templates",
     "featured": false,
     "size": 3421,
-    "preview": "previews/examples-html-anything-frame-macos-notification-html.png"
+    "preview": "previews/html-anything-frame-macos-notification-html.png"
   },
   {
-    "id": "examples-html-anything-gamified-app-html",
+    "id": "html-anything-gamified-app-html",
     "name": "gamified-app",
-    "path": "examples/html-anything/gamified-app.html",
+    "path": "html-anything/gamified-app.html",
     "tags": [
       "app",
       "game"
@@ -750,12 +766,12 @@
     "bucket": "templates",
     "featured": false,
     "size": 16468,
-    "preview": "previews/examples-html-anything-gamified-app-html.png"
+    "preview": "previews/html-anything-gamified-app-html.png"
   },
   {
-    "id": "examples-html-anything-hr-onboarding-html",
+    "id": "html-anything-hr-onboarding-html",
     "name": "hr-onboarding",
-    "path": "examples/html-anything/hr-onboarding.html",
+    "path": "html-anything/hr-onboarding.html",
     "tags": [
       "document",
       "app"
@@ -764,12 +780,12 @@
     "bucket": "templates",
     "featured": false,
     "size": 14193,
-    "preview": "previews/examples-html-anything-hr-onboarding-html.png"
+    "preview": "previews/html-anything-hr-onboarding-html.png"
   },
   {
-    "id": "examples-html-anything-invoice-html",
+    "id": "html-anything-invoice-html",
     "name": "invoice",
-    "path": "examples/html-anything/invoice.html",
+    "path": "html-anything/invoice.html",
     "tags": [
       "document",
       "tool"
@@ -778,12 +794,12 @@
     "bucket": "templates",
     "featured": false,
     "size": 10912,
-    "preview": "previews/examples-html-anything-invoice-html.png"
+    "preview": "previews/html-anything-invoice-html.png"
   },
   {
-    "id": "examples-html-anything-kanban-board-html",
+    "id": "html-anything-kanban-board-html",
     "name": "kanban-board",
-    "path": "examples/html-anything/kanban-board.html",
+    "path": "html-anything/kanban-board.html",
     "tags": [
       "app",
       "dashboard"
@@ -792,12 +808,12 @@
     "bucket": "templates",
     "featured": false,
     "size": 16509,
-    "preview": "previews/examples-html-anything-kanban-board-html.png"
+    "preview": "previews/html-anything-kanban-board-html.png"
   },
   {
-    "id": "examples-html-anything-live-dashboard-html",
+    "id": "html-anything-live-dashboard-html",
     "name": "live-dashboard",
-    "path": "examples/html-anything/live-dashboard.html",
+    "path": "html-anything/live-dashboard.html",
     "tags": [
       "dashboard",
       "chart"
@@ -806,12 +822,12 @@
     "bucket": "templates",
     "featured": false,
     "size": 37327,
-    "preview": "previews/examples-html-anything-live-dashboard-html.png"
+    "preview": "previews/html-anything-live-dashboard-html.png"
   },
   {
-    "id": "examples-html-anything-magazine-poster-html",
+    "id": "html-anything-magazine-poster-html",
     "name": "magazine-poster",
-    "path": "examples/html-anything/magazine-poster.html",
+    "path": "html-anything/magazine-poster.html",
     "tags": [
       "magazine",
       "poster"
@@ -820,12 +836,12 @@
     "bucket": "templates",
     "featured": false,
     "size": 8538,
-    "preview": "previews/examples-html-anything-magazine-poster-html.png"
+    "preview": "previews/html-anything-magazine-poster-html.png"
   },
   {
-    "id": "examples-html-anything-meeting-notes-html",
+    "id": "html-anything-meeting-notes-html",
     "name": "meeting-notes",
-    "path": "examples/html-anything/meeting-notes.html",
+    "path": "html-anything/meeting-notes.html",
     "tags": [
       "document",
       "tool"
@@ -834,12 +850,12 @@
     "bucket": "templates",
     "featured": false,
     "size": 11995,
-    "preview": "previews/examples-html-anything-meeting-notes-html.png"
+    "preview": "previews/html-anything-meeting-notes-html.png"
   },
   {
-    "id": "examples-html-anything-mobile-app-html",
+    "id": "html-anything-mobile-app-html",
     "name": "mobile-app",
-    "path": "examples/html-anything/mobile-app.html",
+    "path": "html-anything/mobile-app.html",
     "tags": [
       "app",
       "prototype"
@@ -848,12 +864,12 @@
     "bucket": "templates",
     "featured": false,
     "size": 6249,
-    "preview": "previews/examples-html-anything-mobile-app-html.png"
+    "preview": "previews/html-anything-mobile-app-html.png"
   },
   {
-    "id": "examples-html-anything-mobile-onboarding-html",
+    "id": "html-anything-mobile-onboarding-html",
     "name": "mobile-onboarding",
-    "path": "examples/html-anything/mobile-onboarding.html",
+    "path": "html-anything/mobile-onboarding.html",
     "tags": [
       "app",
       "prototype"
@@ -862,12 +878,12 @@
     "bucket": "templates",
     "featured": false,
     "size": 8899,
-    "preview": "previews/examples-html-anything-mobile-onboarding-html.png"
+    "preview": "previews/html-anything-mobile-onboarding-html.png"
   },
   {
-    "id": "examples-html-anything-mockup-device-3d-html",
+    "id": "html-anything-mockup-device-3d-html",
     "name": "mockup-device-3d",
-    "path": "examples/html-anything/mockup-device-3d.html",
+    "path": "html-anything/mockup-device-3d.html",
     "tags": [
       "prototype",
       "animation"
@@ -876,12 +892,12 @@
     "bucket": "templates",
     "featured": false,
     "size": 8958,
-    "preview": "previews/examples-html-anything-mockup-device-3d-html.png"
+    "preview": "previews/html-anything-mockup-device-3d-html.png"
   },
   {
-    "id": "examples-html-anything-motion-frames-html",
+    "id": "html-anything-motion-frames-html",
     "name": "motion-frames",
-    "path": "examples/html-anything/motion-frames.html",
+    "path": "html-anything/motion-frames.html",
     "tags": [
       "animation",
       "frame"
@@ -890,12 +906,12 @@
     "bucket": "templates",
     "featured": false,
     "size": 8402,
-    "preview": "previews/examples-html-anything-motion-frames-html.png"
+    "preview": "previews/html-anything-motion-frames-html.png"
   },
   {
-    "id": "examples-html-anything-pm-spec-html",
+    "id": "html-anything-pm-spec-html",
     "name": "pm-spec",
-    "path": "examples/html-anything/pm-spec.html",
+    "path": "html-anything/pm-spec.html",
     "tags": [
       "document",
       "report"
@@ -904,12 +920,12 @@
     "bucket": "templates",
     "featured": false,
     "size": 14291,
-    "preview": "previews/examples-html-anything-pm-spec-html.png"
+    "preview": "previews/html-anything-pm-spec-html.png"
   },
   {
-    "id": "examples-html-anything-poster-hero-html",
+    "id": "html-anything-poster-hero-html",
     "name": "poster-hero",
-    "path": "examples/html-anything/poster-hero.html",
+    "path": "html-anything/poster-hero.html",
     "tags": [
       "poster",
       "magazine"
@@ -918,12 +934,12 @@
     "bucket": "templates",
     "featured": false,
     "size": 5743,
-    "preview": "previews/examples-html-anything-poster-hero-html.png"
+    "preview": "previews/html-anything-poster-hero-html.png"
   },
   {
-    "id": "examples-html-anything-ppt-keynote-html",
+    "id": "html-anything-ppt-keynote-html",
     "name": "ppt-keynote",
-    "path": "examples/html-anything/ppt-keynote.html",
+    "path": "html-anything/ppt-keynote.html",
     "tags": [
       "deck",
       "presentation"
@@ -932,12 +948,12 @@
     "bucket": "templates",
     "featured": false,
     "size": 7237,
-    "preview": "previews/examples-html-anything-ppt-keynote-html.png"
+    "preview": "previews/html-anything-ppt-keynote-html.png"
   },
   {
-    "id": "examples-html-anything-pricing-page-html",
+    "id": "html-anything-pricing-page-html",
     "name": "pricing-page",
-    "path": "examples/html-anything/pricing-page.html",
+    "path": "html-anything/pricing-page.html",
     "tags": [
       "app",
       "prototype"
@@ -946,12 +962,12 @@
     "bucket": "templates",
     "featured": false,
     "size": 7117,
-    "preview": "previews/examples-html-anything-pricing-page-html.png"
+    "preview": "previews/html-anything-pricing-page-html.png"
   },
   {
-    "id": "examples-html-anything-prototype-web-html",
+    "id": "html-anything-prototype-web-html",
     "name": "prototype-web",
-    "path": "examples/html-anything/prototype-web.html",
+    "path": "html-anything/prototype-web.html",
     "tags": [
       "prototype",
       "app"
@@ -960,12 +976,12 @@
     "bucket": "templates",
     "featured": false,
     "size": 13472,
-    "preview": "previews/examples-html-anything-prototype-web-html.png"
+    "preview": "previews/html-anything-prototype-web-html.png"
   },
   {
-    "id": "examples-html-anything-resume-modern-html",
+    "id": "html-anything-resume-modern-html",
     "name": "resume-modern",
-    "path": "examples/html-anything/resume-modern.html",
+    "path": "html-anything/resume-modern.html",
     "tags": [
       "document",
       "resume"
@@ -974,12 +990,12 @@
     "bucket": "templates",
     "featured": false,
     "size": 7712,
-    "preview": "previews/examples-html-anything-resume-modern-html.png"
+    "preview": "previews/html-anything-resume-modern-html.png"
   },
   {
-    "id": "examples-html-anything-saas-landing-html",
+    "id": "html-anything-saas-landing-html",
     "name": "saas-landing",
-    "path": "examples/html-anything/saas-landing.html",
+    "path": "html-anything/saas-landing.html",
     "tags": [
       "app",
       "prototype"
@@ -988,12 +1004,12 @@
     "bucket": "templates",
     "featured": false,
     "size": 7659,
-    "preview": "previews/examples-html-anything-saas-landing-html.png"
+    "preview": "previews/html-anything-saas-landing-html.png"
   },
   {
-    "id": "examples-html-anything-social-carousel-html",
+    "id": "html-anything-social-carousel-html",
     "name": "social-carousel",
-    "path": "examples/html-anything/social-carousel.html",
+    "path": "html-anything/social-carousel.html",
     "tags": [
       "social",
       "card"
@@ -1002,12 +1018,12 @@
     "bucket": "templates",
     "featured": false,
     "size": 10020,
-    "preview": "previews/examples-html-anything-social-carousel-html.png"
+    "preview": "previews/html-anything-social-carousel-html.png"
   },
   {
-    "id": "examples-html-anything-social-media-dashboard-html",
+    "id": "html-anything-social-media-dashboard-html",
     "name": "social-media-dashboard",
-    "path": "examples/html-anything/social-media-dashboard.html",
+    "path": "html-anything/social-media-dashboard.html",
     "tags": [
       "dashboard",
       "social"
@@ -1016,12 +1032,12 @@
     "bucket": "templates",
     "featured": false,
     "size": 51846,
-    "preview": "previews/examples-html-anything-social-media-dashboard-html.png"
+    "preview": "previews/html-anything-social-media-dashboard-html.png"
   },
   {
-    "id": "examples-html-anything-social-media-matrix-html",
+    "id": "html-anything-social-media-matrix-html",
     "name": "social-media-matrix",
-    "path": "examples/html-anything/social-media-matrix.html",
+    "path": "html-anything/social-media-matrix.html",
     "tags": [
       "social",
       "dashboard"
@@ -1030,12 +1046,12 @@
     "bucket": "templates",
     "featured": false,
     "size": 63478,
-    "preview": "previews/examples-html-anything-social-media-matrix-html.png"
+    "preview": "previews/html-anything-social-media-matrix-html.png"
   },
   {
-    "id": "examples-html-anything-social-reddit-card-html",
+    "id": "html-anything-social-reddit-card-html",
     "name": "social-reddit-card",
-    "path": "examples/html-anything/social-reddit-card.html",
+    "path": "html-anything/social-reddit-card.html",
     "tags": [
       "social",
       "card"
@@ -1044,12 +1060,12 @@
     "bucket": "templates",
     "featured": false,
     "size": 3865,
-    "preview": "previews/examples-html-anything-social-reddit-card-html.png"
+    "preview": "previews/html-anything-social-reddit-card-html.png"
   },
   {
-    "id": "examples-html-anything-social-spotify-card-html",
+    "id": "html-anything-social-spotify-card-html",
     "name": "social-spotify-card",
-    "path": "examples/html-anything/social-spotify-card.html",
+    "path": "html-anything/social-spotify-card.html",
     "tags": [
       "social",
       "card"
@@ -1058,12 +1074,12 @@
     "bucket": "templates",
     "featured": false,
     "size": 4467,
-    "preview": "previews/examples-html-anything-social-spotify-card-html.png"
+    "preview": "previews/html-anything-social-spotify-card-html.png"
   },
   {
-    "id": "examples-html-anything-social-x-post-card-html",
+    "id": "html-anything-social-x-post-card-html",
     "name": "social-x-post-card",
-    "path": "examples/html-anything/social-x-post-card.html",
+    "path": "html-anything/social-x-post-card.html",
     "tags": [
       "social",
       "card"
@@ -1072,12 +1088,12 @@
     "bucket": "templates",
     "featured": false,
     "size": 4418,
-    "preview": "previews/examples-html-anything-social-x-post-card-html.png"
+    "preview": "previews/html-anything-social-x-post-card-html.png"
   },
   {
-    "id": "examples-html-anything-sprite-animation-html",
+    "id": "html-anything-sprite-animation-html",
     "name": "sprite-animation",
-    "path": "examples/html-anything/sprite-animation.html",
+    "path": "html-anything/sprite-animation.html",
     "tags": [
       "animation",
       "game"
@@ -1086,12 +1102,12 @@
     "bucket": "templates",
     "featured": false,
     "size": 13511,
-    "preview": "previews/examples-html-anything-sprite-animation-html.png"
+    "preview": "previews/html-anything-sprite-animation-html.png"
   },
   {
-    "id": "examples-html-anything-team-okrs-html",
+    "id": "html-anything-team-okrs-html",
     "name": "team-okrs",
-    "path": "examples/html-anything/team-okrs.html",
+    "path": "html-anything/team-okrs.html",
     "tags": [
       "dashboard",
       "document"
@@ -1100,12 +1116,12 @@
     "bucket": "templates",
     "featured": false,
     "size": 12051,
-    "preview": "previews/examples-html-anything-team-okrs-html.png"
+    "preview": "previews/html-anything-team-okrs-html.png"
   },
   {
-    "id": "examples-html-anything-vfx-text-cursor-html",
+    "id": "html-anything-vfx-text-cursor-html",
     "name": "vfx-text-cursor",
-    "path": "examples/html-anything/vfx-text-cursor.html",
+    "path": "html-anything/vfx-text-cursor.html",
     "tags": [
       "animation",
       "frame"
@@ -1114,12 +1130,12 @@
     "bucket": "templates",
     "featured": false,
     "size": 3549,
-    "preview": "previews/examples-html-anything-vfx-text-cursor-html.png"
+    "preview": "previews/html-anything-vfx-text-cursor-html.png"
   },
   {
-    "id": "examples-html-anything-video-hyperframes-html",
+    "id": "html-anything-video-hyperframes-html",
     "name": "video-hyperframes",
-    "path": "examples/html-anything/video-hyperframes.html",
+    "path": "html-anything/video-hyperframes.html",
     "tags": [
       "animation",
       "frame"
@@ -1128,12 +1144,12 @@
     "bucket": "templates",
     "featured": false,
     "size": 7061,
-    "preview": "previews/examples-html-anything-video-hyperframes-html.png"
+    "preview": "previews/html-anything-video-hyperframes-html.png"
   },
   {
-    "id": "examples-html-anything-waitlist-page-html",
+    "id": "html-anything-waitlist-page-html",
     "name": "waitlist-page",
-    "path": "examples/html-anything/waitlist-page.html",
+    "path": "html-anything/waitlist-page.html",
     "tags": [
       "app",
       "prototype"
@@ -1142,12 +1158,12 @@
     "bucket": "templates",
     "featured": false,
     "size": 12540,
-    "preview": "previews/examples-html-anything-waitlist-page-html.png"
+    "preview": "previews/html-anything-waitlist-page-html.png"
   },
   {
-    "id": "examples-html-anything-web-proto-brutalist-html",
+    "id": "html-anything-web-proto-brutalist-html",
     "name": "web-proto-brutalist",
-    "path": "examples/html-anything/web-proto-brutalist.html",
+    "path": "html-anything/web-proto-brutalist.html",
     "tags": [
       "prototype",
       "app"
@@ -1156,12 +1172,12 @@
     "bucket": "templates",
     "featured": false,
     "size": 21458,
-    "preview": "previews/examples-html-anything-web-proto-brutalist-html.png"
+    "preview": "previews/html-anything-web-proto-brutalist-html.png"
   },
   {
-    "id": "examples-html-anything-web-proto-editorial-html",
+    "id": "html-anything-web-proto-editorial-html",
     "name": "web-proto-editorial",
-    "path": "examples/html-anything/web-proto-editorial.html",
+    "path": "html-anything/web-proto-editorial.html",
     "tags": [
       "prototype",
       "magazine"
@@ -1170,12 +1186,12 @@
     "bucket": "templates",
     "featured": false,
     "size": 18228,
-    "preview": "previews/examples-html-anything-web-proto-editorial-html.png"
+    "preview": "previews/html-anything-web-proto-editorial-html.png"
   },
   {
-    "id": "examples-html-anything-web-proto-soft-html",
+    "id": "html-anything-web-proto-soft-html",
     "name": "web-proto-soft",
-    "path": "examples/html-anything/web-proto-soft.html",
+    "path": "html-anything/web-proto-soft.html",
     "tags": [
       "prototype",
       "app"
@@ -1184,12 +1200,12 @@
     "bucket": "templates",
     "featured": false,
     "size": 24206,
-    "preview": "previews/examples-html-anything-web-proto-soft-html.png"
+    "preview": "previews/html-anything-web-proto-soft-html.png"
   },
   {
-    "id": "examples-html-anything-weekly-update-html",
+    "id": "html-anything-weekly-update-html",
     "name": "weekly-update",
-    "path": "examples/html-anything/weekly-update.html",
+    "path": "html-anything/weekly-update.html",
     "tags": [
       "document",
       "report"
@@ -1198,12 +1214,12 @@
     "bucket": "templates",
     "featured": false,
     "size": 16514,
-    "preview": "previews/examples-html-anything-weekly-update-html.png"
+    "preview": "previews/html-anything-weekly-update-html.png"
   },
   {
-    "id": "examples-html-anything-wireframe-sketch-html",
+    "id": "html-anything-wireframe-sketch-html",
     "name": "wireframe-sketch",
-    "path": "examples/html-anything/wireframe-sketch.html",
+    "path": "html-anything/wireframe-sketch.html",
     "tags": [
       "prototype",
       "diagram"
@@ -1212,26 +1228,12 @@
     "bucket": "templates",
     "featured": false,
     "size": 15563,
-    "preview": "previews/examples-html-anything-wireframe-sketch-html.png"
+    "preview": "previews/html-anything-wireframe-sketch-html.png"
   },
   {
-    "id": "examples-open-artifacts-html",
-    "name": "open-artifacts (platform)",
-    "path": "examples/open-artifacts.html",
-    "tags": [
-      "platform",
-      "app"
-    ],
-    "source": "open-artifacts",
-    "bucket": "collected",
-    "featured": false,
-    "size": 39322,
-    "preview": "previews/examples-open-artifacts-html.png"
-  },
-  {
-    "id": "starters-react-18-tsx-esm-html",
+    "id": "winstonfassett-react-18-tsx-esm-html",
     "name": "react-18-tsx-esm",
-    "path": "starters/react-18-tsx-esm.html",
+    "path": "winstonfassett/react-18-tsx-esm.html",
     "tags": [
       "starter",
       "app",
@@ -1242,12 +1244,12 @@
     "bucket": "mine",
     "featured": true,
     "size": 1486,
-    "preview": "previews/starters-react-18-tsx-esm-html.png"
+    "preview": "previews/winstonfassett-react-18-tsx-esm-html.png"
   },
   {
-    "id": "starters-react-19-tsx-esm-html",
+    "id": "winstonfassett-react-19-tsx-esm-html",
     "name": "react-19-tsx-esm",
-    "path": "starters/react-19-tsx-esm.html",
+    "path": "winstonfassett/react-19-tsx-esm.html",
     "tags": [
       "starter",
       "app",
@@ -1258,12 +1260,12 @@
     "bucket": "mine",
     "featured": true,
     "size": 1486,
-    "preview": "previews/starters-react-19-tsx-esm-html.png"
+    "preview": "previews/winstonfassett-react-19-tsx-esm-html.png"
   },
   {
-    "id": "starters-chartjs-html",
+    "id": "winstonfassett-chartjs-html",
     "name": "chartjs",
-    "path": "starters/chartjs.html",
+    "path": "winstonfassett/chartjs.html",
     "tags": [
       "starter",
       "chart",
@@ -1274,12 +1276,12 @@
     "bucket": "mine",
     "featured": true,
     "size": 886,
-    "preview": "previews/starters-chartjs-html.png"
+    "preview": "previews/winstonfassett-chartjs-html.png"
   },
   {
-    "id": "starters-vega-lite-html",
+    "id": "winstonfassett-vega-lite-html",
     "name": "vega-lite",
-    "path": "starters/vega-lite.html",
+    "path": "winstonfassett/vega-lite.html",
     "tags": [
       "starter",
       "chart",
@@ -1290,12 +1292,12 @@
     "bucket": "mine",
     "featured": true,
     "size": 1091,
-    "preview": "previews/starters-vega-lite-html.png"
+    "preview": "previews/winstonfassett-vega-lite-html.png"
   },
   {
-    "id": "starters-plotly-html",
+    "id": "winstonfassett-plotly-html",
     "name": "plotly",
-    "path": "starters/plotly.html",
+    "path": "winstonfassett/plotly.html",
     "tags": [
       "starter",
       "chart",
@@ -1306,12 +1308,12 @@
     "bucket": "mine",
     "featured": true,
     "size": 669,
-    "preview": "previews/starters-plotly-html.png"
+    "preview": "previews/winstonfassett-plotly-html.png"
   },
   {
-    "id": "starters-mermaid-esm-html",
+    "id": "winstonfassett-mermaid-esm-html",
     "name": "mermaid-esm",
-    "path": "starters/mermaid-esm.html",
+    "path": "winstonfassett/mermaid-esm.html",
     "tags": [
       "starter",
       "diagram",
@@ -1322,12 +1324,12 @@
     "bucket": "mine",
     "featured": true,
     "size": 1382,
-    "preview": "previews/starters-mermaid-esm-html.png"
+    "preview": "previews/winstonfassett-mermaid-esm-html.png"
   },
   {
-    "id": "starters-d3-force-esm-html",
+    "id": "winstonfassett-d3-force-esm-html",
     "name": "d3-force-esm",
-    "path": "starters/d3-force-esm.html",
+    "path": "winstonfassett/d3-force-esm.html",
     "tags": [
       "starter",
       "diagram",
@@ -1339,12 +1341,12 @@
     "bucket": "mine",
     "featured": true,
     "size": 2331,
-    "preview": "previews/starters-d3-force-esm-html.png"
+    "preview": "previews/winstonfassett-d3-force-esm-html.png"
   },
   {
-    "id": "starters-canvas-life-html",
+    "id": "winstonfassett-canvas-life-html",
     "name": "canvas-life",
-    "path": "starters/canvas-life.html",
+    "path": "winstonfassett/canvas-life.html",
     "tags": [
       "starter",
       "game",
@@ -1356,12 +1358,12 @@
     "bucket": "mine",
     "featured": true,
     "size": 2990,
-    "preview": "previews/starters-canvas-life-html.png"
+    "preview": "previews/winstonfassett-canvas-life-html.png"
   },
   {
-    "id": "starters-markdown-editor-html",
+    "id": "winstonfassett-markdown-editor-html",
     "name": "markdown-editor",
-    "path": "starters/markdown-editor.html",
+    "path": "winstonfassett/markdown-editor.html",
     "tags": [
       "starter",
       "tool",
@@ -1372,12 +1374,12 @@
     "bucket": "mine",
     "featured": true,
     "size": 1928,
-    "preview": "previews/starters-markdown-editor-html.png"
+    "preview": "previews/winstonfassett-markdown-editor-html.png"
   },
   {
-    "id": "starters-three-esm-html",
+    "id": "winstonfassett-three-esm-html",
     "name": "three-esm",
-    "path": "starters/three-esm.html",
+    "path": "winstonfassett/three-esm.html",
     "tags": [
       "starter",
       "3d",
@@ -1388,12 +1390,12 @@
     "bucket": "mine",
     "featured": true,
     "size": 1502,
-    "preview": "previews/starters-three-esm-html.png"
+    "preview": "previews/winstonfassett-three-esm-html.png"
   },
   {
-    "id": "starters-petite-vue-html",
+    "id": "winstonfassett-petite-vue-html",
     "name": "petite-vue",
-    "path": "starters/petite-vue.html",
+    "path": "winstonfassett/petite-vue.html",
     "tags": [
       "starter",
       "app",
@@ -1404,12 +1406,12 @@
     "bucket": "mine",
     "featured": true,
     "size": 1948,
-    "preview": "previews/starters-petite-vue-html.png"
+    "preview": "previews/winstonfassett-petite-vue-html.png"
   },
   {
-    "id": "starters-react-18-babel-html",
+    "id": "winstonfassett-react-18-babel-html",
     "name": "react-18-babel",
-    "path": "starters/react-18-babel.html",
+    "path": "winstonfassett/react-18-babel.html",
     "tags": [
       "starter",
       "app",
@@ -1420,12 +1422,12 @@
     "bucket": "mine",
     "featured": true,
     "size": 1492,
-    "preview": "previews/starters-react-18-babel-html.png"
+    "preview": "previews/winstonfassett-react-18-babel-html.png"
   },
   {
-    "id": "starters-react-htm-html",
+    "id": "winstonfassett-react-htm-html",
     "name": "react-htm",
-    "path": "starters/react-htm.html",
+    "path": "winstonfassett/react-htm.html",
     "tags": [
       "starter",
       "app",
@@ -1436,12 +1438,12 @@
     "bucket": "mine",
     "featured": true,
     "size": 1392,
-    "preview": "previews/starters-react-htm-html.png"
+    "preview": "previews/winstonfassett-react-htm-html.png"
   },
   {
-    "id": "starters-react-fireproof-esm-html",
+    "id": "winstonfassett-react-fireproof-esm-html",
     "name": "react-fireproof-esm",
-    "path": "starters/react-fireproof-esm.html",
+    "path": "winstonfassett/react-fireproof-esm.html",
     "tags": [
       "starter",
       "app",
@@ -1453,12 +1455,12 @@
     "bucket": "mine",
     "featured": true,
     "size": 2717,
-    "preview": "previews/starters-react-fireproof-esm-html.png"
+    "preview": "previews/winstonfassett-react-fireproof-esm-html.png"
   },
   {
-    "id": "starters-alpine-html",
+    "id": "winstonfassett-alpine-html",
     "name": "alpine",
-    "path": "starters/alpine.html",
+    "path": "winstonfassett/alpine.html",
     "tags": [
       "starter",
       "app",
@@ -1469,12 +1471,12 @@
     "bucket": "mine",
     "featured": true,
     "size": 1964,
-    "preview": "previews/starters-alpine-html.png"
+    "preview": "previews/winstonfassett-alpine-html.png"
   },
   {
-    "id": "starters-preact-htm-esm-html",
+    "id": "winstonfassett-preact-htm-esm-html",
     "name": "preact-htm-esm",
-    "path": "starters/preact-htm-esm.html",
+    "path": "winstonfassett/preact-htm-esm.html",
     "tags": [
       "starter",
       "app",
@@ -1486,12 +1488,12 @@
     "bucket": "mine",
     "featured": true,
     "size": 1610,
-    "preview": "previews/starters-preact-htm-esm-html.png"
+    "preview": "previews/winstonfassett-preact-htm-esm-html.png"
   },
   {
-    "id": "starters-solid-html-esm-html",
+    "id": "winstonfassett-solid-html-esm-html",
     "name": "solid-html-esm",
-    "path": "starters/solid-html-esm.html",
+    "path": "winstonfassett/solid-html-esm.html",
     "tags": [
       "starter",
       "app",
@@ -1502,12 +1504,12 @@
     "bucket": "mine",
     "featured": true,
     "size": 2468,
-    "preview": "previews/starters-solid-html-esm-html.png"
+    "preview": "previews/winstonfassett-solid-html-esm-html.png"
   },
   {
-    "id": "starters-vue3-html",
+    "id": "winstonfassett-vue3-html",
     "name": "vue3",
-    "path": "starters/vue3.html",
+    "path": "winstonfassett/vue3.html",
     "tags": [
       "starter",
       "app",
@@ -1518,12 +1520,12 @@
     "bucket": "mine",
     "featured": true,
     "size": 1948,
-    "preview": "previews/starters-vue3-html.png"
+    "preview": "previews/winstonfassett-vue3-html.png"
   },
   {
-    "id": "starters-lit-esm-html",
+    "id": "winstonfassett-lit-esm-html",
     "name": "lit-esm",
-    "path": "starters/lit-esm.html",
+    "path": "winstonfassett/lit-esm.html",
     "tags": [
       "starter",
       "app",
@@ -1535,12 +1537,12 @@
     "bucket": "mine",
     "featured": true,
     "size": 1439,
-    "preview": "previews/starters-lit-esm-html.png"
+    "preview": "previews/winstonfassett-lit-esm-html.png"
   },
   {
-    "id": "starters-react-three-fiber-esm-html",
+    "id": "winstonfassett-react-three-fiber-esm-html",
     "name": "react-three-fiber-esm",
-    "path": "starters/react-three-fiber-esm.html",
+    "path": "winstonfassett/react-three-fiber-esm.html",
     "tags": [
       "starter",
       "app",
@@ -1552,12 +1554,12 @@
     "bucket": "mine",
     "featured": true,
     "size": 2092,
-    "preview": "previews/starters-react-three-fiber-esm-html.png"
+    "preview": "previews/winstonfassett-react-three-fiber-esm-html.png"
   },
   {
-    "id": "starters-remotion-player-esm-html",
+    "id": "winstonfassett-remotion-player-esm-html",
     "name": "remotion-player-esm",
-    "path": "starters/remotion-player-esm.html",
+    "path": "winstonfassett/remotion-player-esm.html",
     "tags": [
       "starter",
       "react",
@@ -1569,12 +1571,12 @@
     "bucket": "mine",
     "featured": true,
     "size": 2592,
-    "preview": "previews/starters-remotion-player-esm-html.png"
+    "preview": "previews/winstonfassett-remotion-player-esm-html.png"
   },
   {
-    "id": "starters-sqljs-html",
+    "id": "winstonfassett-sqljs-html",
     "name": "sqljs",
-    "path": "starters/sqljs.html",
+    "path": "winstonfassett/sqljs.html",
     "tags": [
       "starter",
       "data",
@@ -1585,12 +1587,12 @@
     "bucket": "mine",
     "featured": true,
     "size": 2524,
-    "preview": "previews/starters-sqljs-html.png"
+    "preview": "previews/winstonfassett-sqljs-html.png"
   },
   {
-    "id": "starters-pglite-esm-html",
+    "id": "winstonfassett-pglite-esm-html",
     "name": "pglite (Postgres WASM)",
-    "path": "starters/pglite-esm.html",
+    "path": "winstonfassett/pglite-esm.html",
     "tags": [
       "starter",
       "data",
@@ -1601,12 +1603,12 @@
     "bucket": "mine",
     "featured": true,
     "size": 3055,
-    "preview": "previews/starters-pglite-esm-html.png"
+    "preview": "previews/winstonfassett-pglite-esm-html.png"
   },
   {
-    "id": "starters-codemirror-esm-html",
+    "id": "winstonfassett-codemirror-esm-html",
     "name": "codemirror-esm (no-build recipe)",
-    "path": "starters/codemirror-esm.html",
+    "path": "winstonfassett/codemirror-esm.html",
     "tags": [
       "starter",
       "editor",
@@ -1617,12 +1619,12 @@
     "bucket": "mine",
     "featured": true,
     "size": 2176,
-    "preview": "previews/starters-codemirror-esm-html.png"
+    "preview": "previews/winstonfassett-codemirror-esm-html.png"
   },
   {
-    "id": "starters-milkdown-dual-view-esm-html",
+    "id": "winstonfassett-milkdown-dual-view-esm-html",
     "name": "milkdown-dual-view",
-    "path": "starters/milkdown-dual-view-esm.html",
+    "path": "winstonfassett/milkdown-dual-view-esm.html",
     "tags": [
       "starter",
       "app",
@@ -1633,12 +1635,12 @@
     "bucket": "mine",
     "featured": true,
     "size": 5936,
-    "preview": "previews/starters-milkdown-dual-view-esm-html.png"
+    "preview": "previews/winstonfassett-milkdown-dual-view-esm-html.png"
   },
   {
-    "id": "starters-leaflet-map-html",
+    "id": "winstonfassett-leaflet-map-html",
     "name": "leaflet-map",
-    "path": "starters/leaflet-map.html",
+    "path": "winstonfassett/leaflet-map.html",
     "tags": [
       "starter",
       "map",
@@ -1649,12 +1651,12 @@
     "bucket": "mine",
     "featured": true,
     "size": 961,
-    "preview": "previews/starters-leaflet-map-html.png"
+    "preview": "previews/winstonfassett-leaflet-map-html.png"
   },
   {
-    "id": "starters-json-viewer-html",
+    "id": "winstonfassett-json-viewer-html",
     "name": "json-viewer",
-    "path": "starters/json-viewer.html",
+    "path": "winstonfassett/json-viewer.html",
     "tags": [
       "starter",
       "tool",
@@ -1665,12 +1667,12 @@
     "bucket": "mine",
     "featured": true,
     "size": 1837,
-    "preview": "previews/starters-json-viewer-html.png"
+    "preview": "previews/winstonfassett-json-viewer-html.png"
   },
   {
-    "id": "starters-regex-tester-html",
+    "id": "winstonfassett-regex-tester-html",
     "name": "regex-tester",
-    "path": "starters/regex-tester.html",
+    "path": "winstonfassett/regex-tester.html",
     "tags": [
       "starter",
       "tool",
@@ -1681,12 +1683,12 @@
     "bucket": "mine",
     "featured": true,
     "size": 3009,
-    "preview": "previews/starters-regex-tester-html.png"
+    "preview": "previews/winstonfassett-regex-tester-html.png"
   },
   {
-    "id": "starters-reveal-deck-html",
+    "id": "winstonfassett-reveal-deck-html",
     "name": "reveal-deck",
-    "path": "starters/reveal-deck.html",
+    "path": "winstonfassett/reveal-deck.html",
     "tags": [
       "starter",
       "deck",
@@ -1697,12 +1699,12 @@
     "bucket": "mine",
     "featured": true,
     "size": 1993,
-    "preview": "previews/starters-reveal-deck-html.png"
+    "preview": "previews/winstonfassett-reveal-deck-html.png"
   },
   {
-    "id": "starters-impress-deck-html",
+    "id": "winstonfassett-impress-deck-html",
     "name": "impress-deck",
-    "path": "starters/impress-deck.html",
+    "path": "winstonfassett/impress-deck.html",
     "tags": [
       "starter",
       "deck",
@@ -1714,12 +1716,12 @@
     "bucket": "mine",
     "featured": true,
     "size": 1725,
-    "preview": "previews/starters-impress-deck-html.png"
+    "preview": "previews/winstonfassett-impress-deck-html.png"
   },
   {
-    "id": "starters-gsap-motion-html",
+    "id": "winstonfassett-gsap-motion-html",
     "name": "gsap-motion",
-    "path": "starters/gsap-motion.html",
+    "path": "winstonfassett/gsap-motion.html",
     "tags": [
       "starter",
       "animation",
@@ -1730,12 +1732,12 @@
     "bucket": "mine",
     "featured": true,
     "size": 1705,
-    "preview": "previews/starters-gsap-motion-html.png"
+    "preview": "previews/winstonfassett-gsap-motion-html.png"
   },
   {
-    "id": "starters-anime-html",
+    "id": "winstonfassett-anime-html",
     "name": "anime",
-    "path": "starters/anime.html",
+    "path": "winstonfassett/anime.html",
     "tags": [
       "starter",
       "animation",
@@ -1746,12 +1748,12 @@
     "bucket": "mine",
     "featured": true,
     "size": 1414,
-    "preview": "previews/starters-anime-html.png"
+    "preview": "previews/winstonfassett-anime-html.png"
   },
   {
-    "id": "starters-motion-esm-html",
+    "id": "winstonfassett-motion-esm-html",
     "name": "motion-esm",
-    "path": "starters/motion-esm.html",
+    "path": "winstonfassett/motion-esm.html",
     "tags": [
       "starter",
       "animation",
@@ -1762,12 +1764,12 @@
     "bucket": "mine",
     "featured": true,
     "size": 1528,
-    "preview": "previews/starters-motion-esm-html.png"
+    "preview": "previews/winstonfassett-motion-esm-html.png"
   },
   {
-    "id": "starters-lottie-html",
+    "id": "winstonfassett-lottie-html",
     "name": "lottie",
-    "path": "starters/lottie.html",
+    "path": "winstonfassett/lottie.html",
     "tags": [
       "starter",
       "animation",
@@ -1778,12 +1780,12 @@
     "bucket": "mine",
     "featured": true,
     "size": 1535,
-    "preview": "previews/starters-lottie-html.png"
+    "preview": "previews/winstonfassett-lottie-html.png"
   },
   {
-    "id": "examples-matchina-standalone-esmsh-html",
+    "id": "winstonfassett-standalone-esmsh-html",
     "name": "matchina + vanilla",
-    "path": "examples/matchina/standalone-esmsh.html",
+    "path": "winstonfassett/standalone-esmsh.html",
     "tags": [
       "matchina",
       "reactive",
@@ -1794,12 +1796,12 @@
     "bucket": "mine",
     "featured": true,
     "size": 4597,
-    "preview": "previews/examples-matchina-standalone-esmsh-html.png"
+    "preview": "previews/winstonfassett-standalone-esmsh-html.png"
   },
   {
-    "id": "examples-matchina-standalone-stimulus-html",
+    "id": "winstonfassett-standalone-stimulus-html",
     "name": "matchina + Stimulus",
-    "path": "examples/matchina/standalone-stimulus.html",
+    "path": "winstonfassett/standalone-stimulus.html",
     "tags": [
       "matchina",
       "reactive",
@@ -1810,12 +1812,12 @@
     "bucket": "mine",
     "featured": true,
     "size": 6248,
-    "preview": "previews/examples-matchina-standalone-stimulus-html.png"
+    "preview": "previews/winstonfassett-standalone-stimulus-html.png"
   },
   {
-    "id": "examples-matchina-standalone-alpine-html",
+    "id": "winstonfassett-standalone-alpine-html",
     "name": "matchina + Alpine",
-    "path": "examples/matchina/standalone-alpine.html",
+    "path": "winstonfassett/standalone-alpine.html",
     "tags": [
       "matchina",
       "reactive",
@@ -1826,12 +1828,12 @@
     "bucket": "mine",
     "featured": true,
     "size": 5131,
-    "preview": "previews/examples-matchina-standalone-alpine-html.png"
+    "preview": "previews/winstonfassett-standalone-alpine-html.png"
   },
   {
-    "id": "examples-matchina-standalone-react-html",
+    "id": "winstonfassett-standalone-react-html",
     "name": "matchina + React",
-    "path": "examples/matchina/standalone-react.html",
+    "path": "winstonfassett/standalone-react.html",
     "tags": [
       "matchina",
       "reactive",
@@ -1843,12 +1845,12 @@
     "bucket": "mine",
     "featured": true,
     "size": 4863,
-    "preview": "previews/examples-matchina-standalone-react-html.png"
+    "preview": "previews/winstonfassett-standalone-react-html.png"
   },
   {
-    "id": "examples-matchina-standalone-petite-vue-html",
+    "id": "winstonfassett-standalone-petite-vue-html",
     "name": "matchina + petite-vue",
-    "path": "examples/matchina/standalone-petite-vue.html",
+    "path": "winstonfassett/standalone-petite-vue.html",
     "tags": [
       "matchina",
       "reactive",
@@ -1859,12 +1861,12 @@
     "bucket": "mine",
     "featured": true,
     "size": 5371,
-    "preview": "previews/examples-matchina-standalone-petite-vue-html.png"
+    "preview": "previews/winstonfassett-standalone-petite-vue-html.png"
   },
   {
-    "id": "examples-matchina-standalone-vue-html",
+    "id": "winstonfassett-standalone-vue-html",
     "name": "matchina + Vue 3",
-    "path": "examples/matchina/standalone-vue.html",
+    "path": "winstonfassett/standalone-vue.html",
     "tags": [
       "matchina",
       "reactive",
@@ -1875,12 +1877,12 @@
     "bucket": "mine",
     "featured": true,
     "size": 5063,
-    "preview": "previews/examples-matchina-standalone-vue-html.png"
+    "preview": "previews/winstonfassett-standalone-vue-html.png"
   },
   {
-    "id": "examples-matchina-standalone-van-html",
+    "id": "winstonfassett-standalone-van-html",
     "name": "matchina + VanJS",
-    "path": "examples/matchina/standalone-van.html",
+    "path": "winstonfassett/standalone-van.html",
     "tags": [
       "matchina",
       "reactive",
@@ -1891,12 +1893,12 @@
     "bucket": "mine",
     "featured": true,
     "size": 5034,
-    "preview": "previews/examples-matchina-standalone-van-html.png"
+    "preview": "previews/winstonfassett-standalone-van-html.png"
   },
   {
-    "id": "examples-matchina-standalone-solid-html",
+    "id": "winstonfassett-standalone-solid-html",
     "name": "matchina + Solid",
-    "path": "examples/matchina/standalone-solid.html",
+    "path": "winstonfassett/standalone-solid.html",
     "tags": [
       "matchina",
       "reactive",
@@ -1907,12 +1909,12 @@
     "bucket": "mine",
     "featured": true,
     "size": 5515,
-    "preview": "previews/examples-matchina-standalone-solid-html.png"
+    "preview": "previews/winstonfassett-standalone-solid-html.png"
   },
   {
-    "id": "examples-matchina-standalone-preact-html",
+    "id": "winstonfassett-standalone-preact-html",
     "name": "matchina + Preact",
-    "path": "examples/matchina/standalone-preact.html",
+    "path": "winstonfassett/standalone-preact.html",
     "tags": [
       "matchina",
       "reactive",
@@ -1923,12 +1925,12 @@
     "bucket": "mine",
     "featured": true,
     "size": 5568,
-    "preview": "previews/examples-matchina-standalone-preact-html.png"
+    "preview": "previews/winstonfassett-standalone-preact-html.png"
   },
   {
-    "id": "examples-matchina-standalone-arrow-html",
+    "id": "winstonfassett-standalone-arrow-html",
     "name": "matchina + ArrowJS",
-    "path": "examples/matchina/standalone-arrow.html",
+    "path": "winstonfassett/standalone-arrow.html",
     "tags": [
       "matchina",
       "reactive",
@@ -1939,12 +1941,12 @@
     "bucket": "mine",
     "featured": true,
     "size": 4327,
-    "preview": "previews/examples-matchina-standalone-arrow-html.png"
+    "preview": "previews/winstonfassett-standalone-arrow-html.png"
   },
   {
-    "id": "examples-interactive-mermaid-viewer-bonomani-html",
+    "id": "winstonfassett-mermaid-viewer-bonomani-html",
     "name": "mermaid-viewer (bonomani)",
-    "path": "examples/interactive/mermaid-viewer-bonomani.html",
+    "path": "winstonfassett/mermaid-viewer-bonomani.html",
     "tags": [
       "diagram",
       "interactive",
@@ -1955,12 +1957,12 @@
     "bucket": "collected",
     "featured": false,
     "size": 13951,
-    "preview": "previews/examples-interactive-mermaid-viewer-bonomani-html.png"
+    "preview": "previews/winstonfassett-mermaid-viewer-bonomani-html.png"
   },
   {
-    "id": "examples-interactive-mermaid-viewer-kevinobytes-html",
+    "id": "winstonfassett-mermaid-viewer-kevinobytes-html",
     "name": "mermaid-viewer (KevinOBytes)",
-    "path": "examples/interactive/mermaid-viewer-kevinobytes.html",
+    "path": "winstonfassett/mermaid-viewer-kevinobytes.html",
     "tags": [
       "diagram",
       "interactive"
@@ -1970,12 +1972,12 @@
     "bucket": "collected",
     "featured": false,
     "size": 6363,
-    "preview": "previews/examples-interactive-mermaid-viewer-kevinobytes-html.png"
+    "preview": "previews/winstonfassett-mermaid-viewer-kevinobytes-html.png"
   },
   {
-    "id": "examples-interactive-d3-graphviz-basic-html",
+    "id": "winstonfassett-d3-graphviz-basic-html",
     "name": "d3-graphviz-basic",
-    "path": "examples/interactive/d3-graphviz-basic.html",
+    "path": "winstonfassett/d3-graphviz-basic.html",
     "tags": [
       "diagram",
       "viz"
@@ -1985,444 +1987,12 @@
     "bucket": "collected",
     "featured": false,
     "size": 412,
-    "preview": "previews/examples-interactive-d3-graphviz-basic-html.png"
+    "preview": "previews/winstonfassett-d3-graphviz-basic-html.png"
   },
   {
-    "id": "examples-simonw-tools-ocr-html",
-    "name": "ocr",
-    "path": "examples/simonw-tools/ocr.html",
-    "tags": [
-      "tool",
-      "image"
-    ],
-    "source": "simonw",
-    "loading": "esm",
-    "bucket": "collected",
-    "featured": false,
-    "size": 13969,
-    "preview": "previews/examples-simonw-tools-ocr-html.png"
-  },
-  {
-    "id": "examples-simonw-tools-qr-html",
-    "name": "qr",
-    "path": "examples/simonw-tools/qr.html",
-    "tags": [
-      "tool"
-    ],
-    "source": "simonw",
-    "loading": "script",
-    "bucket": "collected",
-    "featured": false,
-    "size": 21224,
-    "preview": "previews/examples-simonw-tools-qr-html.png"
-  },
-  {
-    "id": "examples-simonw-tools-qr-code-generator-html",
-    "name": "qr-code-generator",
-    "path": "examples/simonw-tools/qr-code-generator.html",
-    "tags": [
-      "tool"
-    ],
-    "source": "simonw",
-    "loading": "script",
-    "bucket": "collected",
-    "featured": false,
-    "size": 17851,
-    "preview": "previews/examples-simonw-tools-qr-code-generator-html.png"
-  },
-  {
-    "id": "examples-simonw-tools-haiku-html",
-    "name": "haiku (LLM-powered)",
-    "path": "examples/simonw-tools/haiku.html",
-    "tags": [
-      "tool",
-      "ai",
-      "llm"
-    ],
-    "source": "simonw",
-    "loading": "esm",
-    "bucket": "collected",
-    "featured": false,
-    "size": 7736,
-    "preview": "previews/examples-simonw-tools-haiku-html.png"
-  },
-  {
-    "id": "examples-simonw-tools-omit-needless-words-html",
-    "name": "omit-needless-words (LLM)",
-    "path": "examples/simonw-tools/omit-needless-words.html",
-    "tags": [
-      "tool",
-      "ai",
-      "llm"
-    ],
-    "source": "simonw",
-    "loading": "esm",
-    "bucket": "collected",
-    "featured": false,
-    "size": 24032,
-    "preview": "previews/examples-simonw-tools-omit-needless-words-html.png"
-  },
-  {
-    "id": "examples-simonw-tools-gemini-chat-html",
-    "name": "gemini-chat (LLM)",
-    "path": "examples/simonw-tools/gemini-chat.html",
-    "tags": [
-      "tool",
-      "ai",
-      "llm"
-    ],
-    "source": "simonw",
-    "loading": "esm",
-    "bucket": "collected",
-    "featured": false,
-    "size": 7983,
-    "preview": "previews/examples-simonw-tools-gemini-chat-html.png"
-  },
-  {
-    "id": "examples-simonw-tools-openai-webrtc-html",
-    "name": "openai-webrtc (LLM voice)",
-    "path": "examples/simonw-tools/openai-webrtc.html",
-    "tags": [
-      "tool",
-      "ai",
-      "llm",
-      "audio"
-    ],
-    "source": "simonw",
-    "loading": "esm",
-    "bucket": "collected",
-    "featured": false,
-    "size": 21521,
-    "preview": "previews/examples-simonw-tools-openai-webrtc-html.png"
-  },
-  {
-    "id": "examples-simonw-tools-image-to-svg-html",
-    "name": "image-to-svg",
-    "path": "examples/simonw-tools/image-to-svg.html",
-    "tags": [
-      "tool",
-      "image"
-    ],
-    "source": "simonw",
-    "loading": "script",
-    "bucket": "collected",
-    "featured": false,
-    "size": 4295,
-    "preview": "previews/examples-simonw-tools-image-to-svg-html.png"
-  },
-  {
-    "id": "examples-simonw-tools-json-to-yaml-html",
-    "name": "json-to-yaml",
-    "path": "examples/simonw-tools/json-to-yaml.html",
-    "tags": [
-      "tool"
-    ],
-    "source": "simonw",
-    "loading": "script",
-    "bucket": "collected",
-    "featured": false,
-    "size": 4353,
-    "preview": "previews/examples-simonw-tools-json-to-yaml-html.png"
-  },
-  {
-    "id": "examples-simonw-tools-json-diff-html",
-    "name": "json-diff",
-    "path": "examples/simonw-tools/json-diff.html",
-    "tags": [
-      "tool"
-    ],
-    "source": "simonw",
-    "loading": "script",
-    "bucket": "collected",
-    "featured": false,
-    "size": 28212,
-    "preview": "previews/examples-simonw-tools-json-diff-html.png"
-  },
-  {
-    "id": "examples-simonw-tools-text-diff-html",
-    "name": "text-diff",
-    "path": "examples/simonw-tools/text-diff.html",
-    "tags": [
-      "tool"
-    ],
-    "source": "simonw",
-    "loading": "script",
-    "bucket": "collected",
-    "featured": false,
-    "size": 5961,
-    "preview": "previews/examples-simonw-tools-text-diff-html.png"
-  },
-  {
-    "id": "examples-simonw-tools-markdown-math-html",
-    "name": "markdown-math",
-    "path": "examples/simonw-tools/markdown-math.html",
-    "tags": [
-      "tool"
-    ],
-    "source": "simonw",
-    "loading": "script",
-    "bucket": "collected",
-    "featured": false,
-    "size": 3880,
-    "preview": "previews/examples-simonw-tools-markdown-math-html.png"
-  },
-  {
-    "id": "examples-simonw-tools-word-counter-html",
-    "name": "word-counter",
-    "path": "examples/simonw-tools/word-counter.html",
-    "tags": [
-      "tool"
-    ],
-    "source": "simonw",
-    "loading": "script",
-    "bucket": "collected",
-    "featured": false,
-    "size": 5111,
-    "preview": "previews/examples-simonw-tools-word-counter-html.png"
-  },
-  {
-    "id": "examples-simonw-tools-encrypt-html",
-    "name": "encrypt",
-    "path": "examples/simonw-tools/encrypt.html",
-    "tags": [
-      "tool"
-    ],
-    "source": "simonw",
-    "loading": "script",
-    "bucket": "collected",
-    "featured": false,
-    "size": 12043,
-    "preview": "previews/examples-simonw-tools-encrypt-html.png"
-  },
-  {
-    "id": "examples-simonw-tools-audio-spectrum-html",
-    "name": "audio-spectrum",
-    "path": "examples/simonw-tools/audio-spectrum.html",
-    "tags": [
-      "tool",
-      "audio",
-      "interactive"
-    ],
-    "source": "simonw",
-    "loading": "esm",
-    "bucket": "collected",
-    "featured": false,
-    "size": 2297,
-    "preview": "previews/examples-simonw-tools-audio-spectrum-html.png"
-  },
-  {
-    "id": "examples-simonw-tools-speech-synthesis-html",
-    "name": "speech-synthesis",
-    "path": "examples/simonw-tools/speech-synthesis.html",
-    "tags": [
-      "tool",
-      "audio"
-    ],
-    "source": "simonw",
-    "loading": "esm",
-    "bucket": "collected",
-    "featured": false,
-    "size": 7355,
-    "preview": "previews/examples-simonw-tools-speech-synthesis-html.png"
-  },
-  {
-    "id": "examples-simonw-tools-minesweeper-html",
-    "name": "minesweeper",
-    "path": "examples/simonw-tools/minesweeper.html",
-    "tags": [
-      "game",
-      "interactive"
-    ],
-    "source": "simonw",
-    "loading": "script",
-    "bucket": "collected",
-    "featured": false,
-    "size": 16176,
-    "preview": "previews/examples-simonw-tools-minesweeper-html.png"
-  },
-  {
-    "id": "examples-simonw-tools-pomodoro-html",
-    "name": "pomodoro",
-    "path": "examples/simonw-tools/pomodoro.html",
-    "tags": [
-      "tool",
-      "interactive"
-    ],
-    "source": "simonw",
-    "loading": "script",
-    "bucket": "collected",
-    "featured": false,
-    "size": 12002,
-    "preview": "previews/examples-simonw-tools-pomodoro-html.png"
-  },
-  {
-    "id": "examples-simonw-tools-gradient-card-html",
-    "name": "gradient-card",
-    "path": "examples/simonw-tools/gradient-card.html",
-    "tags": [
-      "tool",
-      "design"
-    ],
-    "source": "simonw",
-    "loading": "script",
-    "bucket": "collected",
-    "featured": false,
-    "size": 26380,
-    "preview": "previews/examples-simonw-tools-gradient-card-html.png"
-  },
-  {
-    "id": "examples-simonw-tools-animated-word-cloud-html",
-    "name": "animated-word-cloud",
-    "path": "examples/simonw-tools/animated-word-cloud.html",
-    "tags": [
-      "viz",
-      "animation"
-    ],
-    "source": "simonw",
-    "loading": "script",
-    "bucket": "collected",
-    "featured": false,
-    "size": 23673,
-    "preview": "previews/examples-simonw-tools-animated-word-cloud-html.png"
-  },
-  {
-    "id": "examples-simonw-tools-svg-render-html",
-    "name": "svg-render",
-    "path": "examples/simonw-tools/svg-render.html",
-    "tags": [
-      "tool"
-    ],
-    "source": "simonw",
-    "loading": "script",
-    "bucket": "collected",
-    "featured": false,
-    "size": 15822,
-    "preview": "previews/examples-simonw-tools-svg-render-html.png"
-  },
-  {
-    "id": "examples-simonw-tools-flexbox-playground-html",
-    "name": "flexbox-playground",
-    "path": "examples/simonw-tools/flexbox-playground.html",
-    "tags": [
-      "tool",
-      "interactive"
-    ],
-    "source": "simonw",
-    "loading": "script",
-    "bucket": "collected",
-    "featured": false,
-    "size": 25664,
-    "preview": "previews/examples-simonw-tools-flexbox-playground-html.png"
-  },
-  {
-    "id": "examples-simonw-tools-box-shadow-html",
-    "name": "box-shadow",
-    "path": "examples/simonw-tools/box-shadow.html",
-    "tags": [
-      "tool",
-      "design"
-    ],
-    "source": "simonw",
-    "loading": "script",
-    "bucket": "collected",
-    "featured": false,
-    "size": 6344,
-    "preview": "previews/examples-simonw-tools-box-shadow-html.png"
-  },
-  {
-    "id": "examples-simonw-tools-sqlite-wasm-html",
-    "name": "sqlite-wasm",
-    "path": "examples/simonw-tools/sqlite-wasm.html",
-    "tags": [
-      "data",
-      "tool"
-    ],
-    "source": "simonw",
-    "loading": "esm",
-    "bucket": "collected",
-    "featured": false,
-    "size": 5233,
-    "preview": "previews/examples-simonw-tools-sqlite-wasm-html.png"
-  },
-  {
-    "id": "examples-simonw-tools-pyodide-repl-html",
-    "name": "pyodide-repl (Python)",
-    "path": "examples/simonw-tools/pyodide-repl.html",
-    "tags": [
-      "tool",
-      "python"
-    ],
-    "source": "simonw",
-    "loading": "esm",
-    "bucket": "collected",
-    "featured": false,
-    "size": 20028,
-    "preview": "previews/examples-simonw-tools-pyodide-repl-html.png"
-  },
-  {
-    "id": "examples-simonw-tools-numpy-pyodide-lab-html",
-    "name": "numpy-pyodide-lab (Python)",
-    "path": "examples/simonw-tools/numpy-pyodide-lab.html",
-    "tags": [
-      "tool",
-      "python",
-      "data"
-    ],
-    "source": "simonw",
-    "loading": "script",
-    "bucket": "collected",
-    "featured": false,
-    "size": 19143,
-    "preview": "previews/examples-simonw-tools-numpy-pyodide-lab-html.png"
-  },
-  {
-    "id": "examples-simonw-tools-micropython-html",
-    "name": "micropython",
-    "path": "examples/simonw-tools/micropython.html",
-    "tags": [
-      "tool",
-      "python"
-    ],
-    "source": "simonw",
-    "loading": "esm",
-    "bucket": "collected",
-    "featured": false,
-    "size": 22599,
-    "preview": "previews/examples-simonw-tools-micropython-html.png"
-  },
-  {
-    "id": "examples-simonw-tools-quickjs-html",
-    "name": "quickjs",
-    "path": "examples/simonw-tools/quickjs.html",
-    "tags": [
-      "tool"
-    ],
-    "source": "simonw",
-    "loading": "esm",
-    "bucket": "collected",
-    "featured": false,
-    "size": 20749,
-    "preview": "previews/examples-simonw-tools-quickjs-html.png"
-  },
-  {
-    "id": "examples-simonw-tools-v86-html",
-    "name": "v86 (x86 emulator!)",
-    "path": "examples/simonw-tools/v86.html",
-    "tags": [
-      "interactive",
-      "wasm"
-    ],
-    "source": "simonw",
-    "loading": "esm",
-    "bucket": "collected",
-    "featured": false,
-    "size": 21775,
-    "preview": "previews/examples-simonw-tools-v86-html.png"
-  },
-  {
-    "id": "starters-collab-milkdown-yjs-esm-html",
+    "id": "winstonfassett-collab-milkdown-yjs-esm-html",
     "name": "collab-milkdown-yjs-esm",
-    "path": "starters/collab-milkdown-yjs-esm.html",
+    "path": "winstonfassett/collab-milkdown-yjs-esm.html",
     "tags": [
       "editor",
       "collaboration",
@@ -2430,15 +2000,15 @@
       "milkdown"
     ],
     "source": "starters",
-    "bucket": "starters",
+    "bucket": "mine",
     "featured": false,
     "size": 5838,
-    "preview": "previews/starters-collab-milkdown-yjs-esm-html.png"
+    "preview": "previews/winstonfassett-collab-milkdown-yjs-esm-html.png"
   },
   {
-    "id": "starters-react-chat-html",
+    "id": "winstonfassett-react-chat-html",
     "name": "react-chat",
-    "path": "starters/react-chat.html",
+    "path": "winstonfassett/react-chat.html",
     "tags": [
       "chat",
       "ai",
@@ -2447,15 +2017,15 @@
       "streaming"
     ],
     "source": "starters",
-    "bucket": "starters",
+    "bucket": "mine",
     "featured": false,
     "size": 9738,
-    "preview": "previews/starters-react-chat-html.png"
+    "preview": "previews/winstonfassett-react-chat-html.png"
   },
   {
-    "id": "starters-react-chat-streamdown-html",
+    "id": "winstonfassett-react-chat-streamdown-html",
     "name": "react-chat-streamdown",
-    "path": "starters/react-chat-streamdown.html",
+    "path": "winstonfassett/react-chat-streamdown.html",
     "tags": [
       "chat",
       "ai",
@@ -2465,15 +2035,15 @@
       "markdown"
     ],
     "source": "starters",
-    "bucket": "starters",
+    "bucket": "mine",
     "featured": false,
     "size": 12080,
-    "preview": "previews/starters-react-chat-streamdown-html.png"
+    "preview": "previews/winstonfassett-react-chat-streamdown-html.png"
   },
   {
-    "id": "starters-webawesome-chat-marked-html",
+    "id": "winstonfassett-webawesome-chat-marked-html",
     "name": "webawesome-chat-marked",
-    "path": "starters/webawesome-chat-marked.html",
+    "path": "winstonfassett/webawesome-chat-marked.html",
     "tags": [
       "chat",
       "ai",
@@ -2482,15 +2052,15 @@
       "markdown"
     ],
     "source": "starters",
-    "bucket": "starters",
+    "bucket": "mine",
     "featured": false,
     "size": 15496,
-    "preview": "previews/starters-webawesome-chat-marked-html.png"
+    "preview": "previews/winstonfassett-webawesome-chat-marked-html.png"
   },
   {
-    "id": "starters-webawesome-chat-html",
+    "id": "winstonfassett-webawesome-chat-html",
     "name": "webawesome-chat",
-    "path": "starters/webawesome-chat.html",
+    "path": "winstonfassett/webawesome-chat.html",
     "tags": [
       "chat",
       "ai",
@@ -2498,15 +2068,15 @@
       "streaming"
     ],
     "source": "starters",
-    "bucket": "starters",
+    "bucket": "mine",
     "featured": false,
     "size": 13900,
-    "preview": "previews/starters-webawesome-chat-html.png"
+    "preview": "previews/winstonfassett-webawesome-chat-html.png"
   },
   {
-    "id": "starters-webawesome-chat-markstream-html",
+    "id": "winstonfassett-webawesome-chat-markstream-html",
     "name": "webawesome-chat-markstream",
-    "path": "starters/webawesome-chat-markstream.html",
+    "path": "winstonfassett/webawesome-chat-markstream.html",
     "tags": [
       "chat",
       "ai",
@@ -2516,15 +2086,15 @@
       "markstream"
     ],
     "source": "starters",
-    "bucket": "starters",
+    "bucket": "mine",
     "featured": false,
     "size": 15800,
-    "preview": "previews/starters-webawesome-chat-markstream-html.png"
+    "preview": "previews/winstonfassett-webawesome-chat-markstream-html.png"
   },
   {
-    "id": "starters-chatscope-chat-esm-html",
+    "id": "winstonfassett-chatscope-chat-esm-html",
     "name": "chatscope-chat-esm",
-    "path": "starters/chatscope-chat-esm.html",
+    "path": "winstonfassett/chatscope-chat-esm.html",
     "tags": [
       "chat",
       "ai",
@@ -2534,9 +2104,9 @@
       "react"
     ],
     "source": "starters",
-    "bucket": "starters",
+    "bucket": "mine",
     "featured": false,
     "size": 13084,
-    "preview": "previews/starters-chatscope-chat-esm-html.png"
+    "preview": "previews/winstonfassett-chatscope-chat-esm-html.png"
   }
 ]
