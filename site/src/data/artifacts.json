@@ -2452,9 +2452,9 @@
     "preview": "previews/starters-collab-milkdown-yjs-esm-html.png"
   },
   {
-    "id": "starters-openrouter-chat-esm-html",
-    "name": "openrouter-chat-esm",
-    "path": "starters/openrouter-chat-esm.html",
+    "id": "starters-react-chat-html",
+    "name": "react-chat",
+    "path": "starters/react-chat.html",
     "tags": [
       "chat",
       "ai",
@@ -2466,12 +2466,12 @@
     "bucket": "starters",
     "featured": false,
     "size": 9738,
-    "preview": "previews/starters-openrouter-chat-esm-html.png"
+    "preview": "previews/starters-react-chat-html.png"
   },
   {
-    "id": "starters-openrouter-chat-streamdown-html",
-    "name": "openrouter-chat-streamdown",
-    "path": "starters/openrouter-chat-streamdown.html",
+    "id": "starters-react-chat-streamdown-html",
+    "name": "react-chat-streamdown",
+    "path": "starters/react-chat-streamdown.html",
     "tags": [
       "chat",
       "ai",
@@ -2484,7 +2484,7 @@
     "bucket": "starters",
     "featured": false,
     "size": 12080,
-    "preview": "previews/starters-openrouter-chat-streamdown-html.png"
+    "preview": "previews/starters-react-chat-streamdown-html.png"
   },
   {
     "id": "starters-webawesome-chat-streamdown-html",
