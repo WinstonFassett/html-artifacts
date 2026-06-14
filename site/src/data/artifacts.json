@@ -2420,22 +2420,6 @@
     "preview": "previews/examples-simonw-tools-v86-html.png"
   },
   {
-    "id": "starters-assistant-ui-chat-esm-html",
-    "name": "assistant-ui-chat-esm",
-    "path": "starters/assistant-ui-chat-esm.html",
-    "tags": [
-      "chat",
-      "ai",
-      "react",
-      "assistant-ui"
-    ],
-    "source": "starters",
-    "bucket": "starters",
-    "featured": false,
-    "size": 11012,
-    "preview": "previews/starters-assistant-ui-chat-esm-html.png"
-  },
-  {
     "id": "starters-collab-milkdown-yjs-esm-html",
     "name": "collab-milkdown-yjs-esm",
     "path": "starters/collab-milkdown-yjs-esm.html",
@@ -2536,5 +2520,23 @@
     "featured": false,
     "size": 15800,
     "preview": "previews/starters-webawesome-chat-markstream-html.png"
+  },
+  {
+    "id": "starters-chatscope-chat-esm-html",
+    "name": "chatscope-chat-esm",
+    "path": "starters/chatscope-chat-esm.html",
+    "tags": [
+      "chat",
+      "ai",
+      "chatscope",
+      "streaming",
+      "markdown",
+      "react"
+    ],
+    "source": "starters",
+    "bucket": "starters",
+    "featured": false,
+    "size": 13084,
+    "preview": "previews/starters-chatscope-chat-esm-html.png"
   }
 ]
