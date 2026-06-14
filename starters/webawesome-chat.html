@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en" class="wa-theme-default">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WebAwesome chat</title>
+
+  <link rel="stylesheet" href="https://ka-f.webawesome.com/webawesome@3.8.0/styles/webawesome.css" />
+  <script type="module" src="https://ka-f.webawesome.com/webawesome@3.8.0/webawesome.loader.js"></script>
+
+  <!-- Vercel AI SDK for streaming — no React needed -->
+  <script type="importmap">
+  {
+    "imports": {
+      "ai":             "https://esm.sh/ai@4.3.16",
+      "@ai-sdk/openai": "https://esm.sh/@ai-sdk/openai@1.3.22"
+    }
+  }
+  </script>
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      font-family: var(--wa-font-sans, system-ui, sans-serif);
+      background: var(--wa-color-surface-default, #f5f5f5);
+      color: var(--wa-color-text-default, #111);
+    }
+
+    #app {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      max-width: 780px;
+      width: 100%;
+      margin: 0 auto;
+    }
+
+    /* ── Key gate ───────────────────────────────────────── */
+    #key-gate {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      flex: 1;
+      padding: 2rem;
+    }
+
+    #key-gate .inner {
+      width: 100%;
+      max-width: 420px;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    /* ── Chat layout ────────────────────────────────────── */
+    #chat { display: none; flex-direction: column; flex: 1; min-height: 0; }
+    #chat.active { display: flex; }
+
+    #chat-header {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.625rem 0.75rem;
+      border-bottom: 1px solid var(--wa-color-border-default, #ddd);
+      background: var(--wa-color-surface-raised, #fff);
+    }
+
+    #model-select { flex: 1; }
+
+    #messages {
+      flex: 1;
+      overflow-y: auto;
+      padding: 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    #empty-state {
+      margin-top: 3rem;
+      text-align: center;
+      color: var(--wa-color-text-quiet, #888);
+      font-size: 0.875rem;
+    }
+
+    /* ── Message bubbles ────────────────────────────────── */
+    .msg-row {
+      display: flex;
+      align-items: flex-end;
+      gap: 0.5rem;
+    }
+
+    .msg-row.user { flex-direction: row-reverse; }
+
+    .bubble {
+      max-width: 78%;
+      padding: 0.625rem 0.875rem;
+      border-radius: 1.125rem;
+      font-size: 0.875rem;
+      line-height: 1.5;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    .bubble.user {
+      background: var(--wa-color-brand-fill, #2563eb);
+      color: #fff;
+      border-bottom-right-radius: 0.25rem;
+    }
+
+    .bubble.assistant {
+      background: var(--wa-color-surface-raised, #fff);
+      border: 1px solid var(--wa-color-border-default, #ddd);
+      border-bottom-left-radius: 0.25rem;
+    }
+
+    .cursor {
+      display: inline-block;
+      width: 7px;
+      height: 1em;
+      background: currentColor;
+      opacity: 0.6;
+      margin-left: 2px;
+      vertical-align: text-bottom;
+      animation: blink 0.9s step-end infinite;
+    }
+
+    @keyframes blink { 50% { opacity: 0; } }
+
+    /* ── Input bar ──────────────────────────────────────── */
+    #input-bar {
+      padding: 0.75rem;
+      border-top: 1px solid var(--wa-color-border-default, #ddd);
+      background: var(--wa-color-surface-raised, #fff);
+      display: flex;
+      gap: 0.5rem;
+      align-items: flex-end;
+    }
+
+    #msg-input {
+      flex: 1;
+      --wa-input-border-radius: 1.25rem;
+    }
+  </style>
+</head>
+<body>
+<div id="app">
+
+  <!-- Key gate -->
+  <div id="key-gate">
+    <div class="inner">
+      <h2 style="margin:0">WebAwesome chat</h2>
+      <p style="margin:0;font-size:0.875rem;color:var(--wa-color-text-quiet,#666)">
+        Paste your <a href="https://openrouter.ai/keys" target="_blank">OpenRouter API key</a>.
+        Stored in localStorage only.
+      </p>
+      <wa-input id="key-input" type="password" placeholder="sk-or-v1-…" clearable></wa-input>
+      <wa-button id="key-btn" variant="brand" disabled>Save key &amp; start chatting</wa-button>
+    </div>
+  </div>
+
+  <!-- Chat UI -->
+  <div id="chat">
+    <div id="chat-header">
+      <wa-select id="model-select" size="s" placeholder="Loading models…"></wa-select>
+      <wa-button id="clear-btn" size="s" appearance="plain">clear</wa-button>
+      <wa-button id="key-reset-btn" size="s" appearance="plain">key</wa-button>
+    </div>
+
+    <div id="messages">
+      <div id="empty-state">Send a message to start.</div>
+    </div>
+
+    <div id="input-bar">
+      <wa-textarea
+        id="msg-input"
+        placeholder="Message…"
+        rows="2"
+        resize="none"
+        style="flex:1;--wa-input-border-radius:1.25rem"
+      ></wa-textarea>
+      <wa-button id="send-btn" variant="brand" disabled>Send</wa-button>
+    </div>
+  </div>
+
+</div>
+
+<script type="module">
+import { streamText } from 'ai'
+import { createOpenAI } from '@ai-sdk/openai'
+
+// ── State ────────────────────────────────────────────────
+let apiKey = localStorage.getItem('or_key') || ''
+let currentModel = 'openrouter/free'
+let messages = []       // { role, content }
+let streaming = false
+let abortCtrl = null
+
+// ── DOM refs ─────────────────────────────────────────────
+const keyGate    = document.getElementById('key-gate')
+const chatEl     = document.getElementById('chat')
+const keyInput   = document.getElementById('key-input')
+const keyBtn     = document.getElementById('key-btn')
+const modelSel   = document.getElementById('model-select')
+const messagesEl = document.getElementById('messages')
+const emptyState = document.getElementById('empty-state')
+const msgInput   = document.getElementById('msg-input')
+const sendBtn    = document.getElementById('send-btn')
+const clearBtn   = document.getElementById('clear-btn')
+const keyResetBtn= document.getElementById('key-reset-btn')
+
+// ── Key gate ─────────────────────────────────────────────
+keyInput.addEventListener('wa-input', () => {
+  keyBtn.disabled = !keyInput.value.trim()
+})
+keyInput.addEventListener('keydown', e => {
+  if (e.key === 'Enter' && keyInput.value.trim()) saveKey(keyInput.value.trim())
+})
+keyBtn.addEventListener('click', () => saveKey(keyInput.value.trim()))
+
+function saveKey(k) {
+  apiKey = k
+  localStorage.setItem('or_key', k)
+  showChat()
+}
+
+function showGate() {
+  keyGate.style.display = 'flex'
+  chatEl.classList.remove('active')
+}
+
+function showChat() {
+  keyGate.style.display = 'none'
+  chatEl.classList.add('active')
+  loadModels()
+}
+
+keyResetBtn.addEventListener('click', () => {
+  localStorage.removeItem('or_key')
+  apiKey = ''
+  messages = []
+  renderMessages()
+  showGate()
+})
+
+// ── Models ───────────────────────────────────────────────
+async function loadModels() {
+  modelSel.innerHTML = '<wa-option value="">Loading…</wa-option>'
+  try {
+    const res = await fetch('https://openrouter.ai/api/v1/models', {
+      headers: { Authorization: `Bearer ${apiKey}` }
+    })
+    const json = await res.json()
+    const models = (json.data || [])
+      .filter(m => m.architecture?.modality?.includes('text'))
+      .map(m => {
+        const p = parseFloat(m.pricing?.prompt ?? '0')
+        const c = parseFloat(m.pricing?.completion ?? '0')
+        const price = Math.max(0, p + c) * 1_000_000
+        return { id: m.id, name: m.name, price }
+      })
+      .sort((a, b) => a.price - b.price)
+
+    modelSel.innerHTML = ''
+    for (const m of models) {
+      const opt = document.createElement('wa-option')
+      opt.value = m.id
+      const priceStr = m.price === 0 ? 'free' : m.price < 0.1 ? `$${m.price.toFixed(3)}/1M` : `$${m.price.toFixed(2)}/1M`
+      opt.textContent = `${m.name} — ${priceStr}`
+      modelSel.appendChild(opt)
+    }
+
+    const hasFree = models.find(m => m.id === 'openrouter/free')
+    currentModel = hasFree ? 'openrouter/free' : (models[0]?.id ?? '')
+    modelSel.value = currentModel
+  } catch (e) {
+    modelSel.innerHTML = `<wa-option value="">Error: ${e.message}</wa-option>`
+  }
+}
+
+modelSel.addEventListener('wa-change', () => { if (modelSel.value) currentModel = modelSel.value })
+modelSel.addEventListener('change', () => { if (modelSel.value) currentModel = modelSel.value })
+
+// ── Messages ─────────────────────────────────────────────
+function renderMessages() {
+  emptyState.style.display = messages.length ? 'none' : 'block'
+
+  // remove all existing rows
+  messagesEl.querySelectorAll('.msg-row').forEach(el => el.remove())
+
+  for (let i = 0; i < messages.length; i++) {
+    const msg = messages[i]
+    const row = document.createElement('div')
+    row.className = `msg-row ${msg.role}`
+    row.dataset.index = i
+
+    if (msg.role === 'assistant') {
+      const avatar = document.createElement('wa-avatar')
+      avatar.label = 'AI'
+      avatar.style.setProperty('--size', '2rem')
+      const icon = document.createElement('wa-icon')
+      icon.setAttribute('slot', 'icon')
+      icon.name = 'sparkles'
+      avatar.appendChild(icon)
+      row.appendChild(avatar)
+    }
+
+    const bubble = document.createElement('div')
+    bubble.className = `bubble ${msg.role}`
+    bubble.textContent = msg.content
+
+    if (msg.role === 'assistant' && streaming && i === messages.length - 1) {
+      const cur = document.createElement('span')
+      cur.className = 'cursor'
+      bubble.appendChild(cur)
+    }
+
+    row.appendChild(bubble)
+
+    if (msg.role === 'user') {
+      const avatar = document.createElement('wa-avatar')
+      avatar.label = 'You'
+      avatar.style.setProperty('--size', '2rem')
+      const icon = document.createElement('wa-icon')
+      icon.setAttribute('slot', 'icon')
+      icon.name = 'user'
+      avatar.appendChild(icon)
+      row.appendChild(avatar)
+    }
+
+    messagesEl.appendChild(row)
+  }
+
+  messagesEl.scrollTop = messagesEl.scrollHeight
+}
+
+function updateLastBubble(content) {
+  const rows = messagesEl.querySelectorAll('.msg-row')
+  const last = rows[rows.length - 1]
+  if (!last) return
+  const bubble = last.querySelector('.bubble')
+  if (!bubble) return
+  // clear and re-set text (keep cursor span)
+  bubble.childNodes.forEach(n => { if (n.nodeType === Node.TEXT_NODE) n.remove() })
+  bubble.insertBefore(document.createTextNode(content), bubble.querySelector('.cursor') || null)
+}
+
+// ── Send ─────────────────────────────────────────────────
+clearBtn.addEventListener('click', () => {
+  messages = []
+  renderMessages()
+})
+
+msgInput.addEventListener('input', updateSendBtn)
+// wa-textarea shadow DOM eats keydown — listen on the inner textarea
+msgInput.addEventListener('wa-ready', () => {
+  const inner = msgInput.shadowRoot?.querySelector('textarea')
+  if (inner) inner.addEventListener('keydown', e => {
+    if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSend() }
+  })
+})
+// fallback: also listen on host in case wa-ready already fired
+msgInput.shadowRoot?.querySelector('textarea')?.addEventListener('keydown', e => {
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSend() }
+})
+sendBtn.addEventListener('click', () => {
+  if (streaming) stopStream()
+  else handleSend()
+})
+
+function updateSendBtn() {
+  const hasText = msgInput.value?.trim()
+  sendBtn.disabled = !streaming && !hasText
+  sendBtn.textContent = streaming ? 'Stop' : 'Send'
+  sendBtn.variant = streaming ? 'danger' : 'brand'
+}
+
+function stopStream() {
+  abortCtrl?.abort()
+}
+
+async function handleSend() {
+  const text = msgInput.value?.trim()
+  if (!text || streaming) return
+  msgInput.value = ''
+  updateSendBtn()
+
+  messages.push({ role: 'user', content: text })
+  const assistantMsg = { role: 'assistant', content: '' }
+  messages.push(assistantMsg)
+  streaming = true
+  updateSendBtn()
+  renderMessages()
+
+  abortCtrl = new AbortController()
+
+  try {
+    const openrouter = createOpenAI({
+      baseURL: 'https://openrouter.ai/api/v1',
+      apiKey,
+      headers: { 'HTTP-Referer': location.href, 'X-Title': 'webawesome-chat-artifact' },
+    })
+
+    const result = streamText({
+      model: openrouter(currentModel),
+      messages: messages.slice(0, -1),
+      abortSignal: abortCtrl.signal,
+    })
+
+    for await (const delta of result.textStream) {
+      assistantMsg.content += delta
+      updateLastBubble(assistantMsg.content)
+      messagesEl.scrollTop = messagesEl.scrollHeight
+    }
+  } catch (e) {
+    if (e?.name !== 'AbortError') {
+      assistantMsg.content = `Error: ${e?.message ?? e}`
+      updateLastBubble(assistantMsg.content)
+    }
+  } finally {
+    streaming = false
+    abortCtrl = null
+    renderMessages() // re-render to drop cursor
+    updateSendBtn()
+  }
+}
+
+// ── Boot ─────────────────────────────────────────────────
+if (apiKey) {
+  showChat()
+} else {
+  showGate()
+}
+</script>
+</body>
+</html>
