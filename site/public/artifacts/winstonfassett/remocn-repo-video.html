@@ -43,7 +43,7 @@
   <div id="root"></div>
   <p class="note">
     Components adapted from <strong style="color:#94a3b8">remocn.dev</strong> source via registry API (no shadcn CLI) ·
-    Typewriter · StaggeredFadeUp · MatrixDecode · AnimatedBarChart · running in-browser via Remotion Player + esm.sh/tsx
+    Typewriter · StaggeredFadeUp · MatrixDecode · AnimatedBarChart · EcosystemConstellation · InfiniteBentoPan · running in-browser via Remotion Player + esm.sh/tsx
   </p>
 
 <script type="text/tsx">
@@ -157,6 +157,222 @@ function AnimatedBarChart({ data, labels, width = 860, height = 340, barColor = 
         )
       })}
     </svg>
+  )
+}
+
+// ─── remocn: EcosystemConstellation ─────────────────────────────────────────
+function ReactMark() {
+  return <svg viewBox="0 0 24 24" width={28} height={28}><circle cx="12" cy="12" r="2.5" fill="#61dafb"/><ellipse cx="12" cy="12" rx="10" ry="4" fill="none" stroke="#61dafb" strokeWidth="1.2"/><ellipse cx="12" cy="12" rx="10" ry="4" fill="none" stroke="#61dafb" strokeWidth="1.2" transform="rotate(60 12 12)"/><ellipse cx="12" cy="12" rx="10" ry="4" fill="none" stroke="#61dafb" strokeWidth="1.2" transform="rotate(120 12 12)"/></svg>
+}
+function VueMark() {
+  return <svg viewBox="0 0 24 24" width={28} height={28}><path fill="#42b883" d="M12 21L1 3h4.5L12 14.5 18.5 3H23z"/><path fill="#35495e" d="M12 21l-4.5-8h3L12 16l1.5-3h3z"/></svg>
+}
+function SolidMark() {
+  return <svg viewBox="0 0 24 24" width={28} height={28}><path fill="#446b9e" d="M2 6l10-4 10 4-10 4z"/><path fill="#53a3db" d="M2 6l10 4v8L2 14z"/><path fill="#2c5f8a" d="M22 6L12 10v8l10-4z"/></svg>
+}
+function PreactMark() {
+  return <svg viewBox="0 0 24 24" width={26} height={26}><polygon points="12,2 22,19 2,19" fill="none" stroke="#673ab8" strokeWidth="2"/><polygon points="12,7 18,17 6,17" fill="#673ab8"/></svg>
+}
+function ThreeMark() {
+  return <svg viewBox="0 0 24 24" width={26} height={26}><path fill="#fff" d="M3 20L12 4l9 16H3zm3-2h12l-6-10.5L6 18z"/></svg>
+}
+function D3Mark() {
+  return <svg viewBox="0 0 24 24" width={26} height={26}><path fill="#f9a03c" d="M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4zM14 14h6v6h-6z" opacity="0.8"/><path fill="#f9a03c" d="M10 7h4M7 10v4M17 10v4M10 17h4" stroke="#f9a03c" strokeWidth="2"/></svg>
+}
+function AlpineMark() {
+  return <svg viewBox="0 0 24 24" width={26} height={26}><path fill="#77c1d2" d="M2 18L8 6l4 8 4-8 6 12H2z"/></svg>
+}
+function RemotionMark() {
+  return <svg viewBox="0 0 24 24" width={26} height={26}><circle cx="12" cy="12" r="10" fill="#fff" opacity="0.1"/><polygon points="9,7 19,12 9,17" fill="#fff"/></svg>
+}
+
+const FRAMEWORK_SATELLITES = [
+  { Logo: ReactMark,   bg: '#0e1a2b', label: 'React' },
+  { Logo: VueMark,     bg: '#0d1f17', label: 'Vue' },
+  { Logo: SolidMark,   bg: '#0d1829', label: 'Solid' },
+  { Logo: PreactMark,  bg: '#1a0f2e', label: 'Preact' },
+  { Logo: ThreeMark,   bg: '#111', label: 'Three.js' },
+  { Logo: D3Mark,      bg: '#1a1200', label: 'D3' },
+  { Logo: AlpineMark,  bg: '#0d1e22', label: 'Alpine' },
+  { Logo: RemotionMark,bg: '#1a0a1a', label: 'Remotion' },
+]
+
+function SceneConstellation() {
+  const frame = useCurrentFrame()
+  const { fps } = useVideoConfig()
+  const count = 8
+  const cx = 480, cy = 270
+  const pulse = (Math.sin(frame / 12) + 1) / 2
+  const centerScale = 1 + pulse * 0.06
+  const accentColor = '#6366f1'
+
+  const satellites = FRAMEWORK_SATELLITES.map((brand, i) => {
+    const sp = spring({ frame: frame - i * 4, fps, config: { mass: 1.1, damping: 16, stiffness: 70 }, durationInFrames: 50 })
+    const radiusFactor = interpolate(sp, [0, 1], [8, 1])
+    const rX = 200 + i * 8, rY = 155 + i * 6
+    const angularSpeed = 0.010 - i * 0.0007
+    const angle = (i / count) * Math.PI * 2 + frame * angularSpeed
+    const x = cx + Math.cos(angle) * rX * radiusFactor
+    const y = cy + Math.sin(angle) * rY * radiusFactor
+    const activeIdx = Math.floor(frame / 25) % count
+    const isActive = activeIdx === i
+    const localFrame = frame - Math.floor(frame / 25) * 25
+    const lineOpacity = isActive
+      ? interpolate(localFrame, [0, 6, 19, 25], [0.1, 0.8, 0.8, 0.1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' })
+      : 0.1
+    const satScale = isActive
+      ? interpolate(localFrame, [0, 6, 19, 25], [1, 1.15, 1.15, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' })
+      : 1
+    return { ...brand, x, y, lineOpacity, satScale, visible: sp > 0.02 }
+  })
+
+  const titleOpacity = interpolate(frame, [0, 15], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' })
+
+  return (
+    <AbsoluteFill style={{ background: 'radial-gradient(ellipse at center, #14101e 0%, #05030a 75%)', overflow: 'hidden' }}>
+      {/* Title */}
+      <div style={{ position: 'absolute', top: 36, left: 0, right: 0, textAlign: 'center', opacity: titleOpacity }}>
+        <div style={{ color: '#475569', fontSize: 13, letterSpacing: '0.1em', textTransform: 'uppercase', fontFamily: 'system-ui' }}>View · Power · Ecosystem</div>
+      </div>
+      <svg width="100%" height="100%" viewBox="0 0 960 540" style={{ position: 'absolute', inset: 0 }}>
+        {satellites.map((s, i) => s.visible && (
+          <line key={i} x1={cx} y1={cy} x2={s.x} y2={s.y} stroke={accentColor} strokeWidth={1.5} strokeLinecap="round" opacity={s.lineOpacity} />
+        ))}
+        <circle cx={cx} cy={cy} r={68 + pulse * 8} fill={accentColor} opacity={0.1} />
+        <circle cx={cx} cy={cy} r={48 + pulse * 4} fill={accentColor} opacity={0.18} />
+      </svg>
+      {/* Center node */}
+      <div style={{
+        position: 'absolute', left: cx, top: cy, width: 90, height: 90,
+        marginLeft: -45, marginTop: -45, borderRadius: 22,
+        background: `linear-gradient(180deg, ${accentColor} 0%, ${accentColor}cc 100%)`,
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        color: 'white', fontWeight: 800, fontSize: 20, letterSpacing: '-0.03em',
+        transform: `scale(${centerScale})`,
+        boxShadow: `0 0 60px ${accentColor}66, inset 0 1px 0 rgba(255,255,255,0.3)`,
+        border: '1px solid rgba(255,255,255,0.15)', fontFamily: 'system-ui',
+        textAlign: 'center', lineHeight: 1.2,
+      }}>
+        esm<br/>.sh
+      </div>
+      {/* Satellites */}
+      {satellites.map((s, i) => {
+        if (!s.visible) return null
+        const Logo = s.Logo
+        return (
+          <div key={i} style={{
+            position: 'absolute', left: s.x, top: s.y,
+            width: 56, height: 56, marginLeft: -28, marginTop: -28,
+            borderRadius: 14, background: s.bg,
+            border: `1px solid rgba(255,255,255,0.1)`,
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            transform: `scale(${s.satScale})`,
+            boxShadow: '0 4px 20px rgba(0,0,0,0.5)',
+            flexDirection: 'column', gap: 2,
+          }}>
+            <Logo />
+            <div style={{ color: 'rgba(255,255,255,0.5)', fontSize: 8, fontFamily: 'system-ui', letterSpacing: '0.05em' }}>{s.label}</div>
+          </div>
+        )
+      })}
+    </AbsoluteFill>
+  )
+}
+
+// ─── remocn: InfiniteBentoPan ────────────────────────────────────────────────
+function noise(i: number, frame: number) { return Math.sin(frame / 30 + i) * 0.5 + 0.5 }
+
+
+// Preview images from /previews/ — real screenshots of artifacts in this repo
+const PREVIEW_IMGS = [
+  'winstonfassett-react-three-fiber-esm-html.png',
+  'winstonfassett-d3-force-esm-html.png',
+  'winstonfassett-chartjs-html.png',
+  'winstonfassett-canvas-life-html.png',
+  'winstonfassett-three-esm-html.png',
+  'winstonfassett-plotly-html.png',
+  'winstonfassett-leaflet-map-html.png',
+  'winstonfassett-vega-lite-html.png',
+  'examples-simonw-tools-animated-word-cloud-html.png',
+  'winstonfassett-gsap-motion-html.png',
+  'winstonfassett-mermaid-esm-html.png',
+  'winstonfassett-remotion-player-esm-html.png',
+  'examples-simonw-tools-audio-spectrum-html.png',
+  'winstonfassett-motion-esm-html.png',
+  'winstonfassett-anime-html.png',
+  'examples-simonw-tools-gradient-card-html.png',
+  'winstonfassett-reveal-deck-html.png',
+  'winstonfassett-impress-deck-html.png',
+  'examples-simonw-tools-minesweeper-html.png',
+  'winstonfassett-solid-html-esm-html.png',
+  'examples-simonw-tools-sqlite-wasm-html.png',
+  'winstonfassett-pglite-esm-html.png',
+  'examples-html-anything-dashboard-html.png',
+  'examples-html-anything-deck-graphify-dark-html.png',
+]
+
+// Layout: rows of cards with varying widths, all height 220
+const GAP = 16
+const ROW_H = 220
+const CARD_LAYOUT = [
+  // row 0 y=60
+  [{ w: 380 }, { w: 280 }, { w: 340 }, { w: 380 }, { w: 280 }, { w: 340 }],
+  // row 1 y=296
+  [{ w: 280 }, { w: 380 }, { w: 340 }, { w: 280 }, { w: 380 }, { w: 340 }],
+  // row 2 y=532
+  [{ w: 340 }, { w: 280 }, { w: 380 }, { w: 340 }, { w: 280 }, { w: 380 }],
+  // row 3 y=768
+  [{ w: 380 }, { w: 340 }, { w: 280 }, { w: 380 }, { w: 340 }, { w: 280 }],
+]
+
+const BENTO_CARDS = (() => {
+  const cards: any[] = []
+  let imgIdx = 0
+  CARD_LAYOUT.forEach((row, rowIdx) => {
+    const y = 60 + rowIdx * (ROW_H + GAP)
+    let x = 60
+    row.forEach((col) => {
+      cards.push({ x, y, w: col.w, h: ROW_H, img: PREVIEW_IMGS[imgIdx % PREVIEW_IMGS.length] })
+      imgIdx++
+      x += col.w + GAP
+    })
+  })
+  return cards
+})()
+
+function BentoCard({ card }: any) {
+  return (
+    <div style={{
+      position: 'absolute', left: card.x, top: card.y, width: card.w, height: card.h,
+      borderRadius: 12, overflow: 'hidden',
+      border: '1px solid rgba(255,255,255,0.08)',
+      boxShadow: '0 4px 24px rgba(0,0,0,0.5)',
+      background: '#0a0a0a',
+    }}>
+      <img
+        src={`/previews/${card.img}`}
+        style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top left', display: 'block' }}
+      />
+    </div>
+  )
+}
+
+function SceneBento() {
+  const frame = useCurrentFrame()
+  const { width, height } = useVideoConfig()
+  const SUPER_W = 2200, SUPER_H = 1060
+  const maxPanX = SUPER_W - width, maxPanY = SUPER_H - height
+  const panX = interpolate(frame, [0, 160], [0, maxPanX], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' })
+  const panY = interpolate(frame, [0, 160], [0, maxPanY], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' })
+  const fadeIn = interpolate(frame, [0, 20], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' })
+
+  return (
+    <AbsoluteFill style={{ background: '#080812', overflow: 'hidden', opacity: fadeIn }}>
+      <div style={{ position: 'absolute', width: SUPER_W, height: SUPER_H, transform: `translate(${-panX}px, ${-panY}px)` }}>
+        {BENTO_CARDS.map((card, i) => <BentoCard key={i} card={card} />)}
+      </div>
+      <div style={{ position: 'absolute', inset: 0, background: 'radial-gradient(ellipse at center, transparent 40%, #080812 92%)', pointerEvents: 'none' }} />
+    </AbsoluteFill>
   )
 }
 
@@ -381,17 +597,18 @@ function SceneOutro() {
 
 // ─── Root composition ─────────────────────────────────────────────────────────
 const FPS = 30
-// Scene timing (frames): Title 0–119, Idea 120–239, Rule 240–349, Chart 350–499, Outro 500–599
-const TOTAL = 600
+// 0–119 Title, 120–239 Constellation, 240–349 Rule, 350–499 Chart, 500–659 Bento, 660–759 Outro
+const TOTAL = 760
 
 function Video() {
   return (
     <AbsoluteFill>
-      <Sequence from={0} durationInFrames={120}><SceneTitle /></Sequence>
-      <Sequence from={120} durationInFrames={120}><SceneIdea /></Sequence>
+      <Sequence from={0}   durationInFrames={120}><SceneTitle /></Sequence>
+      <Sequence from={120} durationInFrames={120}><SceneConstellation /></Sequence>
       <Sequence from={240} durationInFrames={110}><SceneRule /></Sequence>
       <Sequence from={350} durationInFrames={150}><SceneChart /></Sequence>
-      <Sequence from={500} durationInFrames={100}><SceneOutro /></Sequence>
+      <Sequence from={500} durationInFrames={160}><SceneBento /></Sequence>
+      <Sequence from={660} durationInFrames={100}><SceneOutro /></Sequence>
     </AbsoluteFill>
   )
 }
