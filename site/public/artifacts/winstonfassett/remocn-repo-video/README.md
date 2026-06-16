@@ -22,8 +22,16 @@ npm run render
 
 Output: `out/remocn-repo-video.mp4`
 
-## Notes
+## Preview images
 
-- Component files may need manual cleanup — imports are generated conservatively.
-- Any assets referenced via absolute paths (e.g. `/previews/`) need to be
-  copied into `public/` or paths updated to `staticFile('...')`.
+The bento scene uses real artifact screenshots from the canonical
+`site/public/previews/` dir. They are **not committed here** — `npm start`
+and `npm run render` auto-copy the needed PNGs into `public/previews/` via
+`scripts/copy-previews.mjs` (a `prestart`/`prerender` hook). To copy manually:
+
+```bash
+npm run previews
+```
+
+The script parses `PREVIEW_IMGS` out of `src/components/InfiniteBentoPan.tsx`,
+so it stays in sync if you change which previews the scene uses.

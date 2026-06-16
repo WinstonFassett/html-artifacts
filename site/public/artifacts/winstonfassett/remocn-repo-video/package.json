@@ -3,11 +3,14 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "previews": "node scripts/copy-previews.mjs",
+    "prestart": "node scripts/copy-previews.mjs",
+    "prerender": "node scripts/copy-previews.mjs",
     "start": "npx remotion studio",
-    "render": "npx remotion render HtmlArtifacts out/remocn-repo-video.mp4",
-    "build": "npx remotion render HtmlArtifacts out/${baseName}.mp4"
+    "render": "npx remotion render HtmlArtifacts out/remocn-repo-video.mp4"
   },
   "dependencies": {
+    "@remotion/google-fonts": "^4.0.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "remotion": "^4.0.0"

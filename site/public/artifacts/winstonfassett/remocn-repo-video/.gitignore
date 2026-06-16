@@ -1,0 +1,3 @@
+# Preview PNGs are copied from the canonical site/public/previews/ by
+# scripts/copy-previews.mjs (runs via prestart/prerender). Not committed.
+public/previews/
