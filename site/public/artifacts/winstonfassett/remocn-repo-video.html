@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HTML Artifacts — Remotion/remocn Video</title>
+  <script type="importmap">
+  {
+    "imports": {
+      "react": "https://esm.sh/react@19",
+      "react/jsx-runtime": "https://esm.sh/react@19/jsx-runtime",
+      "react-dom": "https://esm.sh/react-dom@19",
+      "react-dom/client": "https://esm.sh/react-dom@19/client",
+      "remotion": "https://esm.sh/remotion@4?external=react,react-dom",
+      "remotion/no-react": "https://esm.sh/remotion@4/no-react?external=react,react-dom",
+      "@remotion/player": "https://esm.sh/@remotion/player@4?external=react,react-dom,remotion"
+    }
+  }
+  </script>
+  <script type="module" src="https://esm.sh/tsx"></script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: #080812;
+      color: #e2e8f0;
+      font-family: system-ui, -apple-system, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+      padding: 1.25rem 1rem 2rem;
+      gap: 1rem;
+    }
+    h1 { font-size: 1.4rem; font-weight: 600; color: #f1f5f9; letter-spacing: -0.02em; }
+    .subtitle { color: #64748b; font-size: 0.85rem; }
+    #root { width: 960px; max-width: 100%; border-radius: 12px; overflow: hidden; box-shadow: 0 0 0 1px rgba(255,255,255,0.08), 0 32px 64px rgba(0,0,0,0.6); }
+    .note { color: #475569; font-size: 0.78rem; max-width: 960px; text-align: center; line-height: 1.6; }
+  </style>
+</head>
+<body>
+  <h1>HTML Artifacts</h1>
+  <p class="subtitle">A Remotion video built with remocn components — adapted from source, no CLI</p>
+  <div id="root"></div>
+  <p class="note">
+    Components adapted from <strong style="color:#94a3b8">remocn.dev</strong> source via registry API (no shadcn CLI) ·
+    Typewriter · StaggeredFadeUp · MatrixDecode · AnimatedBarChart · running in-browser via Remotion Player + esm.sh/tsx
+  </p>
+
+<script type="text/tsx">
+import { createRoot } from 'react-dom/client'
+import { Player } from '@remotion/player'
+import {
+  useCurrentFrame, useVideoConfig, interpolate, spring, random,
+  AbsoluteFill, Sequence
+} from 'remotion'
+
+// ─── remocn: Typewriter ──────────────────────────────────────────────────────
+function Typewriter({ text, cursor = true, charsPerSecond = 20, speed = 1, fontSize = 48, color = '#f1f5f9', cursorColor = '#6366f1', fontWeight = 700 }) {
+  const frame = useCurrentFrame() * speed
+  const { fps } = useVideoConfig()
+  const charsToRevealOver = (text.length / charsPerSecond) * fps
+  const revealed = Math.floor(
+    interpolate(frame, [0, charsToRevealOver], [0, text.length], {
+      extrapolateLeft: 'clamp', extrapolateRight: 'clamp'
+    })
+  )
+  const visibleText = text.substring(0, revealed)
+  const isCursorVisible = Math.floor((frame / fps) * 2) % 2 === 0
+  return (
+    <span style={{ fontSize, fontWeight, color, letterSpacing: '-0.03em', fontFamily: 'system-ui, sans-serif', whiteSpace: 'pre' }}>
+      {visibleText}
+      {cursor && (
+        <span style={{
+          display: 'inline-block', width: '0.08em', height: '1em',
+          marginLeft: '0.04em', verticalAlign: 'text-bottom',
+          background: cursorColor, opacity: isCursorVisible ? 1 : 0
+        }} />
+      )}
+    </span>
+  )
+}
+
+// ─── remocn: StaggeredFadeUp ─────────────────────────────────────────────────
+function StaggeredFadeUp({ text, staggerDelay = 4, distance = 20, fontSize = 36, color = '#94a3b8', fontWeight = 500, speed = 1 }) {
+  const frame = useCurrentFrame() * speed
+  const words = text.split(' ')
+  return (
+    <span style={{ fontSize, fontWeight, color, letterSpacing: '-0.02em', fontFamily: 'system-ui, sans-serif' }}>
+      {words.map((word, i) => {
+        const local = frame - i * staggerDelay
+        const opacity = interpolate(local, [0, 12], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' })
+        const y = interpolate(local, [0, 12], [distance, 0], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' })
+        return (
+          <span key={i} style={{ display: 'inline-block', marginRight: '0.28em', opacity, transform: `translateY(${y}px)` }}>
+            {word}
+          </span>
+        )
+      })}
+    </span>
+  )
+}
+
+// ─── remocn: MatrixDecode ────────────────────────────────────────────────────
+function MatrixDecode({ text, charset = '!@#$%^&*()_+-=<>?/|{}[]', fontSize = 40, color = '#22c55e', fontWeight = 600, revealDuration = 50, speed = 1 }) {
+  const frame = useCurrentFrame() * speed
+  let output = ''
+  for (let i = 0; i < text.length; i++) {
+    const revealFrame = (i / Math.max(text.length, 1)) * revealDuration
+    if (text[i] === ' ') { output += ' '; continue }
+    if (frame >= revealFrame) { output += text[i] }
+    else {
+      const r = random(`${i}-${Math.floor(frame / 2)}`)
+      output += charset[Math.floor(r * charset.length)]
+    }
+  }
+  return (
+    <span style={{ fontSize, fontWeight, color, letterSpacing: '0.04em', whiteSpace: 'pre', fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace' }}>
+      {output}
+    </span>
+  )
+}
+
+// ─── remocn: AnimatedBarChart ────────────────────────────────────────────────
+function AnimatedBarChart({ data, labels, width = 860, height = 340, barColor = '#6366f1', background = 'transparent', gap = 18, staggerFrames = 5, speed = 1 }) {
+  const frame = useCurrentFrame() * speed
+  const { fps } = useVideoConfig()
+  const padding = 40
+  const labelSpace = labels ? 36 : 0
+  const innerWidth = width - padding * 2
+  const innerHeight = height - padding * 2 - labelSpace
+  const max = Math.max(...data)
+  const barWidth = (innerWidth - gap * (data.length - 1)) / data.length
+  const baseY = padding + innerHeight
+
+  return (
+    <svg width={width} height={height} viewBox={`0 0 ${width} ${height}`} style={{ background }}>
+      <line x1={padding} x2={padding + innerWidth} y1={baseY} y2={baseY} stroke="#1e293b" strokeWidth={2} />
+      {data.map((value, index) => {
+        const targetHeight = (value / max) * innerHeight
+        const x = padding + index * (barWidth + gap)
+        const scaleY = spring({
+          frame: frame - index * staggerFrames,
+          fps, config: { damping: 12, stiffness: 100, mass: 0.8 }, from: 0, to: 1
+        })
+        const barH = targetHeight * scaleY
+        const by = baseY - barH
+        return (
+          <g key={index}>
+            <rect x={x} y={by} width={barWidth} height={barH} rx={5} fill={barColor} style={{ filter: `drop-shadow(0 4px 12px ${barColor}66)` }} />
+            {labels && labels[index] && (
+              <text x={x + barWidth / 2} y={baseY + 26} fill="#64748b" fontSize={13} textAnchor="middle" opacity={scaleY} style={{ fontFamily: 'system-ui, sans-serif' }}>
+                {labels[index]}
+              </text>
+            )}
+          </g>
+        )
+      })}
+    </svg>
+  )
+}
+
+// ─── Shared layout ────────────────────────────────────────────────────────────
+function Slide({ bg = '#080812', children }: any) {
+  return (
+    <AbsoluteFill style={{ background: bg, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: 60 }}>
+      {children}
+    </AbsoluteFill>
+  )
+}
+
+function FadeIn({ from = 0, children }: any) {
+  const frame = useCurrentFrame()
+  const opacity = interpolate(frame, [from, from + 15], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' })
+  return <div style={{ opacity }}>{children}</div>
+}
+
+// ─── Scene 1: Title (frames 0–119) ───────────────────────────────────────────
+function SceneTitle() {
+  const frame = useCurrentFrame()
+  const taglineDelay = 55
+  return (
+    <Slide bg="#080812">
+      {/* Subtle grid bg */}
+      <div style={{
+        position: 'absolute', inset: 0, opacity: 0.07,
+        backgroundImage: 'linear-gradient(rgba(99,102,241,0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(99,102,241,0.5) 1px, transparent 1px)',
+        backgroundSize: '48px 48px'
+      }} />
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 24, position: 'relative' }}>
+        {/* Badge */}
+        <FadeIn from={0}>
+          <div style={{ background: 'rgba(99,102,241,0.15)', border: '1px solid rgba(99,102,241,0.4)', borderRadius: 999, padding: '4px 16px', fontSize: 13, color: '#818cf8', letterSpacing: '0.08em', textTransform: 'uppercase' }}>
+            HTML · ESM · No Build
+          </div>
+        </FadeIn>
+        {/* Typewriter headline */}
+        <div style={{ textAlign: 'center' }}>
+          <Typewriter text="HTML Artifacts" fontSize={88} charsPerSecond={14} color="#f1f5f9" cursorColor="#6366f1" />
+        </div>
+        {/* Staggered tagline */}
+        {frame >= taglineDelay && (
+          <Sequence from={taglineDelay} layout="none">
+            <div style={{ textAlign: 'center' }}>
+              <StaggeredFadeUp
+                text="Single files. Real superpowers. No build step."
+                fontSize={26}
+                color="#64748b"
+                staggerDelay={5}
+              />
+            </div>
+          </Sequence>
+        )}
+      </div>
+    </Slide>
+  )
+}
+
+// ─── Scene 2: The Idea (frames 120–239) ──────────────────────────────────────
+function SceneIdea() {
+  const frame = useCurrentFrame()
+  return (
+    <Slide bg="#06060f">
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 40, width: '100%', maxWidth: 760 }}>
+        <FadeIn from={0}>
+          <div style={{ color: '#475569', fontSize: 14, letterSpacing: '0.1em', textTransform: 'uppercase' }}>The question</div>
+        </FadeIn>
+        <FadeIn from={8}>
+          <div style={{ fontSize: 32, fontWeight: 700, color: '#f1f5f9', lineHeight: 1.35, letterSpacing: '-0.02em' }}>
+            Given a no-build target — one HTML file —<br />
+            <span style={{ color: '#6366f1' }}>what stack can you run?</span>
+          </div>
+        </FadeIn>
+        <FadeIn from={30}>
+          <div style={{ display: 'flex', gap: 16 }}>
+            {[
+              { label: 'View Layer', desc: 'React · Vue · Solid · Preact · Alpine · Lit', color: '#6366f1' },
+              { label: 'Power Layer', desc: 'Three.js · Remotion · D3 · SQLite · Charts · Maps', color: '#22c55e' },
+            ].map(({ label, desc, color }, i) => (
+              <Sequence key={i} from={i * 20} layout="none">
+                <div style={{
+                  flex: 1, background: 'rgba(255,255,255,0.03)', border: `1px solid ${color}33`,
+                  borderRadius: 12, padding: '20px 24px', display: 'flex', flexDirection: 'column', gap: 10
+                }}>
+                  <div style={{ color, fontSize: 13, fontWeight: 600, letterSpacing: '0.06em', textTransform: 'uppercase' }}>{label}</div>
+                  <div style={{ color: '#94a3b8', fontSize: 15, lineHeight: 1.5 }}>{desc}</div>
+                </div>
+              </Sequence>
+            ))}
+          </div>
+        </FadeIn>
+      </div>
+    </Slide>
+  )
+}
+
+// ─── Scene 3: The Rule (frames 240–349) ──────────────────────────────────────
+function SceneRule() {
+  const frame = useCurrentFrame()
+  return (
+    <Slide bg="#04080f">
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 36, alignItems: 'center', textAlign: 'center', maxWidth: 820 }}>
+        <FadeIn from={0}>
+          <div style={{ color: '#22c55e', fontSize: 13, letterSpacing: '0.1em', textTransform: 'uppercase', fontFamily: 'ui-monospace, monospace' }}>
+            The rule that cuts across everything
+          </div>
+        </FadeIn>
+        <div>
+          <MatrixDecode
+            text="Any runtime React library works via esm.sh"
+            fontSize={30}
+            color="#22c55e"
+            revealDuration={60}
+          />
+        </div>
+        {frame >= 65 && (
+          <Sequence from={65} layout="none">
+            <FadeIn from={0}>
+              <div style={{ display: 'flex', gap: 32 }}>
+                {[
+                  { label: '✗  Svelte', note: 'Compiler-required', color: '#ef4444' },
+                  { label: '✗  Solid TSX', note: 'babel-preset-solid needed', color: '#ef4444' },
+                  { label: '✓  Everything else', note: 'esm.sh + tsx', color: '#22c55e' },
+                ].map(({ label, note, color }, i) => (
+                  <Sequence key={i} from={i * 10} layout="none">
+                    <div style={{ background: 'rgba(255,255,255,0.03)', border: `1px solid ${color}33`, borderRadius: 10, padding: '14px 20px', minWidth: 200 }}>
+                      <div style={{ color, fontSize: 15, fontWeight: 600 }}>{label}</div>
+                      <div style={{ color: '#475569', fontSize: 13, marginTop: 6 }}>{note}</div>
+                    </div>
+                  </Sequence>
+                ))}
+              </div>
+            </FadeIn>
+          </Sequence>
+        )}
+      </div>
+    </Slide>
+  )
+}
+
+// ─── Scene 4: Stack popularity chart (frames 350–499) ─────────────────────────
+function SceneChart() {
+  return (
+    <Slide bg="#080812">
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 20, width: '100%', alignItems: 'center' }}>
+        <FadeIn from={0}>
+          <div style={{ color: '#64748b', fontSize: 13, letterSpacing: '0.08em', textTransform: 'uppercase' }}>
+            Starters in this repo by ecosystem
+          </div>
+        </FadeIn>
+        <FadeIn from={6}>
+          <AnimatedBarChart
+            data={[8, 5, 4, 3, 3, 2, 2, 2]}
+            labels={['React', 'Charts', 'Motion', 'Diagrams', 'Decks', 'Vue/Preact', '3D', 'Other']}
+            width={860}
+            height={330}
+            barColor="#6366f1"
+            staggerFrames={6}
+          />
+        </FadeIn>
+        <FadeIn from={40}>
+          <div style={{ display: 'flex', gap: 24 }}>
+            {[
+              { val: '31', label: 'Starters' },
+              { val: '216', label: 'Simon Willison tools' },
+              { val: '87', label: 'html-anything templates' },
+            ].map(({ val, label }, i) => (
+              <Sequence key={i} from={i * 12} layout="none">
+                <div style={{ textAlign: 'center' }}>
+                  <div style={{ fontSize: 36, fontWeight: 800, color: '#6366f1', letterSpacing: '-0.04em' }}>{val}</div>
+                  <div style={{ color: '#475569', fontSize: 13 }}>{label}</div>
+                </div>
+              </Sequence>
+            ))}
+          </div>
+        </FadeIn>
+      </div>
+    </Slide>
+  )
+}
+
+// ─── Scene 5: Outro (frames 500–599) ─────────────────────────────────────────
+function SceneOutro() {
+  const frame = useCurrentFrame()
+  return (
+    <Slide bg="#080812">
+      <div style={{
+        position: 'absolute', inset: 0, opacity: 0.06,
+        backgroundImage: 'radial-gradient(circle at 50% 50%, #6366f1 0%, transparent 70%)'
+      }} />
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 28, position: 'relative' }}>
+        <FadeIn from={0}>
+          <div style={{ fontSize: 14, color: '#475569', letterSpacing: '0.1em', textTransform: 'uppercase' }}>
+            Ship it in a single file
+          </div>
+        </FadeIn>
+        {frame >= 10 && (
+          <Sequence from={10} layout="none">
+            <StaggeredFadeUp
+              text="One HTML file. All the power."
+              fontSize={48}
+              color="#f1f5f9"
+              fontWeight={800}
+              staggerDelay={6}
+            />
+          </Sequence>
+        )}
+        {frame >= 50 && (
+          <Sequence from={50} layout="none">
+            <FadeIn from={0}>
+              <div style={{ color: '#6366f1', fontFamily: 'ui-monospace, monospace', fontSize: 18 }}>
+                html-artifacts.localhost:1355
+              </div>
+            </FadeIn>
+          </Sequence>
+        )}
+      </div>
+    </Slide>
+  )
+}
+
+// ─── Root composition ─────────────────────────────────────────────────────────
+const FPS = 30
+// Scene timing (frames): Title 0–119, Idea 120–239, Rule 240–349, Chart 350–499, Outro 500–599
+const TOTAL = 600
+
+function Video() {
+  return (
+    <AbsoluteFill>
+      <Sequence from={0} durationInFrames={120}><SceneTitle /></Sequence>
+      <Sequence from={120} durationInFrames={120}><SceneIdea /></Sequence>
+      <Sequence from={240} durationInFrames={110}><SceneRule /></Sequence>
+      <Sequence from={350} durationInFrames={150}><SceneChart /></Sequence>
+      <Sequence from={500} durationInFrames={100}><SceneOutro /></Sequence>
+    </AbsoluteFill>
+  )
+}
+
+createRoot(document.getElementById('root')!).render(
+  <Player
+    component={Video}
+    durationInFrames={TOTAL}
+    fps={FPS}
+    compositionWidth={960}
+    compositionHeight={540}
+    controls
+    loop
+    initialFrame={45}
+    acknowledgeRemotionLicense
+    style={{ width: '100%' }}
+  />
+)
+</script>
+</body>
+</html>
