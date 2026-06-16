@@ -1,2 +1,6 @@
 .DS_Store
 inspo/
+node_modules/
+out/
+.remotion/
+dist/
