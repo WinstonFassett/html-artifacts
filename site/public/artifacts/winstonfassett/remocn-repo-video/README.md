@@ -1,6 +1,7 @@
 # remocn-repo-video
 
-Generated from `remocn-repo-video.html` by `html-to-remotion.mjs`.
+Remotion port of the `remocn-repo-video.html` artifact — scaffolded from its
+TSX, then hand-wired into a renderable project (exports, imports, fonts, assets).
 
 ## Setup
 
