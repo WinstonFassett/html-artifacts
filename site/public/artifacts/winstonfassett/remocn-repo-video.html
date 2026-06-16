@@ -47,6 +47,7 @@
   </p>
 
 <script type="text/tsx">
+import React, { useRef } from 'react'
 import { createRoot } from 'react-dom/client'
 import { Player } from '@remotion/player'
 import {
@@ -395,20 +396,49 @@ function Video() {
   )
 }
 
-createRoot(document.getElementById('root')!).render(
-  <Player
-    component={Video}
-    durationInFrames={TOTAL}
-    fps={FPS}
-    compositionWidth={960}
-    compositionHeight={540}
-    controls
-    loop
-    initialFrame={45}
-    acknowledgeRemotionLicense
-    style={{ width: '100%' }}
-  />
-)
+function App() {
+  const playerRef = useRef(null)
+  const [started, setStarted] = React.useState(false)
+
+  const handleClick = (e) => {
+    if (!started) {
+      playerRef.current?.play(e)
+      setStarted(true)
+    }
+  }
+
+  return (
+    <div style={{ position: 'relative', width: '100%' }} onClickCapture={handleClick}>
+      <Player
+        ref={playerRef}
+        component={Video}
+        durationInFrames={TOTAL}
+        fps={FPS}
+        compositionWidth={960}
+        compositionHeight={540}
+        controls
+        loop
+        acknowledgeRemotionLicense
+        style={{ width: '100%' }}
+      />
+      {!started && (
+        <div style={{
+          position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center',
+          cursor: 'pointer', background: 'rgba(0,0,0,0.3)',
+        }}>
+          <div style={{
+            width: 64, height: 64, borderRadius: '50%', background: 'rgba(255,255,255,0.15)',
+            border: '2px solid rgba(255,255,255,0.4)', display: 'flex', alignItems: 'center', justifyContent: 'center'
+          }}>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="white"><polygon points="6,3 20,12 6,21"/></svg>
+          </div>
+        </div>
+      )}
+    </div>
+  )
+}
+
+createRoot(document.getElementById('root')!).render(<App />)
 </script>
 </body>
 </html>
