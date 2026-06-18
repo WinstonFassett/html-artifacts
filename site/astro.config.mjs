@@ -9,5 +9,10 @@ export default defineConfig({
   // full-text/Pagefind in v1 — kept simple, no per-artifact pages needed.
   vite: {
     plugins: [tailwindcss()],
+    server: {
+      headers: {
+        'Content-Security-Policy': "default-src * 'unsafe-inline' 'unsafe-eval' data: blob:",
+      },
+    },
   },
 });
