@@ -1,40 +1,52 @@
 ---
 name: html-artifacts
-description: Router for working with the HTML artifacts in this repo (single-file demos, stacks/starters, collections, and HTML-native video). Use when adding, adapting, harvesting, or rendering an artifact, or when asked which example/stack to start from. Routes to the relevant content area; if that area has its own SKILL.md, read and follow it.
+description: Find and reuse the HTML artifacts in this repo instead of building from scratch or grepping the tree. Use whenever a task needs a specific library/stack (React, Vue, Solid, Lit, Three.js, D3, GSAP, Mermaid, CodeMirror, Milkdown, PGlite, SQL.js, Leaflet, Plotly, etc.) or a generic artifact type (deck, dashboard, report, chat, social card, video, doc). Query the catalog with find.mjs; copy the closest match and adapt.
 ---
 
-# HTML artifacts — router
+# HTML artifacts — catalog router
 
-This repo collects and curates HTML artifacts: single-file demos, stack/starter
-recipes, and HTML-native video. When a task touches one of the areas below, **go to
-that area, and if it contains a `SKILL.md`, read and follow it before doing anything
-else** — the leaf skill is authoritative and may delegate to external tooling.
+This repo curates ~140 HTML artifacts. **Don't build a library setup from scratch and
+don't grep the tree — there is almost certainly an existing one to copy.** Query the
+catalog first.
 
-Keep this file thin. It only routes. Behavior lives in the area, not here.
+## Find what's here (one command, no file search)
 
-## Areas
+`artifacts.json` (`site/src/data/artifacts.json`) indexes every artifact with name,
+path, and tags. Query it with the bundled tool — run from this skill dir:
 
-Content lives under `site/public/artifacts/`. Most areas carry a `README.md` (read it
-for conventions); only areas that need to **override** default behavior carry a `SKILL.md`.
+```
+node find.mjs --libs            # all library/stack starters (the no-build setups)
+node find.mjs --types           # every artifact type (tag) with counts
+node find.mjs <term>...         # match name/tag/path, AND across terms  (e.g. react chat)
+node find.mjs --tag <tag>       # exact-tag filter, repeatable          (e.g. --tag 3d)
+node find.mjs --all
+```
 
-- **video** — HTML-native / programmatic video.
-  - `winstonfassett/hyperframes/` — harvested HeyGen Hyperframes compositions + a no-build
-    player & renderer. **Has a leaf skill:** `skills/html-artifacts/video/hyperframes/SKILL.md`.
-    Read it before generating or rendering Hyperframes video.
-  - `winstonfassett/remocn-repo-video/`, `winstonfassett/remotion-player-esm.html` — Remotion
-    (React) video. No leaf skill; see their files.
-- **stacks / starters** — `winstonfassett/standalone-*.html`, `*-esm.html`, chat starters,
-  reactive-framework demos. Self-contained; copy the closest one and adapt. No leaf skill.
-- **collections** — `simonw-tools/`, `html-anything/`. Curated external artifacts.
+Output is `NAME  PATH  [tags]`; paths are under `site/public/artifacts/`. Open the match,
+copy it, adapt. Use `find.mjs` instead of Grep/Glob for "what do we have for X".
 
-## How to route
+## Two axes to query along
 
-1. Identify the area from the task (video? a stack/starter? a collection?).
-2. `ls` that area; **if a `SKILL.md` exists there, read it and follow it.**
-3. Otherwise read the area's `README.md` and the nearest existing example, then adapt.
+1. **Library / stack** — a minimal working setup for a specific lib. Lives in
+   `winstonfassett/`, tagged `starter`. This is the no-search win: "want Solid?" →
+   `node find.mjs solid`; "Postgres in the browser?" → `node find.mjs pglite`;
+   "force graph?" → `node find.mjs d3`. These define the repo's three shapes:
+   single-file inline, ESM-importmap (`*-esm.html`), and folder artifacts.
+2. **Artifact type** — a finished example of a *kind* of thing (deck, dashboard, report,
+   social card, chat, video, doc). Mostly in `html-anything/`. For "build me a dashboard"
+   → `node find.mjs --tag dashboard` and start from the closest.
 
-## Adding a new artifact
+## Areas that override defaults (read their SKILL.md)
 
-New artifacts go under `site/public/artifacts/<author>/`. Register each in
-`site/src/data/artifacts.json` (hand-maintained; 2-space indent, inline arrays — insert
-surgically, don't reformat the file). A folder artifact is one card; give it a `README.md`.
+Most artifacts are just copy-and-adapt. A few areas delegate to external tooling and
+carry their own `SKILL.md` — read it before working there:
+
+- **Hyperframes / HeyGen video** — `skills/html-artifacts/video/hyperframes/SKILL.md`.
+  Use HeyGen's official skills; render with our no-build `render.mjs`.
+
+## Adding an artifact
+
+Goes under `site/public/artifacts/<author>/`; register in `site/src/data/artifacts.json`
+(hand-maintained: 2-space indent, inline arrays — insert surgically, never reformat). Tag
+it on **both** axes (library AND type) so `find.mjs` surfaces it. A folder artifact is one
+card; give it a `README.md`.
