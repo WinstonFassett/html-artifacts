@@ -15,8 +15,23 @@ and adds two things that exploit the same `window.__timelines` contract:
 
 ## Browse
 
-Open `index.html` — a gallery that lists every harvested composition and plays any of
-them in an iframe. Each file is also a standalone artifact: open it directly to play/scrub.
+Open `index.html` — a gallery that lists every harvested composition. Clicking one loads it
+with `?autoplay=1&loop=1` so it plays and loops immediately (no click-to-play). Each file is
+also a standalone artifact: open it directly to play/scrub, or add the query params yourself.
+
+Harness URL params: `?autoplay=1` (play on load), `?loop=1` (loop), `?chrome=0` (hide controls).
+
+## Status
+
+35/36 render correctly standalone. `variables-launch__scene-08` is **broken in HeyGen's own
+source** (its composition script throws an `appendChild` error and registers no timeline —
+reproduces with zero harness on the raw original); flagged in `manifest.json`, marked ⚠︎ in the
+gallery. Asset-dependent compositions ship their assets alongside (`assets/`, `fonts/`, `logos/`)
+so relative paths resolve — the same way HeyGen's own `<hyperframes-player>` loads them.
+
+Note: a browser extension injecting a strict CSP (`script-src 'self'` + a `chrome-extension://`
+source) will block these compositions' inline scripts. The dev server's CSP is permissive; if
+inline scripts are blocked, it's an extension, not the artifact — test in a clean/incognito profile.
 
 ## What's here
 

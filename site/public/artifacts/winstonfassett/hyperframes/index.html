@@ -66,7 +66,7 @@
   function select(m, el) {
     if (activeEl) activeEl.classList.remove("active");
     activeEl = el; el && el.classList.add("active");
-    stage.src = m.file;
+    stage.src = m.file + "?autoplay=1&loop=1";
     curId.textContent = m.id;
     curMeta.textContent = `${m.project} · ${m.duration || "?"}s${m.template ? " · template" : ""}`;
     openRaw.href = m.file;
@@ -84,7 +84,9 @@
       g.innerHTML = `<div class="label">${proj}</div>`;
       items.forEach(m => {
         const el = document.createElement("div"); el.className = "item";
-        el.innerHTML = `<span class="nm">${m.name}</span><span class="du">${m.duration || "?"}s</span>`;
+        const broken = m.status === "broken-upstream";
+        const dur = broken ? "⚠︎" : `${m.duration || "?"}s`;
+        el.innerHTML = `<span class="nm">${m.name}</span><span class="du" ${broken ? `title="${m.note || "broken upstream"}" style="color:#c66"` : ""}>${dur}</span>`;
         el.onclick = () => select(m, el);
         if (location.hash.slice(1) === m.file) setTimeout(() => select(m, el), 0);
         g.appendChild(el);

@@ -55,8 +55,9 @@
   </div>
 </template>
 
-<!-- hyperframes-harness: standalone play/scrub for a paused GSAP composition.
-     Handles both full-doc compositions and <template>-wrapped ones. -->
+<!-- hyperframes-harness: standalone play/scrub (+ optional autoplay/loop) for a paused
+     GSAP composition. Handles both full-doc and <template>-wrapped compositions.
+     Modes via URL query: ?autoplay=1  ?loop=1  ?chrome=0 (hide controls). -->
 <style>
   html, body { margin: 0; overflow: hidden; background: #000; }
   #hf-stage { position: absolute; top: 0; left: 0; }
@@ -67,31 +68,58 @@
     background: rgba(12, 12, 20, 0.82); color: #e6e6ee;
     backdrop-filter: blur(8px); border-top: 1px solid rgba(255,255,255,0.08);
   }
+  #hf-harness.hf-hidden { display: none; }
   #hf-harness button {
     all: unset; cursor: pointer; width: 34px; height: 34px;
     display: grid; place-items: center; border-radius: 8px;
     background: #2a2a3a; color: #fff; font-size: 15px;
   }
   #hf-harness button:hover { background: #3a3a52; }
+  #hf-harness button.hf-on { background: #6c7cff; }
   #hf-harness input[type=range] { flex: 1; accent-color: #6c7cff; }
   #hf-harness .hf-time { font-variant-numeric: tabular-nums; opacity: 0.7; min-width: 92px; }
-  #hf-harness .hf-id { opacity: 0.5; max-width: 220px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  #hf-harness .hf-id { opacity: 0.5; max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 </style>
 <div id="hf-harness">
   <button id="hf-play" title="Play / pause">&#9654;</button>
   <button id="hf-restart" title="Restart">&#8634;</button>
+  <button id="hf-loop" title="Loop">&#8635;</button>
   <input id="hf-scrub" type="range" min="0" max="1000" value="0" />
   <span class="hf-time">0.00 / 0.00s</span>
   <span class="hf-id"></span>
 </div>
 <script>
 (function () {
-  // If the composition is wrapped in a <template>, clone it into a live stage.
-  // Cloned <script> tags don't execute, so we recreate each one. External
-  // (src) scripts must finish loading before later inline scripts run, so we
-  // inject sequentially, awaiting each external script's load event.
+  var Q = new URLSearchParams(location.search);
+  var WANT_AUTOPLAY = Q.get('autoplay') === '1';
+  var WANT_LOOP = Q.get('loop') === '1';
+  var WANT_CHROME = Q.get('chrome') !== '0';
+
+  // GSAP must be a global before ANY composition script runs (template comps call
+  // gsap at parse-time). Compositions load their own gsap from CDN, but to make
+  // activation order-independent we ensure window.gsap exists first.
+  function ensureGsap(cb) {
+    if (window.gsap) return cb();
+    // is the composition already loading a gsap <script src>? wait briefly for it.
+    var waited = 0;
+    (function poll() {
+      if (window.gsap) return cb();
+      if (waited > 1500) {  // inject our own as a fallback
+        var s = document.createElement('script');
+        s.src = 'https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js';
+        s.onload = cb; s.onerror = cb;
+        document.head.appendChild(s);
+        return;
+      }
+      waited += 60; setTimeout(poll, 60);
+    })();
+  }
+
+  // Clone a <template> composition into a live stage. Cloned <script> tags are inert,
+  // so recreate each one; external (src) scripts must finish before later inline
+  // scripts run, so inject sequentially awaiting each src load.
   function activateTemplate(done) {
-    if (document.querySelector('[data-composition-id]')) return done(); // already live
+    if (document.querySelector('[data-composition-id]')) return done();
     var tpl = document.querySelector('template');
     if (!tpl) return done();
     var stage = document.createElement('div');
@@ -104,13 +132,16 @@
       if (i >= scripts.length) return done();
       var old = scripts[i];
       var s = document.createElement('script');
-      for (var j = 0; j < old.attributes.length; j++) {
+      for (var j = 0; j < old.attributes.length; j++)
         s.setAttribute(old.attributes[j].name, old.attributes[j].value);
-      }
       s.textContent = old.textContent;
-      if (old.src) { s.onload = s.onerror = function () { next(i + 1); }; }
-      old.parentNode.replaceChild(s, old);
-      if (!old.src) next(i + 1); // inline scripts run synchronously on insert
+      if (old.src) {
+        s.onload = s.onerror = function () { next(i + 1); };
+        old.parentNode.replaceChild(s, old);
+      } else {
+        old.parentNode.replaceChild(s, old); // inline runs synchronously on insert
+        next(i + 1);
+      }
     })(0);
   }
 
@@ -120,36 +151,53 @@
     var id = root && root.getAttribute('data-composition-id');
     var tl = (id && tls[id]) || tls[Object.keys(tls)[0]];
     if (!tl || !root) {
-      if ((tries || 0) > 60) return;       // give CDN scripts ~5s
-      return setTimeout(function () { boot((tries || 0) + 1); }, 80);
+      if ((tries || 0) > 80) return;
+      return setTimeout(function () { boot((tries || 0) + 1); }, 60);
     }
     if (!id) id = Object.keys(tls)[0];
+
+    var bar = document.getElementById('hf-harness');
+    if (!WANT_CHROME) bar.classList.add('hf-hidden');
 
     var dur = tl.duration() || parseFloat(root.getAttribute('data-duration') || '5');
     var playBtn = document.getElementById('hf-play');
     var restart = document.getElementById('hf-restart');
+    var loopBtn = document.getElementById('hf-loop');
     var scrub = document.getElementById('hf-scrub');
     var timeEl = document.querySelector('#hf-harness .hf-time');
     document.querySelector('#hf-harness .hf-id').textContent = id;
+
+    var looping = WANT_LOOP;
+    if (looping) loopBtn.classList.add('hf-on');
+
+    // Track play state ourselves — GSAP's isActive() is unreliable right after load
+    // (caused the "click play twice" bug), so don't derive UI/toggle from it.
+    var playing = false;
 
     function fmt(t) { return t.toFixed(2) + ' / ' + dur.toFixed(2) + 's'; }
     function sync() {
       scrub.value = String(Math.round((tl.time() / dur) * 1000));
       timeEl.textContent = fmt(tl.time());
-      playBtn.innerHTML = tl.isActive() ? '&#10073;&#10073;' : '&#9654;';
+      playBtn.innerHTML = playing ? '&#10073;&#10073;' : '&#9654;';
     }
     gsap.ticker.add(sync);
-    playBtn.onclick = function () {
-      if (tl.isActive()) tl.pause();
-      else { if (tl.time() >= dur - 0.01) tl.time(0); tl.play(); }
-    };
-    restart.onclick = function () { tl.pause(); tl.time(0); sync(); };
-    scrub.oninput = function () { tl.pause(); tl.time((scrub.value / 1000) * dur); };
+
+    function play() { if (tl.time() >= dur - 0.01) tl.time(0); tl.play(); playing = true; }
+    function pause() { tl.pause(); playing = false; }
+    tl.eventCallback('onComplete', function () {
+      if (looping) { tl.time(0); tl.play(); } else { playing = false; }
+    });
+
+    playBtn.onclick = function () { playing ? pause() : play(); };
+    restart.onclick = function () { tl.time(0); play(); };
+    loopBtn.onclick = function () { looping = !looping; loopBtn.classList.toggle('hf-on', looping);
+      if (looping && !playing) play(); };
+    scrub.oninput = function () { pause(); tl.time((scrub.value / 1000) * dur); };
 
     function fit() {
       var w = parseFloat(root.getAttribute('data-width')) || 1920;
       var h = parseFloat(root.getAttribute('data-height')) || 1080;
-      var avail = window.innerHeight - 56;
+      var avail = window.innerHeight - (WANT_CHROME ? 56 : 0);
       var s = Math.min(window.innerWidth / w, avail / h);
       var host = document.getElementById('hf-stage') || root;
       host.style.transformOrigin = 'top left';
@@ -161,10 +209,11 @@
     }
     fit(); window.addEventListener('resize', fit);
     sync();
+    if (WANT_AUTOPLAY) play();
   }
-  function start() { activateTemplate(function () { boot(0); }); }
-  if (document.readyState === 'loading')
-    document.addEventListener('DOMContentLoaded', start);
+
+  function start() { ensureGsap(function () { activateTemplate(function () { boot(0); }); }); }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start);
   else start();
 })();
 </script>
