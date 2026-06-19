@@ -182,10 +182,15 @@
     }
     gsap.ticker.add(sync);
 
-    function play() { if (tl.time() >= dur - 0.01) tl.time(0); tl.play(); playing = true; }
-    function pause() { tl.pause(); playing = false; }
+    var LOOP_HOLD = 1000;          // hold on the last frame this long before looping
+    var holdTimer = null;
+    function cancelHold() { if (holdTimer) { clearTimeout(holdTimer); holdTimer = null; } }
+    function play() { cancelHold(); if (tl.time() >= dur - 0.01) tl.time(0); tl.play(); playing = true; }
+    function pause() { cancelHold(); tl.pause(); playing = false; }
     tl.eventCallback('onComplete', function () {
-      if (looping) { tl.time(0); tl.play(); } else { playing = false; }
+      if (!looping) { playing = false; return; }
+      tl.pause();                 // sit on the final frame for a beat, then restart
+      holdTimer = setTimeout(function () { holdTimer = null; if (looping && playing) { tl.time(0); tl.play(); } }, LOOP_HOLD);
     });
 
     playBtn.onclick = function () { playing ? pause() : play(); };

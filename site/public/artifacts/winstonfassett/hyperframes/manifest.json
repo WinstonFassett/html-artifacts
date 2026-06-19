@@ -261,9 +261,7 @@
     "name": "scene-08",
     "id": "scene-08",
     "duration": 3.5,
-    "template": false,
-    "status": "broken-upstream",
-    "note": "appendChild error in HeyGen's original source; registers no timeline"
+    "template": false
   },
   {
     "file": "website-to-hyperframes__act-1-cold-open.html",
