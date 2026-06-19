@@ -28,7 +28,8 @@
     "tags": [
       "starter",
       "app",
-      "solid"
+      "solid",
+      "reactive"
     ],
     "source": "starters",
     "loading": "esm",
@@ -1511,22 +1512,6 @@
     "featured": true,
     "size": 1610,
     "preview": "previews/winstonfassett-preact-htm-esm-html.png"
-  },
-  {
-    "id": "winstonfassett-solid-html-esm-html",
-    "name": "solid-html-esm",
-    "path": "winstonfassett/solid-html-esm.html",
-    "tags": [
-      "starter",
-      "app",
-      "reactive"
-    ],
-    "source": "starters",
-    "loading": "esm",
-    "bucket": "mine",
-    "featured": true,
-    "size": 2468,
-    "preview": "previews/winstonfassett-solid-html-esm-html.png"
   },
   {
     "id": "winstonfassett-vue3-html",
