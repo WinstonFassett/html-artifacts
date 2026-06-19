@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lit Components Starter</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+        h1 {
+            color: #e2e8f0;
+            text-align: center;
+            margin-bottom: 40px;
+            font-size: 2.5rem;
+        }
+    </style>
+</head>
+<body>
+    <h1>⚡ Lit Components</h1>
+    <app-root></app-root>
+
+    <script type="importmap">
+    {
+        "imports": {
+            "lit": "https://cdn.jsdelivr.net/npm/lit@3.1.1/+esm"
+        }
+    }
+    </script>
+
+    <script type="module">
+        import { LitElement, html, css } from 'lit';
+
+        // Counter Component
+        class CounterApp extends LitElement {
+            static properties = {
+                count: { type: Number }
+            };
+
+            static styles = css`
+                :host { display: block; }
+                .card {
+                    background: white;
+                    border-radius: 12px;
+                    padding: 24px;
+                    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+                    margin-bottom: 24px;
+                    max-width: 600px;
+                    margin-left: auto;
+                    margin-right: auto;
+                }
+                h2 {
+                    color: #1e293b;
+                    margin-bottom: 16px;
+                    font-size: 1.5rem;
+                }
+                .counter-display {
+                    font-size: 3rem;
+                    font-weight: 700;
+                    color: #6366f1;
+                    text-align: center;
+                    margin: 24px 0;
+                }
+                .button-group {
+                    display: flex;
+                    gap: 8px;
+                    justify-content: center;
+                    flex-wrap: wrap;
+                }
+                button {
+                    padding: 10px 20px;
+                    border: none;
+                    border-radius: 8px;
+                    font-size: 1rem;
+                    font-weight: 600;
+                    cursor: pointer;
+                    transition: all 0.2s ease;
+                }
+                .btn-primary {
+                    background: #6366f1;
+                    color: white;
+                }
+                .btn-primary:hover {
+                    background: #4f46e5;
+                    transform: translateY(-2px);
+                }
+                .btn-secondary {
+                    background: #e2e8f0;
+                    color: #1e293b;
+                }
+                .btn-secondary:hover {
+                    background: #cbd5e1;
+                }
+                .status {
+                    text-align: center;
+                    color: #64748b;
+                    margin-top: 16px;
+                    font-size: 0.9rem;
+                }
+            `;
+
+            constructor() {
+                super();
+                this.count = 0;
+            }
+
+            render() {
+                return html`
+                    <div class="card">
+                        <h2>Counter</h2>
+                        <div class="counter-display">${this.count}</div>
+                        <div class="button-group">
+                            <button class="btn-secondary" @click=${this.decrement}>− Minus</button>
+                            <button class="btn-primary" @click=${this.increment}>+ Plus</button>
+                            <button class="btn-secondary" @click=${this.reset}>Reset</button>
+                        </div>
+                        <div class="status">
+                            ${this.count === 0 
+                                ? 'Click to get started' 
+                                : this.count > 0 
+                                    ? `You're ${this.count} ahead!` 
+                                    : `You're ${Math.abs(this.count)} behind...`}
+                        </div>
+                    </div>
+                `;
+            }
+
+            increment() { this.count++; }
+            decrement() { this.count--; }
+            reset() { this.count = 0; }
+        }
+
+        customElements.define('counter-app', CounterApp);
+
+        // Todo List Component
+        class TodoApp extends LitElement {
+            static properties = {
+                todos: { type: Array },
+                input: { type: String }
+            };
+
+            static styles = css`
+                :host { display: block; }
+                .card {
+                    background: white;
+                    border-radius: 12px;
+                    padding: 24px;
+                    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+                    margin-bottom: 24px;
+                    max-width: 600px;
+                    margin-left: auto;
+                    margin-right: auto;
+                }
+                h2 {
+                    color: #1e293b;
+                    margin-bottom: 16px;
+                    font-size: 1.5rem;
+                }
+                .input-group {
+                    display: flex;
+                    gap: 8px;
+                    margin-bottom: 20px;
+                }
+                input {
+                    flex: 1;
+                    padding: 10px 16px;
+                    border: 2px solid #e2e8f0;
+                    border-radius: 8px;
+                    font-size: 1rem;
+                }
+                input:focus {
+                    outline: none;
+                    border-color: #6366f1;
+                }
+                button {
+                    padding: 10px 20px;
+                    background: #6366f1;
+                    color: white;
+                    border: none;
+                    border-radius: 8px;
+                    font-weight: 600;
+                    cursor: pointer;
+                }
+                button:hover { background: #4f46e5; }
+                .todo-list {
+                    list-style: none;
+                }
+                .todo-item {
+                    display: flex;
+                    align-items: center;
+                    gap: 12px;
+                    padding: 12px;
+                    border-bottom: 1px solid #e2e8f0;
+                }
+                .todo-text {
+                    flex: 1;
+                    color: #1e293b;
+                }
+                .todo-text.done {
+                    text-decoration: line-through;
+                    color: #94a3b8;
+                }
+                .delete-btn {
+                    background: #ef4444;
+                    padding: 6px 12px;
+                    font-size: 0.85rem;
+                }
+                .delete-btn:hover { background: #dc2626; }
+                .stats {
+                    margin-top: 16px;
+                    padding-top: 16px;
+                    border-top: 1px solid #e2e8f0;
+                    font-size: 0.9rem;
+                    color: #64748b;
+                }
+            `;
+
+            constructor() {
+                super();
+                this.todos = [
+                    { id: 1, text: 'Learn Lit components', done: true },
+                    { id: 2, text: 'Build reactive UI', done: false },
+                    { id: 3, text: 'Deploy to production', done: false }
+                ];
+                this.input = '';
+                this.nextId = 4;
+            }
+
+            render() {
+                const done = this.todos.filter(t => t.done).length;
+                const total = this.todos.length;
+
+                return html`
+                    <div class="card">
+                        <h2>Todo List</h2>
+                        <div class="input-group">
+                            <input 
+                                type="text" 
+                                placeholder="Add a new todo..."
+                                .value=${this.input}
+                                @input=${this.updateInput}
+                                @keyup=${this.handleKeyup}
+                            />
+                            <button @click=${this.addTodo}>Add</button>
+                        </div>
+                        <ul class="todo-list">
+                            ${this.todos.map(todo => html`
+                                <li class="todo-item">
+                                    <input 
+                                        type="checkbox" 
+                                        .checked=${todo.done}
+                                        @change=${() => this.toggleTodo(todo.id)}
+                                    />
+                                    <span class="todo-text ${todo.done ? 'done' : ''}">${todo.text}</span>
+                                    <button class="delete-btn" @click=${() => this.deleteTodo(todo.id)}>Delete</button>
+                                </li>
+                            `)}
+                        </ul>
+                        <div class="stats">
+                            Total: ${total} | Done: ${done} | Remaining: ${total - done}
+                        </div>
+                    </div>
+                `;
+            }
+
+            updateInput(e) { this.input = e.target.value; }
+            handleKeyup(e) { if (e.key === 'Enter') this.addTodo(); }
+            addTodo() {
+                if (this.input.trim()) {
+                    this.todos = [...this.todos, { id: this.nextId++, text: this.input, done: false }];
+                    this.input = '';
+                }
+            }
+            toggleTodo(id) {
+                this.todos = this.todos.map(t => t.id === id ? { ...t, done: !t.done } : t);
+            }
+            deleteTodo(id) {
+                this.todos = this.todos.filter(t => t.id !== id);
+            }
+        }
+
+        customElements.define('todo-app', TodoApp);
+
+        // Main App
+        class AppRoot extends LitElement {
+            render() {
+                return html`
+                    <counter-app></counter-app>
+                    <todo-app></todo-app>
+                `;
+            }
+        }
+
+        customElements.define('app-root', AppRoot);
+    </script>
+</body>
+</html>

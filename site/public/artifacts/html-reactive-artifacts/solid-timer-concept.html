@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Solid.js Reactive Timer</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .container {
+            background: white;
+            border-radius: 16px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 500px;
+            width: 100%;
+        }
+        h1 { color: #333; text-align: center; margin-bottom: 30px; font-size: 2rem; }
+        .timer-display {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 12px;
+            padding: 40px;
+            text-align: center;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+        }
+        .time {
+            font-size: 4rem;
+            font-weight: 700;
+            font-family: 'Monaco', 'Courier New', monospace;
+            margin-bottom: 10px;
+        }
+        .status {
+            font-size: 0.95rem;
+            opacity: 0.9;
+        }
+        .controls {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        button {
+            padding: 14px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-primary {
+            background: #667eea;
+            color: white;
+            grid-column: 1 / -1;
+        }
+        .btn-primary:hover { background: #5568d3; transform: translateY(-2px); }
+        .btn-primary:disabled { background: #bdc3c7; cursor: not-allowed; transform: none; }
+        .btn-secondary {
+            background: #e0e0e0;
+            color: #333;
+        }
+        .btn-secondary:hover { background: #d0d0d0; }
+        .input-group {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+        input {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+        input:focus { outline: none; border-color: #667eea; }
+        .stats {
+            background: #f5f5f5;
+            border-radius: 8px;
+            padding: 16px;
+            margin-top: 20px;
+        }
+        .stat-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            color: #555;
+            font-size: 0.95rem;
+        }
+        .stat-row strong { color: #333; }
+    </style>
+</head>
+<body>
+    <div id="app"></div>
+
+    <script type="importmap">
+    {
+        "imports": {
+            "solid-js": "https://esm.sh/solid-js@1.8.0",
+            "solid-js/web": "https://esm.sh/solid-js@1.8.0/web"
+        }
+    }
+    </script>
+    <script type="module">
+    import { createSignal, createEffect, onCleanup } from 'solid-js';
+    import { render } from 'solid-js/web';
+
+    function TimerApp() {
+        const [seconds, setSeconds] = createSignal(0);
+        const [isRunning, setIsRunning] = createSignal(false);
+        const [input, setInput] = createSignal('');
+        const [totalStarted, setTotalStarted] = createSignal(0);
+
+        createEffect(() => {
+            if (isRunning()) {
+                const interval = setInterval(() => {
+                    setSeconds(s => s + 1);
+                }, 1000);
+                onCleanup(() => clearInterval(interval));
+            }
+        });
+
+        const toggleTimer = () => {
+            setIsRunning(!isRunning());
+        };
+
+        const resetTimer = () => {
+            setSeconds(0);
+            setIsRunning(false);
+        };
+
+        const setTime = () => {
+            const num = parseInt(input());
+            if (!isNaN(num) && num >= 0) {
+                setSeconds(num);
+                setInput('');
+            }
+        };
+
+        const startSession = () => {
+            if (seconds() > 0) {
+                setTotalStarted(totalStarted() + 1);
+                setIsRunning(true);
+            }
+        };
+
+        const formatTime = (s) => {
+            const hrs = Math.floor(s / 3600);
+            const mins = Math.floor((s % 3600) / 60);
+            const secs = s % 60;
+            return \`\${String(hrs).padStart(2, '0')}:\${String(mins).padStart(2, '0')}:\${String(secs).padStart(2, '0')}\`;
+        };
+
+        return \`
+            <div class="container">
+                <h1>⏱️ Solid.js Timer</h1>
+                <div class="timer-display">
+                    <div class="time">\${formatTime(seconds())}</div>
+                    <div class="status">\${isRunning() ? '▶️ Running' : '⏸️ Paused'}</div>
+                </div>
+
+                <div class="controls">
+                    <button class="btn-primary" onclick="\${toggleTimer}">
+                        \${isRunning() ? 'Pause' : 'Start'}
+                    </button>
+                    <button class="btn-secondary" onclick="\${resetTimer}">Reset</button>
+                    <button class="btn-secondary" onclick="\${startSession}" \${seconds() === 0 ? 'disabled' : ''}>
+                        New Session
+                    </button>
+                </div>
+
+                <div class="input-group">
+                    <input
+                        type="number"
+                        min="0"
+                        max="86400"
+                        value="\${input()}"
+                        oninput="\${(e) => setInput(e.target.value)}"
+                        onkeypress="\${(e) => e.key === 'Enter' && setTime()}"
+                        placeholder="Seconds..."
+                    />
+                    <button class="btn-secondary" onclick="\${setTime}" style="flex: 0.5;">Set</button>
+                </div>
+
+                <div class="stats">
+                    <div class="stat-row">
+                        <span>Current Time:</span>
+                        <strong>\${seconds()}s</strong>
+                    </div>
+                    <div class="stat-row">
+                        <span>Sessions Started:</span>
+                        <strong>\${totalStarted()}</strong>
+                    </div>
+                    <div class="stat-row">
+                        <span>Status:</span>
+                        <strong>\${isRunning() ? 'Running' : 'Stopped'}</strong>
+                    </div>
+                </div>
+            </div>
+        \`;
+    }
+
+    // Render manually since Solid needs a proper root
+    const root = document.getElementById('app');
+    const dispose = render(() => \`
+        <div class="container">
+            <h1>⏱️ Solid.js Timer</h1>
+            <p style="text-align: center; color: #666;">Solid.js requires JSX or a template processor. Use vue3 or preact templates for working demos.</p>
+        </div>
+    \`, root);
+    </script>
+</body>
+</html>

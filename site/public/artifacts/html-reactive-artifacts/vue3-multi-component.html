@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vue 3 Multi-Component Starter</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .demo {
+            background: white;
+            padding: 20px;
+            margin: 10px 0;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            max-width: 500px;
+        }
+        h1 { color: #333; margin-top: 0; }
+        button {
+            background: #42b983;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+        button:hover { background: #359268; }
+        input { padding: 10px; border: 1px solid #ddd; border-radius: 6px; }
+    </style>
+</head>
+<body>
+    <h1>💚 Vue 3 Components</h1>
+    
+    <div id="app"></div>
+
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script>
+    const { createApp, ref, computed } = Vue;
+
+    const App = {
+        template: `
+            <div style="max-width: 500px;">
+                <!-- Component 1: Simple Counter -->
+                <div style="background: white; padding: 20px; margin: 10px 0; border-radius: 8px;">
+                    <h2>Counter</h2>
+                    <p style="font-size: 2rem; font-weight: bold; color: #42b983;">{{ count }}</p>
+                    <button @click="count++">Increment</button>
+                    <button @click="count = 0" style="background: #999;">Reset</button>
+                </div>
+
+                <!-- Component 2: Input with Computed Display -->
+                <div style="background: white; padding: 20px; margin: 10px 0; border-radius: 8px;">
+                    <h2>Text Transform</h2>
+                    <input
+                        v-model="text"
+                        type="text"
+                        placeholder="Enter text..."
+                        style="width: 100%; box-sizing: border-box;"
+                    />
+                    <p style="margin-top: 10px; color: #666;">
+                        <strong>Uppercase:</strong> {{ text.toUpperCase() }}
+                    </p>
+                </div>
+
+                <!-- Component 3: List with Filter -->
+                <div style="background: white; padding: 20px; margin: 10px 0; border-radius: 8px;">
+                    <h2>Filtered List</h2>
+                    <input
+                        v-model="filter"
+                        type="text"
+                        placeholder="Filter..."
+                        style="width: 100%; box-sizing: border-box;"
+                    />
+                    <ul style="list-style: none; padding: 0; margin-top: 10px;">
+                        <li v-for="item in filtered" :key="item"
+                            style="padding: 8px; background: #f9f9f9; margin: 5px 0; border-left: 4px solid #42b983;">
+                            {{ item }}
+                        </li>
+                    </ul>
+                    <p v-if="filtered.length === 0" style="color: #999;">No matches</p>
+                </div>
+            </div>
+        `,
+        setup() {
+            const count = ref(0);
+            const text = ref('');
+            const filter = ref('');
+            const items = ref(['Apple', 'Banana', 'Cherry', 'Date', 'Elderberry']);
+
+            const filtered = computed(() =>
+                items.value.filter(item =>
+                    item.toLowerCase().includes(filter.value.toLowerCase())
+                )
+            );
+
+            return {
+                count,
+                text,
+                filter,
+                items,
+                filtered
+            };
+        }
+    };
+
+    createApp(App).mount('#app');
+    </script>
+</body>
+</html>
