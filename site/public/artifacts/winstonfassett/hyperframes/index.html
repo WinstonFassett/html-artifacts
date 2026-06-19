@@ -23,6 +23,8 @@
   .item.active { background: #1c1c2c; border-left-color: var(--accent); }
   .item .nm { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .item .du { color: var(--dim); font-variant-numeric: tabular-nums; font-size: 12px; }
+  .hf-badge { font-size: 9px; text-transform: uppercase; letter-spacing: .04em; padding: 1px 5px; margin-left: 6px;
+    border-radius: 6px; background: #3a3a52; color: #b9b9d6; vertical-align: middle; }
   main { display: flex; flex-direction: column; min-width: 0; }
   .bar { padding: 10px 16px; border-bottom: 1px solid var(--line); display: flex; align-items: center; gap: 12px; }
   .bar .id { font-weight: 600; }
@@ -68,7 +70,7 @@
     activeEl = el; el && el.classList.add("active");
     stage.src = m.file + "?autoplay=1&loop=1";
     curId.textContent = m.id;
-    curMeta.textContent = `${m.project} · ${m.duration || "?"}s${m.template ? " · template" : ""}`;
+    curMeta.textContent = `${m.project} · ${m.duration || "?"}s${m.template ? " · template" : ""}${m.note ? " · " + m.note : ""}`;
     openRaw.href = m.file;
     location.hash = m.file;
   }
@@ -84,9 +86,10 @@
       g.innerHTML = `<div class="label">${proj}</div>`;
       items.forEach(m => {
         const el = document.createElement("div"); el.className = "item";
-        const broken = m.status === "broken-upstream";
-        const dur = broken ? "⚠︎" : `${m.duration || "?"}s`;
-        el.innerHTML = `<span class="nm">${m.name}</span><span class="du" ${broken ? `title="${m.note || "broken upstream"}" style="color:#c66"` : ""}>${dur}</span>`;
+        const noted = !!m.status || !!m.note;
+        const dur = `${m.duration || "?"}s`;
+        const badge = m.status ? ` <span class="hf-badge">${m.status}</span>` : "";
+        el.innerHTML = `<span class="nm">${m.name}${badge}</span><span class="du" ${noted ? `title="${(m.note || m.status).replace(/"/g,"&quot;")}" style="opacity:.55"` : ""}>${dur}</span>`;
         el.onclick = () => select(m, el);
         if (location.hash.slice(1) === m.file) setTimeout(() => select(m, el), 0);
         g.appendChild(el);

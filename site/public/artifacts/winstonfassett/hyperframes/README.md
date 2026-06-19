@@ -23,10 +23,10 @@ Harness URL params: `?autoplay=1` (play on load), `?loop=1` (loop), `?chrome=0` 
 
 ## Status
 
-35/36 render correctly standalone. `variables-launch__scene-08` is **broken in HeyGen's own
-source** (its composition script throws an `appendChild` error and registers no timeline —
-reproduces with zero harness on the raw original); flagged in `manifest.json`, marked ⚠︎ in the
-gallery. Asset-dependent compositions ship their assets alongside (`assets/`, `fonts/`, `logos/`)
+35 compositions, all render standalone. `variables-launch__scene-08` was **dropped** — it's
+broken in HeyGen's own source (`appendChild` error, no timeline; reproduces on the raw original
+with zero harness). A few are labeled in the gallery: `endcard` is a blank-by-design placeholder
+(logo composited in post), `quiet-captions` is a caption-only overlay track. See `patches.md`. Asset-dependent compositions ship their assets alongside (`assets/`, `fonts/`, `logos/`)
 so relative paths resolve — the same way HeyGen's own `<hyperframes-player>` loads them.
 
 Note: a browser extension injecting a strict CSP (`script-src 'self'` + a `chrome-extension://`
@@ -35,16 +35,17 @@ inline scripts are blocked, it's an extension, not the artifact — test in a cl
 
 ## What's here
 
-- `*__*.html` — 36 **CDN-pure** compositions (no local font/audio/video deps), each with
-  the player harness injected. Naming: `<project>__<composition>.html`.
+- `*__*.html` — 35 compositions (mostly CDN-pure; a few ship local `assets/`/`fonts/`/`logos/`),
+  each with the player harness injected. Naming: `<project>__<composition>.html`.
 - `index.html` — the gallery browser (reads `manifest.json`).
-- `manifest.json` — id / project / duration / template-flag per composition.
-- `harness.html` — the injected player UI (play, restart, scrub, auto-fit 1920×1080).
+- `manifest.json` — id / project / duration / template-flag / status / note per composition.
+- `harness.html` — the injected player UI (play, restart, loop-with-1s-hold, scrub, auto-fit).
 - `harvest.mjs` — pull more compositions from the repo + inject the harness.
 - `render.mjs` — **no-build** HTML→MP4 renderer.
+- `patches.md` — post-harvest fixes (e.g. act4-video's `<video>`) to re-apply if you re-harvest.
 
-Only the 35/87 zero-asset compositions are bundled. The other 52 reference local
-`assets/` (audio/video) or `fonts/` and need a folder checkout — see "Harvest more".
+Only zero-asset (+ a few asset-bundled) compositions are included. Most of the other ~50 in
+the source repo reference local `assets/`/`fonts/` and need a folder checkout — see "Harvest more".
 
 ## The composition contract
 

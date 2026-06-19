@@ -5,15 +5,19 @@
     "name": "endcard",
     "id": "endcard",
     "duration": 3.5,
-    "template": true
+    "template": true,
+    "status": "blank-by-design",
+    "note": "Plain white placeholder \u2014 HeyGen composites the logo in post"
   },
   {
     "file": "frame-md-launch-storyboard__quiet-captions.html",
     "project": "frame-md-launch-storyboard",
     "name": "quiet-captions",
     "id": "quiet-captions",
-    "duration": 56.254,
-    "template": true
+    "duration": 12.08,
+    "template": true,
+    "status": "caption-overlay",
+    "note": "Caption-only track meant to overlay footage; gaps between captions are expected"
   },
   {
     "file": "frame-md-launch-storyboard__scene-01-hook.html",
@@ -229,7 +233,8 @@
     "name": "act4-video",
     "id": "act4-video",
     "duration": 5.7,
-    "template": true
+    "template": true,
+    "note": "Footage (sstest.mp4) linked from GitHub LFS; scrubbing needs the HeyGen engine for frame-accurate currentTime"
   },
   {
     "file": "variables-launch__scene-03.html",
@@ -253,14 +258,6 @@
     "name": "scene-07",
     "id": "scene-07",
     "duration": 3.8,
-    "template": false
-  },
-  {
-    "file": "variables-launch__scene-08.html",
-    "project": "variables-launch",
-    "name": "scene-08",
-    "id": "scene-08",
-    "duration": 3.5,
     "template": false
   },
   {

@@ -6,9 +6,16 @@
 <template id="act4-video-template">
   <div data-composition-id="act4-video" data-width="1920" data-height="1080" data-start="0" data-duration="5.7">
 
-    <!-- No visible DOM — this comp only drives the entry animation on the
-         root-level <video id="act4-final-video"> element so HF handles the
-         video's currentTime scrubbing normally. -->
+    <!-- This comp only drives the entry animation on the root-level
+         <video id="act4-final-video"> element, which normally lives in the
+         project index.html (the engine composites them). Re-added here for
+         standalone playback; src points at the repo's LFS video over GitHub. -->
+    <video
+      id="act4-final-video"
+      src="https://media.githubusercontent.com/media/heygen-com/hyperframes-launches/main/timeline-launch/assets/sstest.mp4"
+      muted playsinline
+      style="position:absolute; inset:0; width:1920px; height:1080px; object-fit:cover; transform-origin:50% 50%"
+    ></video>
 
     <style>
       [data-composition-id="act4-video"] {
