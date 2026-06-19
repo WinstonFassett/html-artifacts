@@ -1,0 +1,273 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>flex-gsap — Hyperframes</title></head>
+<body>
+<template id="flex-gsap-template">
+  <div
+    data-composition-id="flex-gsap"
+    data-width="1920"
+    data-height="1080"
+    data-start="0"
+    data-duration="0.69"
+  >
+    <div class="gsap-bg"></div>
+
+    <!-- Dot grid — generated via JS -->
+    <div class="gsap-grid" id="gsap-grid"></div>
+
+    <style>
+      [data-composition-id="flex-gsap"] {
+        width: 1920px; height: 1080px;
+        position: relative; overflow: hidden;
+        background: #0e100f;
+      }
+      [data-composition-id="flex-gsap"] .gsap-bg {
+        position: absolute; inset: 0;
+        background: radial-gradient(ellipse at 50% 50%, #161816 0%, #0e100f 100%);
+      }
+
+      [data-composition-id="flex-gsap"] .gsap-grid {
+        position: absolute;
+        top: 50%; left: 50%;
+        display: flex;
+        flex-direction: column;
+      }
+      [data-composition-id="flex-gsap"] .g-row {
+        display: flex;
+      }
+      [data-composition-id="flex-gsap"] .g-cell {
+        width: 40px; height: 40px;
+        margin: 8px;
+        background: #fffce1;
+        border-radius: 50%;
+        will-change: transform;
+      }
+    </style>
+
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <script>
+      (function () {
+        window.__timelines = window.__timelines || {};
+        var tl = gsap.timeline({ paused: true });
+        var root = document.querySelector('[data-composition-id="flex-gsap"]');
+        var grid = root.querySelector("#gsap-grid");
+
+        var ROWS = 15;
+        var COLS = 25;
+        var CELL_SIZE = 40;
+        var GAP = 16; // 8px margin each side
+        var PITCH = CELL_SIZE + GAP;
+
+        // Grid dimensions for centering
+        var gridW = COLS * PITCH;
+        var gridH = ROWS * PITCH;
+        gsap.set(grid, { marginLeft: -gridW / 2, marginTop: -gridH / 2 });
+
+        // Build grid
+        var cells = [];
+        var cellEls = [];
+        for (var r = 0; r < ROWS; r++) {
+          var rowDiv = document.createElement("div");
+          rowDiv.className = "g-row";
+          for (var c = 0; c < COLS; c++) {
+            var cell = document.createElement("div");
+            cell.className = "g-cell";
+            rowDiv.appendChild(cell);
+            cellEls.push(cell);
+            cells.push({ r: r, c: c, el: cell });
+          }
+          grid.appendChild(rowDiv);
+        }
+
+        // Center of grid (in grid-cell coordinates)
+        var centerR = (ROWS - 1) / 2;
+        var centerC = (COLS - 1) / 2;
+
+        // Pre-compute distance from center for each cell (for stagger)
+        cells.forEach(function (cell) {
+          var dr = cell.r - centerR;
+          var dc = cell.c - centerC;
+          cell.dist = Math.sqrt(dr * dr + dc * dc);
+          // Angle from center (for explosion direction)
+          cell.angle = Math.atan2(dr, dc);
+        });
+
+        var maxDist = Math.sqrt(centerR * centerR + centerC * centerC);
+
+        // === Phase 1: Slow cursor sweep (0 → 0.48s) ===
+        // A "cursor" sweeps left→right. Slowed down so you can savour
+        // the elastic snap-back rippling across the grid.
+        for (var c = 0; c < COLS; c++) {
+          var colCells = cells.filter(function (cell) { return cell.c === c; });
+          var colEls = colCells.map(function (cell) { return cell.el; });
+          var colStart = c * 0.019; // slower stagger (was 0.012)
+
+          // Pull toward cursor path
+          tl.to(colEls, {
+            y: -22,
+            x: 8,
+            duration: 0.08,
+            ease: "power2.out",
+            stagger: 0.004
+          }, colStart);
+
+          // Snap back with elastic
+          tl.to(colEls, {
+            y: 0,
+            x: 0,
+            duration: 0.28,
+            ease: "elastic.out(1, 0.3)",
+            stagger: 0.004
+          }, colStart + 0.08);
+        }
+
+        // === Phase 2: Explosion → blur exit (0.48 → 0.69s) ===
+        // Dots fly outward from center — no settle. Blur ramps on the
+        // whole grid so it transitions into the next beat.
+        cells.forEach(function (cell) {
+          var normDist = cell.dist / maxDist;
+          var flyDist = 160 * (1 - normDist * 0.5);
+          var flyX = Math.cos(cell.angle) * flyDist;
+          var flyY = Math.sin(cell.angle) * flyDist - 100;
+          var staggerDelay = normDist * 0.08;
+
+          // Fly out (no return)
+          tl.to(cell.el, {
+            x: flyX,
+            y: flyY,
+            scale: 0.3,
+            opacity: 0.2,
+            duration: 0.18,
+            ease: "power3.out"
+          }, 0.48 + staggerDelay);
+        });
+
+        // Blur ramp on entire grid — sells the transition
+        tl.to(grid, {
+          filter: "blur(20px)",
+          duration: 0.18,
+          ease: "power2.in"
+        }, 0.52);
+
+        window.__timelines["flex-gsap"] = tl;
+      })();
+    </script>
+  </div>
+</template>
+
+<!-- hyperframes-harness: standalone play/scrub for a paused GSAP composition.
+     Handles both full-doc compositions and <template>-wrapped ones. -->
+<style>
+  html, body { margin: 0; overflow: hidden; background: #000; }
+  #hf-stage { position: absolute; top: 0; left: 0; }
+  #hf-harness {
+    position: fixed; left: 0; right: 0; bottom: 0; z-index: 2147483647;
+    display: flex; align-items: center; gap: 12px;
+    padding: 10px 16px; font: 13px/1 ui-sans-serif, system-ui, sans-serif;
+    background: rgba(12, 12, 20, 0.82); color: #e6e6ee;
+    backdrop-filter: blur(8px); border-top: 1px solid rgba(255,255,255,0.08);
+  }
+  #hf-harness button {
+    all: unset; cursor: pointer; width: 34px; height: 34px;
+    display: grid; place-items: center; border-radius: 8px;
+    background: #2a2a3a; color: #fff; font-size: 15px;
+  }
+  #hf-harness button:hover { background: #3a3a52; }
+  #hf-harness input[type=range] { flex: 1; accent-color: #6c7cff; }
+  #hf-harness .hf-time { font-variant-numeric: tabular-nums; opacity: 0.7; min-width: 92px; }
+  #hf-harness .hf-id { opacity: 0.5; max-width: 220px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+</style>
+<div id="hf-harness">
+  <button id="hf-play" title="Play / pause">&#9654;</button>
+  <button id="hf-restart" title="Restart">&#8634;</button>
+  <input id="hf-scrub" type="range" min="0" max="1000" value="0" />
+  <span class="hf-time">0.00 / 0.00s</span>
+  <span class="hf-id"></span>
+</div>
+<script>
+(function () {
+  // If the composition is wrapped in a <template>, clone it into a live stage.
+  // Cloned <script> tags don't execute, so we recreate each one. External
+  // (src) scripts must finish loading before later inline scripts run, so we
+  // inject sequentially, awaiting each external script's load event.
+  function activateTemplate(done) {
+    if (document.querySelector('[data-composition-id]')) return done(); // already live
+    var tpl = document.querySelector('template');
+    if (!tpl) return done();
+    var stage = document.createElement('div');
+    stage.id = 'hf-stage';
+    stage.appendChild(tpl.content.cloneNode(true));
+    document.body.insertBefore(stage, document.getElementById('hf-harness'));
+
+    var scripts = [].slice.call(stage.querySelectorAll('script'));
+    (function next(i) {
+      if (i >= scripts.length) return done();
+      var old = scripts[i];
+      var s = document.createElement('script');
+      for (var j = 0; j < old.attributes.length; j++) {
+        s.setAttribute(old.attributes[j].name, old.attributes[j].value);
+      }
+      s.textContent = old.textContent;
+      if (old.src) { s.onload = s.onerror = function () { next(i + 1); }; }
+      old.parentNode.replaceChild(s, old);
+      if (!old.src) next(i + 1); // inline scripts run synchronously on insert
+    })(0);
+  }
+
+  function boot(tries) {
+    var tls = window.__timelines || {};
+    var root = document.querySelector('[data-composition-id]');
+    var id = root && root.getAttribute('data-composition-id');
+    var tl = (id && tls[id]) || tls[Object.keys(tls)[0]];
+    if (!tl || !root) {
+      if ((tries || 0) > 60) return;       // give CDN scripts ~5s
+      return setTimeout(function () { boot((tries || 0) + 1); }, 80);
+    }
+    if (!id) id = Object.keys(tls)[0];
+
+    var dur = tl.duration() || parseFloat(root.getAttribute('data-duration') || '5');
+    var playBtn = document.getElementById('hf-play');
+    var restart = document.getElementById('hf-restart');
+    var scrub = document.getElementById('hf-scrub');
+    var timeEl = document.querySelector('#hf-harness .hf-time');
+    document.querySelector('#hf-harness .hf-id').textContent = id;
+
+    function fmt(t) { return t.toFixed(2) + ' / ' + dur.toFixed(2) + 's'; }
+    function sync() {
+      scrub.value = String(Math.round((tl.time() / dur) * 1000));
+      timeEl.textContent = fmt(tl.time());
+      playBtn.innerHTML = tl.isActive() ? '&#10073;&#10073;' : '&#9654;';
+    }
+    gsap.ticker.add(sync);
+    playBtn.onclick = function () {
+      if (tl.isActive()) tl.pause();
+      else { if (tl.time() >= dur - 0.01) tl.time(0); tl.play(); }
+    };
+    restart.onclick = function () { tl.pause(); tl.time(0); sync(); };
+    scrub.oninput = function () { tl.pause(); tl.time((scrub.value / 1000) * dur); };
+
+    function fit() {
+      var w = parseFloat(root.getAttribute('data-width')) || 1920;
+      var h = parseFloat(root.getAttribute('data-height')) || 1080;
+      var avail = window.innerHeight - 56;
+      var s = Math.min(window.innerWidth / w, avail / h);
+      var host = document.getElementById('hf-stage') || root;
+      host.style.transformOrigin = 'top left';
+      host.style.transform = 'scale(' + s + ')';
+      host.style.position = 'absolute';
+      host.style.left = ((window.innerWidth - w * s) / 2) + 'px';
+      host.style.top = ((avail - h * s) / 2) + 'px';
+      host.style.width = w + 'px'; host.style.height = h + 'px';
+    }
+    fit(); window.addEventListener('resize', fit);
+    sync();
+  }
+  function start() { activateTemplate(function () { boot(0); }); }
+  if (document.readyState === 'loading')
+    document.addEventListener('DOMContentLoaded', start);
+  else start();
+})();
+</script>
+
+</body></html>

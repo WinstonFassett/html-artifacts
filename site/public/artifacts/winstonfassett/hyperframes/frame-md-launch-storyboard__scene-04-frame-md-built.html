@@ -1,0 +1,270 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>scene-04-frame-md-built — Hyperframes</title></head>
+<body>
+<template id="scene-04-frame-md-built-template">
+  <div class="s4" data-composition-id="scene-04-frame-md-built" data-width="1920" data-height="1080" data-duration="5.24">
+    <style>
+      [data-composition-id="scene-04-frame-md-built"] {
+        --canvas: #fffaf0;
+        --ink: #0a0a0a;
+        --pink: #ff4d8b;
+        --mint: #a4d4c5;
+        --ochre: #e8b94a;
+        --blue: #0007cd;
+        position: relative;
+        width: 1920px;
+        height: 1080px;
+        overflow: hidden;
+        background: transparent;
+        color: var(--ink);
+        font-family: "Cooper Black", "Arial Rounded MT Bold", "Avenir Next Rounded", "Trebuchet MS", sans-serif;
+      }
+      [data-composition-id="scene-04-frame-md-built"] * {
+        box-sizing: border-box;
+        letter-spacing: 0;
+      }
+      .s4 .reveal-shell {
+        position: absolute;
+        left: -170px;
+        top: 0;
+        width: 2260px;
+        height: 1240px;
+        border-radius: 56% 56% 0 0 / 22% 22% 0 0;
+        background: var(--canvas);
+        overflow: hidden;
+        box-shadow: 0 -34px 80px rgba(10,10,10,.18);
+        transform-origin: 50% 100%;
+        will-change: transform;
+      }
+      .s4 .frame-stack {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        width: 1840px;
+        height: 500px;
+        transform: translate(-50%, -50%);
+        will-change: transform, opacity, filter;
+      }
+      .s4 .frame-word {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0;
+        font-size: 392px;
+        line-height: .9;
+        font-weight: 1000;
+        letter-spacing: -0.075em;
+        white-space: nowrap;
+        will-change: transform, opacity, filter;
+      }
+      .s4 .frame-word.back-pink {
+        color: var(--pink);
+        transform: translate(-24px, -24px);
+        opacity: .82;
+      }
+      .s4 .frame-word.back-blue {
+        color: var(--blue);
+        transform: translate(24px, 30px);
+        opacity: .86;
+      }
+      .s4 .frame-word.main {
+        color: #fff;
+        -webkit-text-stroke: 8px rgba(10,10,10,.92);
+        text-shadow: 0 20px 34px rgba(10,10,10,.24);
+      }
+      .s4 .frame-word span {
+        display: block;
+        transform-origin: 50% 62%;
+      }
+      .s4 .frame-word .dot {
+        color: var(--ochre);
+      }
+      .s4 .frame-word .md {
+        color: var(--mint);
+      }
+      .s4 .frame-word.back-pink .dot,
+      .s4 .frame-word.back-pink .md,
+      .s4 .frame-word.back-blue .dot,
+      .s4 .frame-word.back-blue .md {
+        color: inherit;
+      }
+    </style>
+
+    <div class="reveal-shell">
+      <div class="frame-stack" aria-hidden="true">
+        <div class="frame-word back-pink"><span>frame</span><span class="dot">.</span><span class="md">md</span></div>
+        <div class="frame-word back-blue"><span>frame</span><span class="dot">.</span><span class="md">md</span></div>
+        <div class="frame-word main">
+          <span>f</span><span>r</span><span>a</span><span>m</span><span>e</span><span class="dot">.</span><span class="md">md</span>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <script>
+      (function () {
+        const q = (s) => `[data-composition-id="scene-04-frame-md-built"] ${s}`;
+        const tl = gsap.timeline({ paused: true });
+
+        gsap.set(q(".reveal-shell"), { y: 1110, scaleX: 1.08, borderRadius: "58% 58% 0 0 / 18% 18% 0 0" });
+        gsap.set(q(".frame-stack"), { opacity: 0, scale: 0.78, y: 108, filter: "blur(20px)" });
+        gsap.set(q(".frame-word.back-pink, .frame-word.back-blue"), { opacity: 0 });
+        gsap.set(q(".frame-word.main span"), { opacity: 0, y: 165, scale: 0.72, rotate: -7, filter: "blur(15px)" });
+
+        tl.to(q(".reveal-shell"), {
+          y: 0,
+          scaleX: 1,
+          borderRadius: "0% 0% 0 0 / 0% 0% 0 0",
+          duration: 0.74,
+          ease: "power4.inOut"
+        }, 0);
+        tl.to(q(".frame-stack"), {
+          opacity: 1,
+          scale: 1,
+          y: 0,
+          filter: "blur(0px)",
+          duration: 0.68,
+          ease: "expo.out"
+        }, 0.72);
+        tl.to(q(".frame-word.back-pink, .frame-word.back-blue"), { opacity: 1, duration: 0.28, ease: "power2.out" }, 0.78);
+        tl.to(q(".frame-word.main span"), {
+          opacity: 1,
+          y: 0,
+          scale: 1,
+          rotate: 0,
+          filter: "blur(0px)",
+          duration: 0.7,
+          stagger: 0.035,
+          ease: "back.out(1.32)"
+        }, 0.84);
+        tl.to(q(".frame-stack"), { scale: 1.035, duration: 1.5, ease: "sine.inOut" }, 1.88);
+
+        window.__timelines = window.__timelines || {};
+        window.__timelines["scene-04-frame-md-built"] = tl;
+
+        const previewTime = new URLSearchParams(window.location.search).get("t");
+        if (previewTime !== null) tl.time(Number(previewTime));
+      })();
+    </script>
+  </div>
+</template>
+
+<!-- hyperframes-harness: standalone play/scrub for a paused GSAP composition.
+     Handles both full-doc compositions and <template>-wrapped ones. -->
+<style>
+  html, body { margin: 0; overflow: hidden; background: #000; }
+  #hf-stage { position: absolute; top: 0; left: 0; }
+  #hf-harness {
+    position: fixed; left: 0; right: 0; bottom: 0; z-index: 2147483647;
+    display: flex; align-items: center; gap: 12px;
+    padding: 10px 16px; font: 13px/1 ui-sans-serif, system-ui, sans-serif;
+    background: rgba(12, 12, 20, 0.82); color: #e6e6ee;
+    backdrop-filter: blur(8px); border-top: 1px solid rgba(255,255,255,0.08);
+  }
+  #hf-harness button {
+    all: unset; cursor: pointer; width: 34px; height: 34px;
+    display: grid; place-items: center; border-radius: 8px;
+    background: #2a2a3a; color: #fff; font-size: 15px;
+  }
+  #hf-harness button:hover { background: #3a3a52; }
+  #hf-harness input[type=range] { flex: 1; accent-color: #6c7cff; }
+  #hf-harness .hf-time { font-variant-numeric: tabular-nums; opacity: 0.7; min-width: 92px; }
+  #hf-harness .hf-id { opacity: 0.5; max-width: 220px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+</style>
+<div id="hf-harness">
+  <button id="hf-play" title="Play / pause">&#9654;</button>
+  <button id="hf-restart" title="Restart">&#8634;</button>
+  <input id="hf-scrub" type="range" min="0" max="1000" value="0" />
+  <span class="hf-time">0.00 / 0.00s</span>
+  <span class="hf-id"></span>
+</div>
+<script>
+(function () {
+  // If the composition is wrapped in a <template>, clone it into a live stage.
+  // Cloned <script> tags don't execute, so we recreate each one. External
+  // (src) scripts must finish loading before later inline scripts run, so we
+  // inject sequentially, awaiting each external script's load event.
+  function activateTemplate(done) {
+    if (document.querySelector('[data-composition-id]')) return done(); // already live
+    var tpl = document.querySelector('template');
+    if (!tpl) return done();
+    var stage = document.createElement('div');
+    stage.id = 'hf-stage';
+    stage.appendChild(tpl.content.cloneNode(true));
+    document.body.insertBefore(stage, document.getElementById('hf-harness'));
+
+    var scripts = [].slice.call(stage.querySelectorAll('script'));
+    (function next(i) {
+      if (i >= scripts.length) return done();
+      var old = scripts[i];
+      var s = document.createElement('script');
+      for (var j = 0; j < old.attributes.length; j++) {
+        s.setAttribute(old.attributes[j].name, old.attributes[j].value);
+      }
+      s.textContent = old.textContent;
+      if (old.src) { s.onload = s.onerror = function () { next(i + 1); }; }
+      old.parentNode.replaceChild(s, old);
+      if (!old.src) next(i + 1); // inline scripts run synchronously on insert
+    })(0);
+  }
+
+  function boot(tries) {
+    var tls = window.__timelines || {};
+    var root = document.querySelector('[data-composition-id]');
+    var id = root && root.getAttribute('data-composition-id');
+    var tl = (id && tls[id]) || tls[Object.keys(tls)[0]];
+    if (!tl || !root) {
+      if ((tries || 0) > 60) return;       // give CDN scripts ~5s
+      return setTimeout(function () { boot((tries || 0) + 1); }, 80);
+    }
+    if (!id) id = Object.keys(tls)[0];
+
+    var dur = tl.duration() || parseFloat(root.getAttribute('data-duration') || '5');
+    var playBtn = document.getElementById('hf-play');
+    var restart = document.getElementById('hf-restart');
+    var scrub = document.getElementById('hf-scrub');
+    var timeEl = document.querySelector('#hf-harness .hf-time');
+    document.querySelector('#hf-harness .hf-id').textContent = id;
+
+    function fmt(t) { return t.toFixed(2) + ' / ' + dur.toFixed(2) + 's'; }
+    function sync() {
+      scrub.value = String(Math.round((tl.time() / dur) * 1000));
+      timeEl.textContent = fmt(tl.time());
+      playBtn.innerHTML = tl.isActive() ? '&#10073;&#10073;' : '&#9654;';
+    }
+    gsap.ticker.add(sync);
+    playBtn.onclick = function () {
+      if (tl.isActive()) tl.pause();
+      else { if (tl.time() >= dur - 0.01) tl.time(0); tl.play(); }
+    };
+    restart.onclick = function () { tl.pause(); tl.time(0); sync(); };
+    scrub.oninput = function () { tl.pause(); tl.time((scrub.value / 1000) * dur); };
+
+    function fit() {
+      var w = parseFloat(root.getAttribute('data-width')) || 1920;
+      var h = parseFloat(root.getAttribute('data-height')) || 1080;
+      var avail = window.innerHeight - 56;
+      var s = Math.min(window.innerWidth / w, avail / h);
+      var host = document.getElementById('hf-stage') || root;
+      host.style.transformOrigin = 'top left';
+      host.style.transform = 'scale(' + s + ')';
+      host.style.position = 'absolute';
+      host.style.left = ((window.innerWidth - w * s) / 2) + 'px';
+      host.style.top = ((avail - h * s) / 2) + 'px';
+      host.style.width = w + 'px'; host.style.height = h + 'px';
+    }
+    fit(); window.addEventListener('resize', fit);
+    sync();
+  }
+  function start() { activateTemplate(function () { boot(0); }); }
+  if (document.readyState === 'loading')
+    document.addEventListener('DOMContentLoaded', start);
+  else start();
+})();
+</script>
+
+</body></html>

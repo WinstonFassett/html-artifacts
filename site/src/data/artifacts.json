@@ -11,6 +11,17 @@
     "preview": ""
   },
   {
+    "id": "winstonfassett-hyperframes",
+    "name": "hyperframes",
+    "path": "winstonfassett/hyperframes",
+    "tags": ["video", "html-to-video", "gsap", "tool", "collection"],
+    "source": "collected",
+    "bucket": "collected",
+    "featured": false,
+    "size": 585715,
+    "preview": ""
+  },
+  {
     "id": "winstonfassett-solid-html-esm-html",
     "name": "solid-html-esm",
     "path": "winstonfassett/solid-html-esm.html",

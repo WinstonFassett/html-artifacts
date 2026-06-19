@@ -1,0 +1,290 @@
+[
+  {
+    "file": "HF-heygen-stripe__endcard.html",
+    "project": "HF-heygen-stripe",
+    "name": "endcard",
+    "id": "endcard",
+    "duration": 3.5,
+    "template": true
+  },
+  {
+    "file": "frame-md-launch-storyboard__quiet-captions.html",
+    "project": "frame-md-launch-storyboard",
+    "name": "quiet-captions",
+    "id": "quiet-captions",
+    "duration": 56.254,
+    "template": true
+  },
+  {
+    "file": "frame-md-launch-storyboard__scene-01-hook.html",
+    "project": "frame-md-launch-storyboard",
+    "name": "scene-01-hook",
+    "id": "scene-01-hook",
+    "duration": 4,
+    "template": true
+  },
+  {
+    "file": "frame-md-launch-storyboard__scene-02-diagnosis.html",
+    "project": "frame-md-launch-storyboard",
+    "name": "scene-02-diagnosis",
+    "id": "scene-02-diagnosis",
+    "duration": 12.36,
+    "template": true
+  },
+  {
+    "file": "frame-md-launch-storyboard__scene-04-frame-md-built.html",
+    "project": "frame-md-launch-storyboard",
+    "name": "scene-04-frame-md-built",
+    "id": "scene-04-frame-md-built",
+    "duration": 5.24,
+    "template": true
+  },
+  {
+    "file": "frame-md-launch-storyboard__scene-06-text-to-frame.html",
+    "project": "frame-md-launch-storyboard",
+    "name": "scene-06-text-to-frame",
+    "id": "scene-06-text-to-frame",
+    "duration": 7.25,
+    "template": true
+  },
+  {
+    "file": "frame-md-launch-storyboard__scene-07-new-format.html",
+    "project": "frame-md-launch-storyboard",
+    "name": "scene-07-new-format",
+    "id": "scene-07-new-format",
+    "duration": 4.15,
+    "template": true
+  },
+  {
+    "file": "hyperframes-launch__canvas-close.html",
+    "project": "hyperframes-launch",
+    "name": "canvas-close",
+    "id": "canvas-close",
+    "duration": 3.93,
+    "template": true
+  },
+  {
+    "file": "hyperframes-launch__cta.html",
+    "project": "hyperframes-launch",
+    "name": "cta",
+    "id": "cta",
+    "duration": 5.28,
+    "template": true
+  },
+  {
+    "file": "hyperframes-launch__engine.html",
+    "project": "hyperframes-launch",
+    "name": "engine",
+    "id": "engine",
+    "duration": 10.68,
+    "template": true
+  },
+  {
+    "file": "hyperframes-launch__flex-all.html",
+    "project": "hyperframes-launch",
+    "name": "flex-all",
+    "id": "flex-all",
+    "duration": 0.3,
+    "template": true
+  },
+  {
+    "file": "hyperframes-launch__flex-css.html",
+    "project": "hyperframes-launch",
+    "name": "flex-css",
+    "id": "flex-css",
+    "duration": 1.71,
+    "template": true
+  },
+  {
+    "file": "hyperframes-launch__flex-drop.html",
+    "project": "hyperframes-launch",
+    "name": "flex-drop",
+    "id": "flex-drop",
+    "duration": 0.35,
+    "template": true
+  },
+  {
+    "file": "hyperframes-launch__flex-gsap.html",
+    "project": "hyperframes-launch",
+    "name": "flex-gsap",
+    "id": "flex-gsap",
+    "duration": 0.69,
+    "template": true
+  },
+  {
+    "file": "hyperframes-launch__flex-it.html",
+    "project": "hyperframes-launch",
+    "name": "flex-it",
+    "id": "flex-it",
+    "duration": 0.15,
+    "template": true
+  },
+  {
+    "file": "hyperframes-launch__flex-music.html",
+    "project": "hyperframes-launch",
+    "name": "flex-music",
+    "id": "flex-music",
+    "duration": 0.58,
+    "template": true
+  },
+  {
+    "file": "hyperframes-launch__flex-sfx.html",
+    "project": "hyperframes-launch",
+    "name": "flex-sfx",
+    "id": "flex-sfx",
+    "duration": 0.93,
+    "template": true
+  },
+  {
+    "file": "hyperframes-launch__flex-shader.html",
+    "project": "hyperframes-launch",
+    "name": "flex-shader",
+    "id": "flex-shader",
+    "duration": 0.94,
+    "template": true
+  },
+  {
+    "file": "hyperframes-launch__flex-threejs.html",
+    "project": "hyperframes-launch",
+    "name": "flex-threejs",
+    "id": "flex-threejs",
+    "duration": 1.2,
+    "template": true
+  },
+  {
+    "file": "hyperframes-launch__thesis.html",
+    "project": "hyperframes-launch",
+    "name": "thesis",
+    "id": "thesis",
+    "duration": 4.52,
+    "template": true
+  },
+  {
+    "file": "texture-launch-video__domain-warp-dissolve.html",
+    "project": "texture-launch-video",
+    "name": "domain-warp-dissolve",
+    "id": "main",
+    "duration": 4,
+    "template": false
+  },
+  {
+    "file": "timeline-launch__act0-intro-bell.html",
+    "project": "timeline-launch",
+    "name": "act0-intro-bell",
+    "id": "act0-intro-bell",
+    "duration": 7,
+    "template": true
+  },
+  {
+    "file": "timeline-launch__act0b-reprise.html",
+    "project": "timeline-launch",
+    "name": "act0b-reprise",
+    "id": "act0b-reprise",
+    "duration": 2.5,
+    "template": true
+  },
+  {
+    "file": "timeline-launch__act1-late-sfx.html",
+    "project": "timeline-launch",
+    "name": "act1-late-sfx",
+    "id": "act1-late-sfx",
+    "duration": 4,
+    "template": true
+  },
+  {
+    "file": "timeline-launch__act2-merged-chat.html",
+    "project": "timeline-launch",
+    "name": "act2-merged-chat",
+    "id": "act2-merged-chat",
+    "duration": 9.05,
+    "template": true
+  },
+  {
+    "file": "timeline-launch__act2a-first-ask.html",
+    "project": "timeline-launch",
+    "name": "act2a-first-ask",
+    "id": "act2a-first-ask",
+    "duration": 4,
+    "template": true
+  },
+  {
+    "file": "timeline-launch__act2b-spiral.html",
+    "project": "timeline-launch",
+    "name": "act2b-spiral",
+    "id": "act2b-spiral",
+    "duration": 4,
+    "template": true
+  },
+  {
+    "file": "timeline-launch__act3-not-anymore.html",
+    "project": "timeline-launch",
+    "name": "act3-not-anymore",
+    "id": "act3-not-anymore",
+    "duration": 7.45,
+    "template": true
+  },
+  {
+    "file": "timeline-launch__act4-video.html",
+    "project": "timeline-launch",
+    "name": "act4-video",
+    "id": "act4-video",
+    "duration": 5.7,
+    "template": true
+  },
+  {
+    "file": "variables-launch__scene-03.html",
+    "project": "variables-launch",
+    "name": "scene-03",
+    "id": "scene-03",
+    "duration": 3.2,
+    "template": false
+  },
+  {
+    "file": "variables-launch__scene-05.html",
+    "project": "variables-launch",
+    "name": "scene-05",
+    "id": "scene-05",
+    "duration": 6,
+    "template": false
+  },
+  {
+    "file": "variables-launch__scene-07.html",
+    "project": "variables-launch",
+    "name": "scene-07",
+    "id": "scene-07",
+    "duration": 3.8,
+    "template": false
+  },
+  {
+    "file": "variables-launch__scene-08.html",
+    "project": "variables-launch",
+    "name": "scene-08",
+    "id": "scene-08",
+    "duration": 3.5,
+    "template": false
+  },
+  {
+    "file": "website-to-hyperframes__act-1-cold-open.html",
+    "project": "website-to-hyperframes",
+    "name": "act-1-cold-open",
+    "id": "act-1-cold-open",
+    "duration": 12,
+    "template": true
+  },
+  {
+    "file": "website-to-hyperframes__act-4-end-card.html",
+    "project": "website-to-hyperframes",
+    "name": "act-4-end-card",
+    "id": "act-4-end-card",
+    "duration": 8,
+    "template": true
+  },
+  {
+    "file": "spacex-launch__apple-money-count.html",
+    "project": "spacex-launch",
+    "name": "apple-money-count",
+    "id": "apple-money-count",
+    "duration": 5,
+    "template": false
+  }
+]

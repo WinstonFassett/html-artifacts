@@ -1,0 +1,221 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>quiet-captions — Hyperframes</title></head>
+<body>
+<template id="quiet-captions-template">
+  <div class="qc" data-composition-id="quiet-captions" data-width="1920" data-height="1080" data-duration="56.254">
+    <style>
+      [data-composition-id="quiet-captions"] {
+        position: relative;
+        width: 1920px;
+        height: 1080px;
+        overflow: hidden;
+        pointer-events: none;
+        font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      }
+      [data-composition-id="quiet-captions"] * {
+        box-sizing: border-box;
+        letter-spacing: 0;
+      }
+      .qc .caption-group {
+        position: absolute;
+        left: 50%;
+        bottom: 54px;
+        max-width: 1540px;
+        transform: translateX(-50%);
+        opacity: 0;
+        will-change: transform, opacity, filter;
+      }
+      .qc .caption-pill {
+        display: block;
+        padding: 23px 38px 25px;
+        border-radius: 22px;
+        background: rgba(247, 247, 245, .96);
+        border: 1px solid rgba(0, 0, 0, .11);
+        color: #080808;
+        box-shadow: 0 12px 34px rgba(0, 0, 0, .12);
+        font-size: 43px;
+        line-height: 1.08;
+        font-weight: 760;
+        text-align: center;
+        white-space: nowrap;
+      }
+      .qc .caption-group.dark .caption-pill {
+        background: rgba(12, 12, 13, .72);
+        border-color: rgba(255, 255, 255, .13);
+        color: #f7f7f5;
+        box-shadow: 0 14px 38px rgba(0, 0, 0, .28);
+      }
+    </style>
+
+    <div id="cap-00" class="caption-group"><span class="caption-pill">it often builds a presentation.</span></div>
+    <div id="cap-01" class="caption-group"><span class="caption-pill">That's not random.</span></div>
+    <div id="cap-02" class="caption-group"><span class="caption-pill">Most design specs were written</span></div>
+    <div id="cap-03" class="caption-group"><span class="caption-pill">for websites and products.</span></div>
+    <div id="cap-04" class="caption-group dark"><span class="caption-pill">They describe buttons,</span></div>
+    <div id="cap-05" class="caption-group dark"><span class="caption-pill">cards, navs, grids, spacing.</span></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <script>
+      (function () {
+        const q = (s) => `[data-composition-id="quiet-captions"] ${s}`;
+        const tl = gsap.timeline({ paused: true });
+
+        gsap.set(q(".caption-group"), { opacity: 0, y: 18, filter: "blur(6px)", scale: 0.98 });
+
+        function show(selector, start, end, clay) {
+          const dur = end - start;
+          const enter = clay ? 0.18 : 0.22;
+          const exit = clay ? 0.16 : 0.18;
+          tl.to(q(selector), {
+            opacity: clay ? 0.94 : 0.88,
+            y: 0,
+            scale: 1,
+            filter: "blur(0px)",
+            duration: enter,
+            ease: clay ? "back.out(1.25)" : "power2.out"
+          }, start);
+          tl.to(q(selector), {
+            opacity: 0,
+            y: clay ? -10 : 10,
+            scale: clay ? 0.985 : 0.99,
+            filter: "blur(5px)",
+            duration: exit,
+            ease: "power2.in"
+          }, Math.max(start + enter, end - exit));
+          return dur;
+        }
+
+        show("#cap-00", 3.84, 5.34, false);
+        show("#cap-01", 5.54, 6.58, false);
+        show("#cap-02", 6.72, 7.84, false);
+        show("#cap-03", 7.94, 9.34, false);
+        show("#cap-04", 9.76, 10.72, false);
+        show("#cap-05", 10.82, 12.08, false);
+
+        window.__timelines = window.__timelines || {};
+        window.__timelines["quiet-captions"] = tl;
+
+        const previewTime = new URLSearchParams(window.location.search).get("t");
+        if (previewTime !== null) tl.time(Number(previewTime));
+      })();
+    </script>
+  </div>
+</template>
+
+<!-- hyperframes-harness: standalone play/scrub for a paused GSAP composition.
+     Handles both full-doc compositions and <template>-wrapped ones. -->
+<style>
+  html, body { margin: 0; overflow: hidden; background: #000; }
+  #hf-stage { position: absolute; top: 0; left: 0; }
+  #hf-harness {
+    position: fixed; left: 0; right: 0; bottom: 0; z-index: 2147483647;
+    display: flex; align-items: center; gap: 12px;
+    padding: 10px 16px; font: 13px/1 ui-sans-serif, system-ui, sans-serif;
+    background: rgba(12, 12, 20, 0.82); color: #e6e6ee;
+    backdrop-filter: blur(8px); border-top: 1px solid rgba(255,255,255,0.08);
+  }
+  #hf-harness button {
+    all: unset; cursor: pointer; width: 34px; height: 34px;
+    display: grid; place-items: center; border-radius: 8px;
+    background: #2a2a3a; color: #fff; font-size: 15px;
+  }
+  #hf-harness button:hover { background: #3a3a52; }
+  #hf-harness input[type=range] { flex: 1; accent-color: #6c7cff; }
+  #hf-harness .hf-time { font-variant-numeric: tabular-nums; opacity: 0.7; min-width: 92px; }
+  #hf-harness .hf-id { opacity: 0.5; max-width: 220px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+</style>
+<div id="hf-harness">
+  <button id="hf-play" title="Play / pause">&#9654;</button>
+  <button id="hf-restart" title="Restart">&#8634;</button>
+  <input id="hf-scrub" type="range" min="0" max="1000" value="0" />
+  <span class="hf-time">0.00 / 0.00s</span>
+  <span class="hf-id"></span>
+</div>
+<script>
+(function () {
+  // If the composition is wrapped in a <template>, clone it into a live stage.
+  // Cloned <script> tags don't execute, so we recreate each one. External
+  // (src) scripts must finish loading before later inline scripts run, so we
+  // inject sequentially, awaiting each external script's load event.
+  function activateTemplate(done) {
+    if (document.querySelector('[data-composition-id]')) return done(); // already live
+    var tpl = document.querySelector('template');
+    if (!tpl) return done();
+    var stage = document.createElement('div');
+    stage.id = 'hf-stage';
+    stage.appendChild(tpl.content.cloneNode(true));
+    document.body.insertBefore(stage, document.getElementById('hf-harness'));
+
+    var scripts = [].slice.call(stage.querySelectorAll('script'));
+    (function next(i) {
+      if (i >= scripts.length) return done();
+      var old = scripts[i];
+      var s = document.createElement('script');
+      for (var j = 0; j < old.attributes.length; j++) {
+        s.setAttribute(old.attributes[j].name, old.attributes[j].value);
+      }
+      s.textContent = old.textContent;
+      if (old.src) { s.onload = s.onerror = function () { next(i + 1); }; }
+      old.parentNode.replaceChild(s, old);
+      if (!old.src) next(i + 1); // inline scripts run synchronously on insert
+    })(0);
+  }
+
+  function boot(tries) {
+    var tls = window.__timelines || {};
+    var root = document.querySelector('[data-composition-id]');
+    var id = root && root.getAttribute('data-composition-id');
+    var tl = (id && tls[id]) || tls[Object.keys(tls)[0]];
+    if (!tl || !root) {
+      if ((tries || 0) > 60) return;       // give CDN scripts ~5s
+      return setTimeout(function () { boot((tries || 0) + 1); }, 80);
+    }
+    if (!id) id = Object.keys(tls)[0];
+
+    var dur = tl.duration() || parseFloat(root.getAttribute('data-duration') || '5');
+    var playBtn = document.getElementById('hf-play');
+    var restart = document.getElementById('hf-restart');
+    var scrub = document.getElementById('hf-scrub');
+    var timeEl = document.querySelector('#hf-harness .hf-time');
+    document.querySelector('#hf-harness .hf-id').textContent = id;
+
+    function fmt(t) { return t.toFixed(2) + ' / ' + dur.toFixed(2) + 's'; }
+    function sync() {
+      scrub.value = String(Math.round((tl.time() / dur) * 1000));
+      timeEl.textContent = fmt(tl.time());
+      playBtn.innerHTML = tl.isActive() ? '&#10073;&#10073;' : '&#9654;';
+    }
+    gsap.ticker.add(sync);
+    playBtn.onclick = function () {
+      if (tl.isActive()) tl.pause();
+      else { if (tl.time() >= dur - 0.01) tl.time(0); tl.play(); }
+    };
+    restart.onclick = function () { tl.pause(); tl.time(0); sync(); };
+    scrub.oninput = function () { tl.pause(); tl.time((scrub.value / 1000) * dur); };
+
+    function fit() {
+      var w = parseFloat(root.getAttribute('data-width')) || 1920;
+      var h = parseFloat(root.getAttribute('data-height')) || 1080;
+      var avail = window.innerHeight - 56;
+      var s = Math.min(window.innerWidth / w, avail / h);
+      var host = document.getElementById('hf-stage') || root;
+      host.style.transformOrigin = 'top left';
+      host.style.transform = 'scale(' + s + ')';
+      host.style.position = 'absolute';
+      host.style.left = ((window.innerWidth - w * s) / 2) + 'px';
+      host.style.top = ((avail - h * s) / 2) + 'px';
+      host.style.width = w + 'px'; host.style.height = h + 'px';
+    }
+    fit(); window.addEventListener('resize', fit);
+    sync();
+  }
+  function start() { activateTemplate(function () { boot(0); }); }
+  if (document.readyState === 'loading')
+    document.addEventListener('DOMContentLoaded', start);
+  else start();
+})();
+</script>
+
+</body></html>

@@ -1,0 +1,343 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=block');
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { width: 1920px; height: 1080px; overflow: hidden; background: #fff; font-family: 'Inter', sans-serif; }
+
+  #scene-05 {
+    position: relative;
+    width: 1920px;
+    height: 1080px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #fff;
+  }
+
+  .headline {
+    position: absolute;
+    font-size: 94px;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    color: #0a0a0a;
+    white-space: nowrap;
+  }
+
+  .code-block {
+    position: absolute;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    opacity: 0;
+  }
+
+  .code-wrap {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 48px;
+    line-height: 2.0;
+    color: rgba(0,0,0,0.35);
+    text-align: left;
+    padding: 0 60px;
+  }
+
+  .code-wrap .attr { color: #0a0a0a; font-weight: 600; }
+  .code-wrap .str { color: #16a34a; }
+  .code-wrap .punct { color: rgba(0,0,0,0.25); }
+
+  .cursor {
+    display: inline-block;
+    width: 2.5px;
+    height: 1.1em;
+    background: #0a0a0a;
+    vertical-align: text-bottom;
+    margin-left: 1px;
+    opacity: 0;
+  }
+
+  .tagline {
+    font-family: 'Inter', sans-serif;
+    font-size: 85px;
+    font-weight: 600;
+    color: #0a0a0a;
+    letter-spacing: -0.02em;
+    opacity: 0.45;
+    margin-top: 56px;
+    opacity: 0;
+  }
+
+  .code-char {
+    display: none;
+  }
+</style>
+</head>
+<body>
+<div id="scene-05" data-composition-id="scene-05" data-width="1920" data-height="1080" data-duration="6">
+
+  <div class="headline" id="h1"><span style="color:#09B2E5">Any</span> composition.</div>
+  <div class="headline" id="h2">Now a <span style="color:#F3A6FF">template.</span></div>
+
+  <div class="code-block" id="code-block">
+    <div class="code-wrap" id="code-wrap"></div>
+    <div class="tagline" id="tagline">Infinite variations.</div>
+  </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<script>
+window.__timelines = window.__timelines || {};
+var tl = gsap.timeline({ paused: true });
+
+// ── Beat 1a: "Any composition." ──
+// Cut-the-curve entry from right (matching scene-04 leftward exit)
+gsap.set("#h1", { x: 200, filter: "blur(8px)", opacity: 0 });
+gsap.set("#h2", { x: 200, filter: "blur(8px)", opacity: 0 });
+
+tl.to("#h1", {
+  x: 0, filter: "blur(0px)", opacity: 1,
+  duration: 0.42, ease: "expo.out"
+}, 0);
+
+// Hold 0.3s, then cut-the-curve exit left
+tl.to("#h1", {
+  x: -200, filter: "blur(8px)", opacity: 0,
+  duration: 0.33, ease: "power2.in"
+}, 0.72);
+
+// ── Beat 1b: "Now a template." ──
+tl.to("#h2", {
+  x: 0, filter: "blur(0px)", opacity: 1,
+  duration: 0.42, ease: "expo.out"
+}, 1.05);
+
+// Hold 0.3s, then zoom-through exit
+tl.to("#h2", {
+  scale: 1.2, filter: "blur(20px)", opacity: 0.15,
+  duration: 0.2, ease: "power3.in"
+}, 1.77);
+
+// ── Beat 2: Code type-on ──
+var codeSegs = [
+  { cls: "attr", text: "data-composition-variables" },
+  { cls: "punct", text: "='[" },
+  { cls: "br" },
+  { cls: "punct", text: "  { " },
+  { cls: "attr", text: "id" },
+  { cls: "punct", text: ": " },
+  { cls: "str", text: '"hookText"' },
+  { cls: "punct", text: ", " },
+  { cls: "attr", text: "type" },
+  { cls: "punct", text: ": " },
+  { cls: "str", text: '"string"' },
+  { cls: "punct", text: " }," },
+  { cls: "br" },
+  { cls: "punct", text: "  { " },
+  { cls: "attr", text: "id" },
+  { cls: "punct", text: ": " },
+  { cls: "str", text: '"accentColor"' },
+  { cls: "punct", text: ", " },
+  { cls: "attr", text: "type" },
+  { cls: "punct", text: ": " },
+  { cls: "str", text: '"color"' },
+  { cls: "punct", text: " }," },
+  { cls: "br" },
+  { cls: "punct", text: "  { " },
+  { cls: "attr", text: "id" },
+  { cls: "punct", text: ": " },
+  { cls: "str", text: '"creatorClip"' },
+  { cls: "punct", text: ", " },
+  { cls: "attr", text: "type" },
+  { cls: "punct", text: ": " },
+  { cls: "str", text: '"string"' },
+  { cls: "punct", text: " }" },
+  { cls: "br" },
+  { cls: "punct", text: "]'" }
+];
+
+var wrap = document.getElementById("code-wrap");
+var charEls = [];
+
+for (var i = 0; i < codeSegs.length; i++) {
+  var seg = codeSegs[i];
+  if (seg.cls === "br") {
+    var br = document.createElement("br");
+    br.style.display = "none";
+    wrap.appendChild(br);
+    charEls.push(br);
+    continue;
+  }
+  for (var c = 0; c < seg.text.length; c++) {
+    var span = document.createElement("span");
+    span.className = "code-char " + seg.cls;
+    span.textContent = seg.text[c];
+    wrap.appendChild(span);
+    charEls.push(span);
+  }
+}
+
+var cursorEl = document.createElement("span");
+cursorEl.className = "cursor";
+cursorEl.id = "cursor";
+cursorEl.innerHTML = "&nbsp;";
+wrap.appendChild(cursorEl);
+
+// Code block zoom-through entry (from h2 zoom exit)
+gsap.set("#code-block", { scale: 0.75, filter: "blur(20px)", opacity: 0 });
+tl.to("#code-block", {
+  scale: 1, filter: "blur(0px)", opacity: 1,
+  duration: 0.5, ease: "expo.out"
+}, 1.97);
+
+// Cursor blink on
+tl.to("#cursor", { opacity: 1, duration: 0.01 }, 2.1);
+
+// Cursor blink loop
+var blinkStart = 2.1;
+var blinkEnd = 5.8;
+var blinkInterval = 0.5;
+for (var b = blinkStart; b < blinkEnd; b += blinkInterval) {
+  tl.to("#cursor", { opacity: 0, duration: 0.01 }, b + blinkInterval * 0.5);
+  tl.to("#cursor", { opacity: 1, duration: 0.01 }, b + blinkInterval);
+}
+
+// Type characters at ~50 chars/sec
+var typeStart = 2.15;
+var charRate = 0.02;
+
+for (var j = 0; j < charEls.length; j++) {
+  tl.set(charEls[j], { display: "inline" }, typeStart + j * charRate);
+}
+
+var typeEnd = typeStart + charEls.length * charRate;
+
+// Tagline fades in after typing
+tl.to("#tagline", { opacity: 1, duration: 0.3, ease: "power2.out" }, typeEnd + 0.2);
+
+// Zoom-through exit into Scene 06
+tl.to("#code-block", {
+  scale: 1.2, filter: "blur(20px)", opacity: 0.15,
+  duration: 0.2, ease: "power3.in"
+}, 5.8);
+
+window.__timelines["scene-05"] = tl;
+</script>
+<!-- hyperframes-harness: standalone play/scrub for a paused GSAP composition.
+     Handles both full-doc compositions and <template>-wrapped ones. -->
+<style>
+  html, body { margin: 0; overflow: hidden; background: #000; }
+  #hf-stage { position: absolute; top: 0; left: 0; }
+  #hf-harness {
+    position: fixed; left: 0; right: 0; bottom: 0; z-index: 2147483647;
+    display: flex; align-items: center; gap: 12px;
+    padding: 10px 16px; font: 13px/1 ui-sans-serif, system-ui, sans-serif;
+    background: rgba(12, 12, 20, 0.82); color: #e6e6ee;
+    backdrop-filter: blur(8px); border-top: 1px solid rgba(255,255,255,0.08);
+  }
+  #hf-harness button {
+    all: unset; cursor: pointer; width: 34px; height: 34px;
+    display: grid; place-items: center; border-radius: 8px;
+    background: #2a2a3a; color: #fff; font-size: 15px;
+  }
+  #hf-harness button:hover { background: #3a3a52; }
+  #hf-harness input[type=range] { flex: 1; accent-color: #6c7cff; }
+  #hf-harness .hf-time { font-variant-numeric: tabular-nums; opacity: 0.7; min-width: 92px; }
+  #hf-harness .hf-id { opacity: 0.5; max-width: 220px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+</style>
+<div id="hf-harness">
+  <button id="hf-play" title="Play / pause">&#9654;</button>
+  <button id="hf-restart" title="Restart">&#8634;</button>
+  <input id="hf-scrub" type="range" min="0" max="1000" value="0" />
+  <span class="hf-time">0.00 / 0.00s</span>
+  <span class="hf-id"></span>
+</div>
+<script>
+(function () {
+  // If the composition is wrapped in a <template>, clone it into a live stage.
+  // Cloned <script> tags don't execute, so we recreate each one. External
+  // (src) scripts must finish loading before later inline scripts run, so we
+  // inject sequentially, awaiting each external script's load event.
+  function activateTemplate(done) {
+    if (document.querySelector('[data-composition-id]')) return done(); // already live
+    var tpl = document.querySelector('template');
+    if (!tpl) return done();
+    var stage = document.createElement('div');
+    stage.id = 'hf-stage';
+    stage.appendChild(tpl.content.cloneNode(true));
+    document.body.insertBefore(stage, document.getElementById('hf-harness'));
+
+    var scripts = [].slice.call(stage.querySelectorAll('script'));
+    (function next(i) {
+      if (i >= scripts.length) return done();
+      var old = scripts[i];
+      var s = document.createElement('script');
+      for (var j = 0; j < old.attributes.length; j++) {
+        s.setAttribute(old.attributes[j].name, old.attributes[j].value);
+      }
+      s.textContent = old.textContent;
+      if (old.src) { s.onload = s.onerror = function () { next(i + 1); }; }
+      old.parentNode.replaceChild(s, old);
+      if (!old.src) next(i + 1); // inline scripts run synchronously on insert
+    })(0);
+  }
+
+  function boot(tries) {
+    var tls = window.__timelines || {};
+    var root = document.querySelector('[data-composition-id]');
+    var id = root && root.getAttribute('data-composition-id');
+    var tl = (id && tls[id]) || tls[Object.keys(tls)[0]];
+    if (!tl || !root) {
+      if ((tries || 0) > 60) return;       // give CDN scripts ~5s
+      return setTimeout(function () { boot((tries || 0) + 1); }, 80);
+    }
+    if (!id) id = Object.keys(tls)[0];
+
+    var dur = tl.duration() || parseFloat(root.getAttribute('data-duration') || '5');
+    var playBtn = document.getElementById('hf-play');
+    var restart = document.getElementById('hf-restart');
+    var scrub = document.getElementById('hf-scrub');
+    var timeEl = document.querySelector('#hf-harness .hf-time');
+    document.querySelector('#hf-harness .hf-id').textContent = id;
+
+    function fmt(t) { return t.toFixed(2) + ' / ' + dur.toFixed(2) + 's'; }
+    function sync() {
+      scrub.value = String(Math.round((tl.time() / dur) * 1000));
+      timeEl.textContent = fmt(tl.time());
+      playBtn.innerHTML = tl.isActive() ? '&#10073;&#10073;' : '&#9654;';
+    }
+    gsap.ticker.add(sync);
+    playBtn.onclick = function () {
+      if (tl.isActive()) tl.pause();
+      else { if (tl.time() >= dur - 0.01) tl.time(0); tl.play(); }
+    };
+    restart.onclick = function () { tl.pause(); tl.time(0); sync(); };
+    scrub.oninput = function () { tl.pause(); tl.time((scrub.value / 1000) * dur); };
+
+    function fit() {
+      var w = parseFloat(root.getAttribute('data-width')) || 1920;
+      var h = parseFloat(root.getAttribute('data-height')) || 1080;
+      var avail = window.innerHeight - 56;
+      var s = Math.min(window.innerWidth / w, avail / h);
+      var host = document.getElementById('hf-stage') || root;
+      host.style.transformOrigin = 'top left';
+      host.style.transform = 'scale(' + s + ')';
+      host.style.position = 'absolute';
+      host.style.left = ((window.innerWidth - w * s) / 2) + 'px';
+      host.style.top = ((avail - h * s) / 2) + 'px';
+      host.style.width = w + 'px'; host.style.height = h + 'px';
+    }
+    fit(); window.addEventListener('resize', fit);
+    sync();
+  }
+  function start() { activateTemplate(function () { boot(0); }); }
+  if (document.readyState === 'loading')
+    document.addEventListener('DOMContentLoaded', start);
+  else start();
+})();
+</script>
+
+</body>
+</html>
