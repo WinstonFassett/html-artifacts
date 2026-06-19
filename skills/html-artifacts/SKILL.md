@@ -25,6 +25,10 @@ node find.mjs --all
 Output is `NAME  PATH  [tags]`; paths are under `site/public/artifacts/`. Open the match,
 copy it, adapt. Use `find.mjs` instead of Grep/Glob for "what do we have for X".
 
+`find.mjs` finds the catalog by walking up from itself; if this skill is installed
+outside the repo it fetches the published catalog from
+`github.com/WinstonFassett/html-artifacts` instead, and prints raw URLs for each artifact.
+
 ## Two axes to query along
 
 1. **Library / stack** — a minimal working setup for a specific lib. Lives in

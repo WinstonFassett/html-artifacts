@@ -50,6 +50,11 @@ compositions plus our own tooling — see its `README.md`:
   single composition.
 - `harvest.mjs` — pull more compositions from `heygen-com/hyperframes-launches`.
 
+If this skill is installed outside the repo (the paths above don't exist locally), get
+the tooling from GitHub: `https://raw.githubusercontent.com/WinstonFassett/html-artifacts/main/site/public/artifacts/winstonfassett/hyperframes/<file>`
+or `git clone https://github.com/WinstonFassett/html-artifacts`. The upstream rule above
+(use HeyGen's official skills) needs no repo and always applies.
+
 Use our `render.mjs` for a fast one-off render of an existing harvested composition.
 Use the **official skills + CLI** for authoring new compositions, audio/video muxing,
 multi-composition timelines, and production-deterministic renders.
