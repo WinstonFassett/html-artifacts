@@ -10,12 +10,15 @@ const tags = [...new Set(artifacts.flatMap((a) => a.data.tags))].sort();
 const sources = [...new Set(artifacts.map((a) => a.data.source))].sort();
 ---
 <BaseLayout>
-  <header class="mx-auto max-w-7xl px-4 pt-6">
-    <h1 class="text-xl font-bold">HTML Artifact Gallery</h1>
-    <p class="text-sm text-muted-foreground">Single-file artifacts that run with no build step — featured first.</p>
-  </header>
-
-  <FilterBar tags={tags} sources={sources} />
-  <GalleryGrid artifacts={artifacts} />
+  <div class="flex min-h-screen">
+    <FilterBar tags={tags} sources={sources} />
+    <main class="flex-1 min-w-0 flex flex-col">
+      <header class="px-6 pt-5 pb-3">
+        <h1 class="text-lg font-semibold">HTML Artifact Gallery</h1>
+        <p class="text-xs text-muted-foreground mt-0.5">Single-file artifacts that run with no build step — featured first.</p>
+      </header>
+      <GalleryGrid artifacts={artifacts} />
+    </main>
+  </div>
   <Lightbox />
 </BaseLayout>
