@@ -3,8 +3,9 @@ import type { CollectionEntry } from 'astro:content';
 import { formatSize } from '../lib/format';
 interface Props { artifact: CollectionEntry<'artifacts'>['data']; }
 const a = Astro.props.artifact;
-const runUrl = `/artifacts/${a.path.endsWith('.html') ? a.path : a.path + '/index.html'}`;
-const previewUrl = `/${a.preview}`;
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const runUrl = `${base}/artifacts/${a.path.endsWith('.html') ? a.path : a.path + '/index.html'}`;
+const previewUrl = `${base}/${a.preview}`;
 const filename = a.path.split('/').pop() ?? `${a.id}.html`;
 const sizeLabel = formatSize(a.size);
 ---
