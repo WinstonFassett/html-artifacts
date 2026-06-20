@@ -2,9 +2,9 @@
 ---
 <div id="lightbox" class="fixed inset-0 z-50 hidden flex-col bg-black/95 backdrop-blur-sm">
   <!-- Header -->
-  <div class="flex items-center gap-3 border-b border-white/10 px-4 py-2.5">
-    <!-- Prev/Next -->
-    <div class="flex items-center gap-1 shrink-0">
+  <div class="flex items-center gap-2 border-b border-white/10 px-3 py-2 md:gap-3 md:px-4 md:py-2.5">
+    <!-- Prev/Next (desktop only — on mobile these live in the bottom bar) -->
+    <div class="hidden md:flex items-center gap-0.5 shrink-0">
       <button id="lb-prev" type="button" title="Previous (←)"
               class="rounded px-3 py-1.5 text-base text-white/70 hover:bg-white/10 hover:text-white disabled:opacity-25 transition-colors">‹</button>
       <button id="lb-next" type="button" title="Next (→)"
@@ -12,30 +12,39 @@
       <span id="lb-pos" class="text-xs text-white/30 tabular-nums ml-1"></span>
     </div>
 
-    <div class="w-px h-5 bg-white/10 shrink-0"></div>
+    <div class="hidden md:block w-px h-5 bg-white/10 shrink-0"></div>
 
-    <!-- Title + meta -->
-    <div class="flex min-w-0 flex-1 items-center gap-3">
+    <!-- Title (mobile: just title + close; desktop: full meta row) -->
+    <div class="flex min-w-0 flex-1 items-center gap-2 md:gap-3">
       <h2 id="lb-title" class="truncate text-sm font-semibold text-white"></h2>
-      <div id="lb-tags" class="flex flex-wrap gap-1 min-w-0"></div>
-      <span id="lb-source" class="shrink-0 text-[0.65rem] uppercase tracking-wide text-white/30"></span>
-      <span id="lb-size" class="shrink-0 tabular-nums text-xs text-white/30"></span>
+      <div id="lb-tags" class="hidden md:flex flex-wrap gap-1 min-w-0"></div>
+      <span id="lb-source" class="hidden md:inline shrink-0 text-[0.65rem] uppercase tracking-wide text-white/30"></span>
+      <span id="lb-size" class="hidden md:inline shrink-0 tabular-nums text-xs text-white/30"></span>
     </div>
 
     <!-- Actions -->
-    <div class="flex shrink-0 items-center gap-2">
+    <div class="flex shrink-0 items-center gap-1.5 md:gap-2">
       <a id="lb-download" href="#" download
-         class="rounded border border-white/15 px-2.5 py-1 text-xs text-white/60 hover:border-white/40 hover:text-white transition-colors">↓ download</a>
+         class="hidden sm:inline-flex rounded border border-white/15 px-2.5 py-1 text-xs text-white/60 hover:border-white/40 hover:text-white transition-colors">↓</a>
       <a id="lb-open" href="#" target="_blank" rel="noopener"
-         class="rounded border border-white/15 px-2.5 py-1 text-xs text-white/60 hover:border-white/40 hover:text-white transition-colors">open ↗</a>
+         class="rounded border border-white/15 px-2.5 py-2 text-xs text-white/60 hover:border-white/40 hover:text-white transition-colors md:py-1">open ↗</a>
       <button id="lb-close" type="button"
-              class="rounded border border-white/15 px-2.5 py-1 text-xs text-white/60 hover:border-white/40 hover:text-white transition-colors">✕</button>
+              class="rounded border border-white/15 px-3 py-2 text-sm text-white/60 hover:border-white/40 hover:text-white transition-colors md:px-2.5 md:py-1 md:text-xs">✕</button>
     </div>
   </div>
 
   <!-- iframe -->
   <iframe id="lb-frame" class="h-full w-full flex-1 bg-white"
           sandbox="allow-scripts allow-same-origin allow-forms allow-downloads"></iframe>
+
+  <!-- Mobile bottom nav bar -->
+  <div class="flex md:hidden items-center justify-between border-t border-white/10 px-4 py-2 bg-black/80">
+    <button id="lb-prev-mobile" type="button" title="Previous"
+            class="flex items-center gap-1.5 rounded-lg px-5 py-3 text-2xl text-white/70 hover:bg-white/10 hover:text-white disabled:opacity-25 transition-colors active:bg-white/20">‹</button>
+    <span id="lb-pos-mobile" class="text-xs text-white/30 tabular-nums"></span>
+    <button id="lb-next-mobile" type="button" title="Next"
+            class="flex items-center gap-1.5 rounded-lg px-5 py-3 text-2xl text-white/70 hover:bg-white/10 hover:text-white disabled:opacity-25 transition-colors active:bg-white/20">›</button>
+  </div>
 </div>
 
 <script>
@@ -50,6 +59,9 @@
   const dlLink = document.getElementById('lb-download') as HTMLAnchorElement;
   const prevBtn = document.getElementById('lb-prev') as HTMLButtonElement;
   const nextBtn = document.getElementById('lb-next') as HTMLButtonElement;
+  const prevBtnMobile = document.getElementById('lb-prev-mobile') as HTMLButtonElement;
+  const nextBtnMobile = document.getElementById('lb-next-mobile') as HTMLButtonElement;
+  const posMobileEl = document.getElementById('lb-pos-mobile')!;
 
   // cards snapshot taken when lightbox opens
   let cards: HTMLElement[] = [];
@@ -78,13 +90,17 @@
     ).join('');
     sourceEl.textContent = card.dataset.source || '';
     sizeEl.textContent = card.dataset.size || '';
-    posEl.textContent = `${idx + 1} / ${cards.length}`;
+    const pos = `${idx + 1} / ${cards.length}`;
+    posEl.textContent = pos;
+    posMobileEl.textContent = pos;
     openLink.href = run;
     dlLink.href = run;
     dlLink.setAttribute('download', card.dataset.filename || '');
     frame.src = run;
     prevBtn.disabled = idx <= 0;
     nextBtn.disabled = idx >= cards.length - 1;
+    prevBtnMobile.disabled = idx <= 0;
+    nextBtnMobile.disabled = idx >= cards.length - 1;
   }
 
 
@@ -104,6 +120,7 @@
     frame.src = '';
     idx = -1;
     cards = [];
+    history.replaceState(null, '', location.pathname + location.search);
   }
 
   // Card click
@@ -113,39 +130,37 @@
     if (card) open(card);
   });
 
-  // Prev/next
-  prevBtn.addEventListener('click', () => {
+  // Prev/next (desktop + mobile)
+  function goPrev() {
     if (idx <= 0) return;
     history.replaceState(null, '', `#${cardId(cards[idx - 1], idx - 1)}`);
     render(idx - 1);
-  });
-  nextBtn.addEventListener('click', () => {
+  }
+  function goNext() {
     if (idx >= cards.length - 1) return;
     history.replaceState(null, '', `#${cardId(cards[idx + 1], idx + 1)}`);
     render(idx + 1);
-  });
-
-  function closeViaHistory() {
-    history.back(); // triggers popstate → close()
   }
+  prevBtn.addEventListener('click', goPrev);
+  nextBtn.addEventListener('click', goNext);
+  prevBtnMobile.addEventListener('click', goPrev);
+  nextBtnMobile.addEventListener('click', goNext);
 
   // Close
-  document.getElementById('lb-close')!.addEventListener('click', closeViaHistory);
-  lb.addEventListener('click', (e) => { if (e.target === lb) closeViaHistory(); });
+  document.getElementById('lb-close')!.addEventListener('click', close);
+  lb.addEventListener('click', (e) => { if (e.target === lb) close(); });
 
   document.addEventListener('keydown', (e) => {
     if (lb.classList.contains('hidden')) return;
-    if (e.key === 'Escape') closeViaHistory();
-    else if (e.key === 'ArrowLeft') prevBtn.click();
-    else if (e.key === 'ArrowRight') nextBtn.click();
+    if (e.key === 'Escape') close();
+    else if (e.key === 'ArrowLeft') goPrev();
+    else if (e.key === 'ArrowRight') goNext();
   });
 
   // Browser back while lightbox is open = close (stay on page)
-  window.addEventListener('popstate', (e) => {
+  window.addEventListener('popstate', () => {
     if (!lb.classList.contains('hidden')) {
       close();
-      // Strip the hash without navigating away
-      history.replaceState(null, '', location.pathname + location.search);
     }
   });
 

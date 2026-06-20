@@ -10,15 +10,53 @@ const tags = [...new Set(artifacts.flatMap((a) => a.data.tags))].sort();
 const sources = [...new Set(artifacts.map((a) => a.data.source))].sort();
 ---
 <BaseLayout>
+  <!-- Mobile sidebar backdrop -->
+  <div id="sidebar-backdrop" class="fixed inset-0 z-40 bg-black/60 hidden md:hidden" aria-hidden="true"></div>
+
   <div class="flex min-h-screen">
     <FilterBar tags={tags} sources={sources} />
     <main class="flex-1 min-w-0 flex flex-col">
-      <header class="px-6 pt-5 pb-3">
-        <h1 class="text-lg font-semibold">HTML Artifact Gallery</h1>
-        <p class="text-xs text-muted-foreground mt-0.5">Single-file artifacts that run with no build step — featured first.</p>
+      <header class="flex items-center gap-3 px-4 pt-4 pb-3 md:px-6 md:pt-5">
+        <!-- Hamburger (mobile only) -->
+        <button
+          id="sidebar-toggle"
+          type="button"
+          aria-label="Open filters"
+          class="md:hidden shrink-0 rounded p-1.5 text-muted-foreground hover:bg-muted hover:text-foreground"
+        >
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round">
+            <line x1="2" y1="4.5" x2="16" y2="4.5"/>
+            <line x1="2" y1="9" x2="16" y2="9"/>
+            <line x1="2" y1="13.5" x2="16" y2="13.5"/>
+          </svg>
+        </button>
+        <div>
+          <h1 class="text-base font-semibold md:text-lg">HTML Artifact Gallery</h1>
+          <p class="text-xs text-muted-foreground mt-0.5">Single-file artifacts that run with no build step — featured first.</p>
+        </div>
       </header>
       <GalleryGrid artifacts={artifacts} />
     </main>
   </div>
   <Lightbox />
 </BaseLayout>
+
+<script>
+  const toggle = document.getElementById('sidebar-toggle')!;
+  const backdrop = document.getElementById('sidebar-backdrop')!;
+  const sidebar = document.getElementById('sidebar')!;
+
+  function openSidebar() {
+    sidebar.classList.add('sidebar-open');
+    backdrop.classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeSidebar() {
+    sidebar.classList.remove('sidebar-open');
+    backdrop.classList.add('hidden');
+    document.body.style.overflow = '';
+  }
+
+  toggle.addEventListener('click', openSidebar);
+  backdrop.addEventListener('click', closeSidebar);
+</script>

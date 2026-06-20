@@ -48,7 +48,7 @@ const views = [
 ] as const;
 ---
 
-<aside id="sidebar" class="w-60 shrink-0 border-r border-border flex flex-col sticky top-0 h-screen overflow-y-auto">
+<aside id="sidebar" class="fixed inset-y-0 left-0 z-50 w-72 shrink-0 border-r border-border flex flex-col bg-background overflow-y-auto -translate-x-full transition-transform duration-200 md:sticky md:top-0 md:h-screen md:w-60 md:translate-x-0 md:transition-none">
   <!-- Search -->
   <div class="px-4 pt-4 pb-3 border-b border-border">
     <input
@@ -65,7 +65,7 @@ const views = [
     <div class="flex flex-col gap-0.5">
       {views.map(([val, label]) => (
         <button
-          class="view-btn w-full rounded px-2.5 py-1.5 text-left text-sm text-muted-foreground transition-colors hover:bg-muted hover:text-foreground data-[active]:bg-muted data-[active]:text-foreground data-[active]:font-medium"
+          class="view-btn w-full rounded px-2.5 py-2.5 text-left text-sm text-muted-foreground transition-colors hover:bg-muted hover:text-foreground data-[active]:bg-muted data-[active]:text-foreground data-[active]:font-medium md:py-1.5"
           data-view={val}
           data-active={val === 'featured' ? '' : undefined}
         >{label}</button>
@@ -79,9 +79,9 @@ const views = [
   <div class="px-4 py-2">
     <p class="mb-2 text-[0.65rem] font-semibold uppercase tracking-widest text-muted-foreground/50">Source</p>
     <div class="flex flex-col gap-0.5">
-      <button class="src-btn w-full rounded px-2.5 py-1.5 text-left text-sm text-muted-foreground hover:bg-muted hover:text-foreground data-[active]:bg-muted data-[active]:text-foreground data-[active]:font-medium" data-src="">all</button>
+      <button class="src-btn w-full rounded px-2.5 py-2.5 text-left text-sm text-muted-foreground hover:bg-muted hover:text-foreground data-[active]:bg-muted data-[active]:text-foreground data-[active]:font-medium md:py-1.5" data-src="">all</button>
       {sources.map(s => (
-        <button class="src-btn w-full rounded px-2.5 py-1.5 text-left text-sm text-muted-foreground hover:bg-muted hover:text-foreground data-[active]:bg-muted data-[active]:text-foreground data-[active]:font-medium" data-src={s}>{s}</button>
+        <button class="src-btn w-full rounded px-2.5 py-2.5 text-left text-sm text-muted-foreground hover:bg-muted hover:text-foreground data-[active]:bg-muted data-[active]:text-foreground data-[active]:font-medium md:py-1.5" data-src={s}>{s}</button>
       ))}
     </div>
   </div>
@@ -91,7 +91,7 @@ const views = [
   <!-- Tags by group -->
   <div class="px-4 py-2 pb-6 flex flex-col gap-3">
     <p class="text-[0.65rem] font-semibold uppercase tracking-widest text-muted-foreground/50">Tags</p>
-    <button class="tag-btn w-full rounded px-2.5 py-1 text-left text-sm text-muted-foreground hover:bg-muted hover:text-foreground data-[active]:bg-muted data-[active]:text-foreground data-[active]:font-medium" data-tag="">all tags</button>
+    <button class="tag-btn w-full rounded px-2.5 py-2.5 text-left text-sm text-muted-foreground hover:bg-muted hover:text-foreground data-[active]:bg-muted data-[active]:text-foreground data-[active]:font-medium md:py-1" data-tag="">all tags</button>
 
     {TAG_GROUPS.map(group => {
       const groupTags = group.tags.filter(t => tags.includes(t));
@@ -105,7 +105,7 @@ const views = [
           <div class="mt-1 flex flex-col gap-0.5 pl-1">
             {groupTags.map(t => (
               <button
-                class="tag-btn w-full rounded px-2 py-1 text-left text-[0.8rem] text-muted-foreground hover:bg-muted hover:text-foreground data-[active]:bg-muted data-[active]:text-accent data-[active]:font-medium"
+                class="tag-btn w-full rounded px-2 py-2.5 text-left text-[0.8rem] text-muted-foreground hover:bg-muted hover:text-foreground data-[active]:bg-muted data-[active]:text-accent data-[active]:font-medium md:py-1"
                 data-tag={t}
               >{t}</button>
             ))}
@@ -181,4 +181,17 @@ const views = [
   setActive('.src-btn', 'src', '');
   setActive('.tag-btn', 'tag', '');
   apply();
+
+  // Close mobile sidebar after any filter selection
+  function closeMobileSidebar() {
+    const sidebar = document.getElementById('sidebar')!;
+    const backdrop = document.getElementById('sidebar-backdrop');
+    if (window.innerWidth < 768) {
+      sidebar.classList.remove('sidebar-open');
+      if (backdrop) backdrop.classList.add('hidden');
+      document.body.style.overflow = '';
+    }
+  }
+  document.querySelectorAll<HTMLElement>('.view-btn, .src-btn, .tag-btn').forEach(b =>
+    b.addEventListener('click', closeMobileSidebar));
 </script>

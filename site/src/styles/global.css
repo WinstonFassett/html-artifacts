@@ -41,3 +41,10 @@ body {
   color: var(--foreground);
   font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
 }
+
+/* Mobile sidebar open state — must beat Tailwind's -translate-x-full utility.
+   Tailwind v4 uses the `translate` CSS property, not `transform`. */
+#sidebar.sidebar-open {
+  --tw-translate-x: 0 !important;
+  translate: 0 !important;
+}
