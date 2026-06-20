@@ -164,6 +164,13 @@
     }
   });
 
+  // iOS Safari bfcache: swipe-back restores a frozen snapshot with lightbox still visible
+  window.addEventListener('pageshow', (e) => {
+    if (e.persisted && !lb.classList.contains('hidden')) {
+      close();
+    }
+  });
+
   // Page load with hash = open that card
   if (location.hash) {
     document.querySelector<HTMLElement>('.view-btn[data-view="all"]')?.click();
