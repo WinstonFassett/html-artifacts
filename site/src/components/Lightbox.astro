@@ -92,14 +92,13 @@
     cards = visibleCards();
     const i = cards.indexOf(card);
     const id = cardId(card, i < 0 ? 0 : i);
-    history.replaceState(null, '', `#${id}`);
+    history.pushState({ lightbox: id }, '', `#${id}`);
     lb.classList.remove('hidden');
     lb.classList.add('flex');
     render(i < 0 ? 0 : i);
   }
 
   function close() {
-    history.replaceState(null, '', location.pathname);
     lb.classList.add('hidden');
     lb.classList.remove('flex');
     frame.src = '';
@@ -126,20 +125,28 @@
     render(idx + 1);
   });
 
+  function closeViaHistory() {
+    history.back(); // triggers popstate → close()
+  }
+
   // Close
-  document.getElementById('lb-close')!.addEventListener('click', close);
-  lb.addEventListener('click', (e) => { if (e.target === lb) close(); });
+  document.getElementById('lb-close')!.addEventListener('click', closeViaHistory);
+  lb.addEventListener('click', (e) => { if (e.target === lb) closeViaHistory(); });
 
   document.addEventListener('keydown', (e) => {
     if (lb.classList.contains('hidden')) return;
-    if (e.key === 'Escape') close();
+    if (e.key === 'Escape') closeViaHistory();
     else if (e.key === 'ArrowLeft') prevBtn.click();
     else if (e.key === 'ArrowRight') nextBtn.click();
   });
 
-  // Browser back while lightbox is open = close
-  window.addEventListener('popstate', () => {
-    if (!lb.classList.contains('hidden')) close();
+  // Browser back while lightbox is open = close (stay on page)
+  window.addEventListener('popstate', (e) => {
+    if (!lb.classList.contains('hidden')) {
+      close();
+      // Strip the hash without navigating away
+      history.replaceState(null, '', location.pathname + location.search);
+    }
   });
 
   // Page load with hash = open that card
