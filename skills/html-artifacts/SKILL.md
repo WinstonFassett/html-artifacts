@@ -40,6 +40,42 @@ outside the repo it fetches the published catalog from
    social card, chat, video, doc). Mostly in `html-anything/`. For "build me a dashboard"
    → `node find.mjs --tag dashboard` and start from the closest.
 
+## Framework quick-reference
+
+When a catalog match doesn't exist and you must build from scratch, pick by CDN viability:
+
+| Framework | CDN / no-build | Shape | When to reach for it |
+|-----------|---------------|-------|----------------------|
+| **Lit** | ✓ importmap + jsDelivr | `*-esm.html` | Reactive components, scoped CSS, web component interop |
+| **Vue 3** | ✓ global CDN | inline or ESM | Forms, filters, cohesive app logic; template-syntax fans |
+| **Solid** | ✓ importmap | `*-esm.html` | Fine-grained reactivity, signals; see `node find.mjs solid` |
+| **React / Preact** | ✓ via Babel CDN | inline | JSX required; Preact is 4 KB vs React's 42 KB |
+| **htmx** | ✓ script tag | inline | Server-driven hypermedia, zero JS logic |
+| **Three.js / D3 / GSAP** | ✓ importmap / script | ESM or inline | 3D, dataviz, animation — check catalog first |
+| **Svelte / Next / Nuxt** | ✗ compile required | — | Not usable as no-build artifacts |
+
+**CDN rules:**
+- Always use jsDelivr with `+esm` suffix: `https://cdn.jsdelivr.net/npm/lit@3/+esm`
+- Use an `<script type="importmap">` block for ESM libs — don't inline bare `import` without one
+- If an import silently fails, debug the CDN URL first; **never fall back to vanilla JS** without explicit approval
+
+## Common pitfalls
+
+**Reactive array/object mutation won't re-render** (Lit, Solid signals):
+```js
+// ❌ Lit won't detect this
+this.items.push(x);
+// ✓ new reference triggers render
+this.items = [...this.items, x];
+```
+
+**Lit: forgetting `static properties`** — without it, property assignments don't trigger `render()`.
+
+**Lit input binding** — use `.value` (property) not `value` (attribute), plus `@input` handler:
+```html
+<input .value=${this.text} @input=${e => this.text = e.target.value} />
+```
+
 ## Areas that override defaults (read their SKILL.md)
 
 Most artifacts are just copy-and-adapt. A few areas delegate to external tooling and

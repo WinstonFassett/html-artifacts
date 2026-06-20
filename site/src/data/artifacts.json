@@ -27,7 +27,7 @@
   ],
   "source": "collected",
   "bucket": "collected",
-  "featured": false,
+  "featured": true,
   "size": 690350,
   "preview": ""
  },
