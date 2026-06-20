@@ -99,6 +99,20 @@
   }
   document.getElementById("search").oninput = e => render(e.target.value);
   render();
+
+  // Default to flex-css if no hash is set
+  if (!location.hash) {
+    const flexEntry = manifest.find(m => m.id === "flex-css");
+    if (flexEntry) {
+      const el = list.querySelector(".item");
+      // Find the right element by scanning
+      list.querySelectorAll(".item").forEach(item => {
+        if (item.querySelector(".nm")?.textContent.trim().startsWith("flex-css")) {
+          select(flexEntry, item);
+        }
+      });
+    }
+  }
 })();
 </script>
 </body>
