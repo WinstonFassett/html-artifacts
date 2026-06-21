@@ -123,9 +123,10 @@
     history.replaceState(null, '', location.pathname + location.search);
   }
 
-  // Card click
+  // Card click — guard against double-fire (e.g. button inside article both bubble)
   document.addEventListener('click', (e) => {
     if ((e.target as HTMLElement).closest('#lightbox')) return;
+    if (!lb.classList.contains('hidden')) return;
     const card = (e.target as HTMLElement).closest('.card') as HTMLElement | null;
     if (card) open(card);
   });
