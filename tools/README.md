@@ -14,7 +14,7 @@ Serve the repo over HTTP first (ESM artifacts need it). Easiest via the
 
 ```bash
 python3 <webapp-testing>/scripts/with_server.py \
-  --server "python3 -m http.server 9731 --directory $PWD" --port 9731 \
+  --server "python3 -m http.server 9731 --directory public" --port 9731 \
   -- python3 tools/shoot.py
 ```
 
@@ -26,14 +26,3 @@ uncontrolled third-party artifacts produced broken half-dark renders); the
 gallery UI provides the dark chrome. Slug = `path` lowercased, non-alphanumerics
 → `-`. Must stay in sync with `slugPath()` in `index.html`.
 
-## `desite.mjs` — strip docs-site cruft from a slurped page
-
-Turns an HTML page slurped from a docs site (Astro + Netlify) into a standalone
-artifact: rewrites `/cdn-demos/*` asset paths to relative, drops the Astro page
-bundle `<script>`, and removes the Netlify deploy badge. Used to vendor the
-matchina `standalone-react` / `standalone-alpine` artifacts from their PR
-preview. Seed of a future "slurp a site into one self-contained HTML file" tool.
-
-```bash
-node tools/desite.mjs <in.html> <out.html>
-```
