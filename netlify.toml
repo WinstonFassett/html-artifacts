@@ -1,0 +1,8 @@
+[build]
+  base    = "site"
+  command = "npm install && npm run build"
+  publish = "dist"
+
+[build.environment]
+  SITE     = "https://html-artifacts.netlify.app"
+  BASE_URL = "/"

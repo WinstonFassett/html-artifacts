@@ -5,8 +5,8 @@ import svelte from '@astrojs/svelte';
 
 // https://astro.build/config
 export default defineConfig({
-  site: 'https://winstonfassett.github.io',
-  base: '/html-artifacts',
+  site: process.env.SITE ?? 'https://winstonfassett.github.io',
+  base: process.env.BASE_URL ?? '/html-artifacts',
   // Static SSG (default). Artifacts + previews are served verbatim from public/.
   // Search = the instant client-side inline filter (name/tag/source); no
   // full-text/Pagefind in v1 — kept simple, no per-artifact pages needed.
