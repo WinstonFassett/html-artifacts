@@ -1,6 +1,8 @@
 # HTML Artifacts
 
 Gallery of single-file HTML apps that run with no build step.
+<!-- preview-deploy smoke test -->
+
 
 ## Setup
 
