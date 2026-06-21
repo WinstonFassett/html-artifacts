@@ -33,9 +33,8 @@
     </div>
   </div>
 
-  <!-- iframe -->
-  <iframe id="lb-frame" class="h-full w-full flex-1 bg-white"
-          sandbox="allow-scripts allow-same-origin allow-forms allow-downloads"></iframe>
+  <!-- iframe slot — filled dynamically so the initial src load is a replacing navigation -->
+  <div id="lb-frame-slot" class="h-full w-full flex-1 bg-white overflow-hidden"></div>
 
   <!-- Mobile bottom nav bar -->
   <div class="flex md:hidden items-center justify-between border-t border-white/10 px-4 py-2 bg-black/80">
@@ -49,7 +48,8 @@
 
 <script>
   const lb = document.getElementById('lightbox')!;
-  const frame = document.getElementById('lb-frame') as HTMLIFrameElement;
+  const frameSlot = document.getElementById('lb-frame-slot')!;
+  let frame: HTMLIFrameElement | null = null;
   const titleEl = document.getElementById('lb-title')!;
   const tagsEl = document.getElementById('lb-tags')!;
   const sourceEl = document.getElementById('lb-source')!;
@@ -96,7 +96,14 @@
     openLink.href = run;
     dlLink.href = run;
     dlLink.setAttribute('download', card.dataset.filename || '');
+    // Create a fresh iframe and set src before inserting into DOM.
+    // This makes the initial navigation a replacing navigation (no history entry).
+    frameSlot.innerHTML = '';
+    frame = document.createElement('iframe');
+    frame.className = 'h-full w-full bg-white';
+    frame.setAttribute('sandbox', 'allow-scripts allow-same-origin allow-forms allow-downloads allow-popups');
     frame.src = run;
+    frameSlot.appendChild(frame);
     prevBtn.disabled = idx <= 0;
     nextBtn.disabled = idx >= cards.length - 1;
     prevBtnMobile.disabled = idx <= 0;
@@ -104,29 +111,53 @@
   }
 
 
+  let lightboxOpen = false;
+  let histLenAtOpen = 0;
+
   function open(card: HTMLElement) {
     cards = visibleCards();
     const i = cards.indexOf(card);
     const id = cardId(card, i < 0 ? 0 : i);
-    history.replaceState({ lightbox: id }, '', `#${id}`);
+    histLenAtOpen = history.length;
+    history.pushState({ lightbox: id }, '', `#${id}`);
+    lightboxOpen = true;
     lb.classList.remove('hidden');
     lb.classList.add('flex');
     render(i < 0 ? 0 : i);
   }
 
-  function close() {
+  // Tear down lightbox DOM. fromPopstate=true means browser already navigated back.
+  function closeDom() {
+    lightboxOpen = false;
     lb.classList.add('hidden');
     lb.classList.remove('flex');
-    frame.src = '';
+    frameSlot.innerHTML = '';
+    frame = null;
     idx = -1;
     cards = [];
-    history.replaceState(null, '', location.pathname + location.search);
+    histLenAtOpen = 0;
+  }
+
+  // Close triggered by user (button / Escape / backdrop).
+  // The iframe (allow-same-origin) may have pushed extra history entries while the
+  // artifact was running, so we go back by however many entries accumulated since
+  // open(), not just 1. closeDom() fires in the popstate handler.
+  function close() {
+    if (!lightboxOpen) return;
+    const steps = history.length - histLenAtOpen;
+    if (steps > 0) {
+      history.go(-steps);
+    } else {
+      // Fallback: no entries to pop, just strip hash and close DOM directly.
+      closeDom();
+      history.replaceState(null, '', location.pathname + location.search);
+    }
   }
 
   // Card click — guard against double-fire (e.g. button inside article both bubble)
   document.addEventListener('click', (e) => {
     if ((e.target as HTMLElement).closest('#lightbox')) return;
-    if (!lb.classList.contains('hidden')) return;
+    if (lightboxOpen) return;
     const card = (e.target as HTMLElement).closest('.card') as HTMLElement | null;
     if (card) open(card);
   });
@@ -152,24 +183,20 @@
   lb.addEventListener('click', (e) => { if (e.target === lb) close(); });
 
   document.addEventListener('keydown', (e) => {
-    if (lb.classList.contains('hidden')) return;
+    if (!lightboxOpen) return;
     if (e.key === 'Escape') close();
     else if (e.key === 'ArrowLeft') goPrev();
     else if (e.key === 'ArrowRight') goNext();
   });
 
-  // Browser back while lightbox is open = close
+  // Browser back while lightbox is open = close DOM (browser already moved back)
   window.addEventListener('popstate', () => {
-    if (!lb.classList.contains('hidden')) {
-      close();
-    }
+    if (lightboxOpen) closeDom();
   });
 
-  // iOS Safari bfcache: swipe-back restores a frozen snapshot with lightbox still visible
+  // iOS Safari bfcache: swipe-back restores a frozen snapshot with lightbox visible
   window.addEventListener('pageshow', (e) => {
-    if (e.persisted && !lb.classList.contains('hidden')) {
-      close();
-    }
+    if (e.persisted && lightboxOpen) closeDom();
   });
 
   // Page load with hash = open that card
