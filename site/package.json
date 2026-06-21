@@ -13,8 +13,10 @@
     "astro": "astro"
   },
   "dependencies": {
+    "@astrojs/svelte": "^7.2.5",
     "@tailwindcss/vite": "^4.3.1",
     "astro": "^5.18.2",
+    "svelte": "^5.56.3",
     "tailwindcss": "^4.3.1"
   }
 }
