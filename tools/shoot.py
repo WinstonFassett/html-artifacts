@@ -1,17 +1,17 @@
-# Screenshot every gallery artifact -> site/public/previews/<id>.png.
-# Serve site/public/ over HTTP first (ESM artifacts need it), e.g.:
-#   python3 -m http.server 9731 --directory site/public
+# Screenshot every gallery artifact -> public/previews/<id>.png.
+# Serve public/ over HTTP first (ESM artifacts need it), e.g.:
+#   python3 -m http.server 9731 --directory public
 # Pass artifact ids as args to (re)shoot just those; no args = all (skips
-# previews that already exist). Reads artifact list from site/src/data/artifacts.json.
+# previews that already exist). Reads artifact list from src/data/artifacts.json.
 import json, re, os, sys
 from playwright.sync_api import sync_playwright
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 PORT = 9731
-OUT = os.path.join(REPO, "site/public/previews")
+OUT = os.path.join(REPO, "public/previews")
 os.makedirs(OUT, exist_ok=True)
 
-artifacts = json.load(open(os.path.join(REPO, "site/src/data/artifacts.json")))
+artifacts = json.load(open(os.path.join(REPO, "src/data/artifacts.json")))
 
 def slug_path(p):
     return re.sub(r"[^a-z0-9]+", "-", p.lower()).strip("-")
