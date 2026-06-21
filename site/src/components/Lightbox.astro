@@ -66,6 +66,7 @@
   // cards snapshot taken when lightbox opens
   let cards: HTMLElement[] = [];
   let idx = -1;
+  let pushedHistory = false;
 
   function allCards() {
     return Array.from(document.querySelectorAll<HTMLElement>('.card'));
@@ -109,18 +110,29 @@
     const i = cards.indexOf(card);
     const id = cardId(card, i < 0 ? 0 : i);
     history.pushState({ lightbox: id }, '', `#${id}`);
+    pushedHistory = true;
     lb.classList.remove('hidden');
     lb.classList.add('flex');
     render(i < 0 ? 0 : i);
   }
 
-  function close() {
+  function closeUI() {
     lb.classList.add('hidden');
     lb.classList.remove('flex');
     frame.src = '';
     idx = -1;
     cards = [];
-    history.replaceState(null, '', location.pathname + location.search);
+    pushedHistory = false;
+  }
+
+  function close() {
+    if (pushedHistory) {
+      // Let history.back() navigate back, which fires popstate → closeUI
+      history.back();
+    } else {
+      closeUI();
+      history.replaceState(null, '', location.pathname + location.search);
+    }
   }
 
   // Card click
@@ -157,17 +169,17 @@
     else if (e.key === 'ArrowRight') goNext();
   });
 
-  // Browser back while lightbox is open = close (stay on page)
+  // Browser back while lightbox is open = close
   window.addEventListener('popstate', () => {
     if (!lb.classList.contains('hidden')) {
-      close();
+      closeUI();
     }
   });
 
   // iOS Safari bfcache: swipe-back restores a frozen snapshot with lightbox still visible
   window.addEventListener('pageshow', (e) => {
     if (e.persisted && !lb.classList.contains('hidden')) {
-      close();
+      closeUI();
     }
   });
 
