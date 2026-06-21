@@ -33,7 +33,7 @@ with sync_playwright() as p:
         if os.path.exists(outfile) and not only:
             results["ok"].append(aid)
             continue
-        url = f"http://localhost:{PORT}/{path}"
+        url = f"http://localhost:{PORT}/artifacts/{path}"
         page = browser.new_page(viewport={"width": VW, "height": VH}, device_scale_factor=1)
         errors = []
         page.on("pageerror", lambda e: errors.append(str(e)))
