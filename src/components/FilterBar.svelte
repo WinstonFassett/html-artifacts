@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { onMount, onDestroy } from 'svelte';
+  import { onMount } from 'svelte';
   import { visibleCards } from '../lib/store';
 
   let { tags = [], sources = [] }: { tags: string[]; sources: string[] } = $props();
@@ -67,10 +67,7 @@
     apply();
     document.addEventListener('toggle-sidebar', () => (sidebarOpen = !sidebarOpen));
     window.addEventListener('hashchange', onHashChange);
-  });
-
-  onDestroy(() => {
-    window.removeEventListener('hashchange', onHashChange);
+    return () => window.removeEventListener('hashchange', onHashChange);
   });
 
   function apply() {
