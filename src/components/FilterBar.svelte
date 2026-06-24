@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { onMount } from 'svelte';
+  import { onMount, onDestroy } from 'svelte';
   import { visibleCards } from '../lib/store';
 
   let { tags = [], sources = [] }: { tags: string[]; sources: string[] } = $props();
@@ -34,10 +34,43 @@
   let count = $state(0);
   let cards: HTMLElement[] = [];
 
+  // --- Hash-based URL persistence ---
+
+  function readHash() {
+    const params = new URLSearchParams(location.hash.slice(1));
+    view = params.get('view') ?? 'featured';
+    src = params.get('src') ?? '';
+    tag = params.get('tag') ?? '';
+    q = params.get('q') ?? '';
+  }
+
+  function updateHash() {
+    const params = new URLSearchParams();
+    if (view !== 'featured') params.set('view', view);
+    if (src) params.set('src', src);
+    if (tag) params.set('tag', tag);
+    if (q.trim()) params.set('q', q.trim());
+    const qs = params.toString();
+    history.replaceState(null, '', qs ? '#' + qs : location.pathname + location.search);
+  }
+
+  function onHashChange() {
+    readHash();
+    if (cards.length) apply();
+  }
+
+  // ----------------------------------
+
   onMount(() => {
     cards = Array.from(document.querySelectorAll<HTMLElement>('.card'));
+    readHash();
     apply();
     document.addEventListener('toggle-sidebar', () => (sidebarOpen = !sidebarOpen));
+    window.addEventListener('hashchange', onHashChange);
+  });
+
+  onDestroy(() => {
+    window.removeEventListener('hashchange', onHashChange);
   });
 
   function apply() {
@@ -67,9 +100,9 @@
     return card.dataset.bucket === view;
   }
 
-  function setView(v: string) { view = v; apply(); closeSidebar(); }
-  function setSrc(s: string) { src = s; apply(); closeSidebar(); }
-  function setTag(t: string) { tag = t; apply(); closeSidebar(); }
+  function setView(v: string) { view = v; apply(); updateHash(); closeSidebar(); }
+  function setSrc(s: string) { src = s; apply(); updateHash(); closeSidebar(); }
+  function setTag(t: string) { tag = t; apply(); updateHash(); closeSidebar(); }
 
   function closeSidebar() {
     if (window.innerWidth < 768) sidebarOpen = false;
@@ -77,7 +110,7 @@
 
   $effect(() => {
     // re-run apply when q changes (after mount)
-    if (cards.length) { q; apply(); }
+    if (cards.length) { q; apply(); updateHash(); }
   });
 </script>
 
