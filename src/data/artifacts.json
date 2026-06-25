@@ -44,7 +44,7 @@
   "source": "starters",
   "loading": "esm",
   "bucket": "mine",
-  "featured": true,
+  "featured": false,
   "size": 2468,
   "preview": "previews/winstonfassett-solid-html-esm-html.png"
  },
@@ -1275,7 +1275,7 @@
   "source": "starters",
   "loading": "esm",
   "bucket": "mine",
-  "featured": true,
+  "featured": false,
   "size": 1486,
   "preview": "previews/winstonfassett-react-18-tsx-esm-html.png"
  },
@@ -1291,7 +1291,7 @@
   "source": "starters",
   "loading": "esm",
   "bucket": "mine",
-  "featured": true,
+  "featured": false,
   "size": 1486,
   "preview": "previews/winstonfassett-react-19-tsx-esm-html.png"
  },
@@ -1307,7 +1307,7 @@
   "source": "starters",
   "loading": "script",
   "bucket": "mine",
-  "featured": true,
+  "featured": false,
   "size": 886,
   "preview": "previews/winstonfassett-chartjs-html.png"
  },
@@ -1389,7 +1389,7 @@
   "source": "starters",
   "loading": "script",
   "bucket": "mine",
-  "featured": true,
+  "featured": false,
   "size": 2990,
   "preview": "previews/winstonfassett-canvas-life-html.png"
  },
@@ -1405,7 +1405,7 @@
   "source": "starters",
   "loading": "script",
   "bucket": "mine",
-  "featured": true,
+  "featured": false,
   "size": 1928,
   "preview": "previews/winstonfassett-markdown-editor-html.png"
  },
@@ -1437,7 +1437,7 @@
   "source": "starters",
   "loading": "esm",
   "bucket": "mine",
-  "featured": true,
+  "featured": false,
   "size": 1948,
   "preview": "previews/winstonfassett-petite-vue-html.png"
  },
@@ -1453,7 +1453,7 @@
   "source": "starters",
   "loading": "script",
   "bucket": "mine",
-  "featured": true,
+  "featured": false,
   "size": 1492,
   "preview": "previews/winstonfassett-react-18-babel-html.png"
  },
@@ -1469,7 +1469,7 @@
   "source": "starters",
   "loading": "script",
   "bucket": "mine",
-  "featured": true,
+  "featured": false,
   "size": 1392,
   "preview": "previews/winstonfassett-react-htm-html.png"
  },
@@ -1486,7 +1486,7 @@
   "source": "starters",
   "loading": "esm",
   "bucket": "mine",
-  "featured": true,
+  "featured": false,
   "size": 2717,
   "preview": "previews/winstonfassett-react-fireproof-esm-html.png"
  },
@@ -1502,7 +1502,7 @@
   "source": "starters",
   "loading": "script",
   "bucket": "mine",
-  "featured": true,
+  "featured": false,
   "size": 1964,
   "preview": "previews/winstonfassett-alpine-html.png"
  },
@@ -1519,7 +1519,7 @@
   "source": "starters",
   "loading": "esm",
   "bucket": "mine",
-  "featured": true,
+  "featured": false,
   "size": 1610,
   "preview": "previews/winstonfassett-preact-htm-esm-html.png"
  },
@@ -1535,7 +1535,7 @@
   "source": "starters",
   "loading": "script",
   "bucket": "mine",
-  "featured": true,
+  "featured": false,
   "size": 1948,
   "preview": "previews/winstonfassett-vue3-html.png"
  },
@@ -1552,7 +1552,7 @@
   "source": "starters",
   "loading": "esm",
   "bucket": "mine",
-  "featured": true,
+  "featured": false,
   "size": 1439,
   "preview": "previews/winstonfassett-lit-esm-html.png"
  },
@@ -1682,7 +1682,7 @@
   "source": "starters",
   "loading": "script",
   "bucket": "mine",
-  "featured": true,
+  "featured": false,
   "size": 1837,
   "preview": "previews/winstonfassett-json-viewer-html.png"
  },
@@ -1698,7 +1698,7 @@
   "source": "starters",
   "loading": "script",
   "bucket": "mine",
-  "featured": true,
+  "featured": false,
   "size": 3009,
   "preview": "previews/winstonfassett-regex-tester-html.png"
  },
@@ -1811,7 +1811,7 @@
   "source": "matchina",
   "loading": "esm",
   "bucket": "mine",
-  "featured": true,
+  "featured": false,
   "size": 4597,
   "preview": "previews/winstonfassett-standalone-esmsh-html.png"
  },
@@ -1827,7 +1827,7 @@
   "source": "matchina",
   "loading": "esm",
   "bucket": "mine",
-  "featured": true,
+  "featured": false,
   "size": 6248,
   "preview": "previews/winstonfassett-standalone-stimulus-html.png"
  },
@@ -1843,7 +1843,7 @@
   "source": "matchina",
   "loading": "esm",
   "bucket": "mine",
-  "featured": true,
+  "featured": false,
   "size": 5131,
   "preview": "previews/winstonfassett-standalone-alpine-html.png"
  },
@@ -1860,7 +1860,7 @@
   "source": "matchina",
   "loading": "esm",
   "bucket": "mine",
-  "featured": true,
+  "featured": false,
   "size": 4863,
   "preview": "previews/winstonfassett-standalone-react-html.png"
  },
@@ -1876,7 +1876,7 @@
   "source": "matchina",
   "loading": "esm",
   "bucket": "mine",
-  "featured": true,
+  "featured": false,
   "size": 5371,
   "preview": "previews/winstonfassett-standalone-petite-vue-html.png"
  },
@@ -1892,7 +1892,7 @@
   "source": "matchina",
   "loading": "esm",
   "bucket": "mine",
-  "featured": true,
+  "featured": false,
   "size": 5063,
   "preview": "previews/winstonfassett-standalone-vue-html.png"
  },
@@ -1908,7 +1908,7 @@
   "source": "matchina",
   "loading": "esm",
   "bucket": "mine",
-  "featured": true,
+  "featured": false,
   "size": 5034,
   "preview": "previews/winstonfassett-standalone-van-html.png"
  },
@@ -1924,7 +1924,7 @@
   "source": "matchina",
   "loading": "esm",
   "bucket": "mine",
-  "featured": true,
+  "featured": false,
   "size": 5515,
   "preview": "previews/winstonfassett-standalone-solid-html.png"
  },
@@ -1940,7 +1940,7 @@
   "source": "matchina",
   "loading": "esm",
   "bucket": "mine",
-  "featured": true,
+  "featured": false,
   "size": 5568,
   "preview": "previews/winstonfassett-standalone-preact-html.png"
  },
@@ -1956,7 +1956,7 @@
   "source": "matchina",
   "loading": "esm",
   "bucket": "mine",
-  "featured": true,
+  "featured": false,
   "size": 4327,
   "preview": "previews/winstonfassett-standalone-arrow-html.png"
  },
@@ -2037,7 +2037,7 @@
   ],
   "source": "starters",
   "bucket": "mine",
-  "featured": false,
+  "featured": true,
   "size": 12080,
   "preview": "previews/winstonfassett-react-chat-streamdown-html.png"
  },
